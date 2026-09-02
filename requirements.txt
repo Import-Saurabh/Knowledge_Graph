@@ -1,5 +1,11 @@
-fastapi>=0.110.0
-uvicorn>=0.28.0
-pydantic>=2.6.0
-requests>=2.31.0
-feedparser>=6.0.10
+anthropic
+feedparser
+pydantic
+boto3
+python-dotenv
+graphifyy
+fastapi
+uvicorn[standard]
+apscheduler
+httpx
+pytest
