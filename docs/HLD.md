@@ -198,3 +198,172 @@ erDiagram
     ENTITIES ||--o{ RELATIONSHIPS : "as_source"
     ENTITIES ||--o{ RELATIONSHIPS : "as_target"
     ENTITIES ||--o{ CLAIMS : "as_subject"
+    ENTITIES ||--o{ CLAIMS : "as_object"
+    EVENTS ||--o{ CLAIMS : "evidenced_in"
+    ENTITIES ||--o{ ENTITY_EVENT_LINKS : "participates"
+    EVENTS ||--o{ ENTITY_EVENT_LINKS : "involves"
+    CONVERSATIONS ||--o{ MESSAGES : "contains"
+
+    ARTICLES {
+        string id PK
+        string url UK
+        string url_hash
+        string publisher
+        string headline
+        string summary
+        string content_excerpt
+        string content_hash
+        string published_at
+        string ingested_at
+        string feed_source
+        string extraction_status
+    }
+
+    ENTITIES {
+        string id PK
+        string entity_type
+        string canonical_name
+        string description
+        string aliases "JSON Array"
+        string external_ids "JSON Object"
+        string first_observed_at
+        string updated_at
+    }
+
+    EVENTS {
+        string id PK
+        string event_type
+        string summary
+        string event_time
+        string event_time_precision
+        string location
+        string status
+        float confidence
+        string first_observed_at
+        string updated_at
+    }
+
+    RELATIONSHIPS {
+        string id PK
+        string source_id FK
+        string target_id FK
+        string relationship_type
+        string description
+        string source_article_id FK
+        string first_observed_at
+        string updated_at
+    }
+
+    CLAIMS {
+        string id PK
+        string claim_text
+        string subject_entity_id FK
+        string predicate
+        string object_entity_id FK
+        string source_article_id FK
+        string attribution
+        string claim_type
+        float confidence
+        string event_id FK
+        string observed_at
+    }
+
+    ENTITY_EVENT_LINKS {
+        string entity_id PK,FK
+        string event_id PK,FK
+        string role PK
+        string source_article_id
+    }
+
+    CONVERSATIONS {
+        string id PK
+        string title
+        string created_at
+        string updated_at
+    }
+
+    MESSAGES {
+        string id PK
+        string conversation_id FK
+        string role
+        string content
+        string citations "JSON Array"
+        string entity_ids "JSON Array"
+        string event_ids "JSON Array"
+        string research_metadata "JSON Object"
+        string created_at
+    }
+
+    INGESTION_JOBS {
+        string id PK
+        string job_type
+        string status
+        string started_at
+        string completed_at
+        string trigger
+        int articles_discovered
+        int articles_processed
+        int articles_skipped
+        int entities_created
+        int entities_updated
+        int events_created
+        int relationships_created
+        string error_details
+    }
+```
+
+---
+
+## 5. Technology Stack & Operational Matrix
+
+| Component | Technology / Library | Version | Role / Rationale |
+|---|---|---|---|
+| **Backend Framework** | FastAPI | `0.143.0` | Asynchronous high-performance REST API with automatic OpenAPI specs |
+| **ASGI Web Server** | Uvicorn | `0.54.0` | Production ASGI server with async loop and reload support |
+| **Data Validation** | Pydantic V2 | `2.14.0` | Schema definition, input validation, serialization |
+| **Embedded Database** | SQLite 3 (WAL mode) | `3.40+` | Zero-dependency, embedded ACID store with FTS5 search |
+| **Background Scheduler**| APScheduler | `3.11.3` | In-process background job scheduler for periodic news sync |
+| **LLM Client** | Anthropic Python SDK | `1.13.0` | Compatible client for Anthropic and MiniMax-M3 LLMs |
+| **Feed Parser** | Feedparser | `6.0.14` | Robust parsing of RSS 2.0, Atom, and RDF feeds |
+| **HTTP Client** | HTTPX | `0.28.1` | Modern synchronous and asynchronous HTTP client |
+| **3D Graph Frontend** | Three.js / 3D Force Graph | CDN | WebGL force-directed layout and interactive camera navigation |
+| **Chat Frontend** | Marked.js + Vanilla JS | CDN | Clean, dependency-free responsive chat workspace with markdown |
+| **Codebase Graphing** | Graphifyy | `0.9.85` | AST parsing, structural clustering, and knowledge graph mapping |
+| **Unit & Integration** | Pytest | `9.1.1` | Comprehensive test suite for API, DB, and ingestion logic |
+
+---
+
+## 6. Non-Functional Requirements (NFRs)
+
+### 6.1 Performance & Latency Targets
+- **Graph Snapshot (`GET /api/graph`)**: $< 50\text{ ms}$ for 500 nodes and 1,000 edges via pre-indexed SQLite queries.
+- **Entity Neighborhood Subgraph (`GET /api/graph/subgraph`)**: $< 30\text{ ms}$ for 2-hop recursive CTE lookups.
+- **Cached Chat Answer (Existing Graph Context)**: $3\text{--}8\text{ seconds}$ total response time (dominated by LLM generation).
+- **On-Demand Wire Research Chat Query**: $10\text{--}18\text{ seconds}$ (includes wire RSS lookup, LLM graph extraction, database commit, and briefing synthesis).
+
+### 6.2 Reliability & Fault Tolerance
+- **Source Isolation**: Failure of one or more RSS feeds (HTTP 4xx, 5xx, or network timeouts) is caught within thread workers and never fails the broader ingestion job.
+- **Scheduler Non-Overlapping Lock**: Prevents thread exhaustion and DB write contention if an LLM extraction run exceeds the 1-hour interval.
+- **Transactional Rollbacks**: SQLite transactions rollback on unexpected write failures, leaving the database in a consistent state.
+
+### 6.3 Security & Access Control
+- **Administrative Endpoints (`POST /api/ingest`)**: Protected by mandatory `X-API-Key` validation matching `ADMIN_API_KEY`.
+- **Read-Only Public Endpoints**: CORS-enabled for web client consumption with parameterized SQL queries preventing SQL injection vulnerabilities.
+- **URL Sanitization**: Strips tracking headers and tracking parameters to prevent telemetry leakage.
+
+---
+
+## 7. Deployment & Infrastructure Architecture
+
+DriftForge supports two deployment configurations:
+
+### 7.1 Containerized Server Deployment (Primary)
+The application runs as a self-contained Docker container orchestrated via `docker-compose.yml`:
+- **Docker Compose**: Mounts persistent storage volume `./data` to `/app/data` to guarantee SQLite DB retention across container rebuilds.
+- **Environment**: Reads `.env` containing LLM API keys, ports, and scheduler configuration.
+- **Port Mapping**: Exposes port `8080` internally, placed behind Nginx or CloudFront.
+
+### 7.2 AWS CloudFront & Static Edge Pipeline (Supplemental)
+In the cloud distribution architecture:
+- Static assets (`index.html`, `chat.html`, `graph.json`, icons) can be served from AWS S3 via CloudFront (`https://driftforge.cloud`).
+- CloudFront access logs are written to an S3 logging bucket and parsed by `cf_log_shipper.py` to ship traffic metrics into CloudWatch and trigger SNS alerts for novel geographic visitors.
