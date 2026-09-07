@@ -178,3 +178,83 @@ CREATE TABLE IF NOT EXISTS ingestion_jobs (
     articles_processed INTEGER DEFAULT 0,
     articles_skipped INTEGER DEFAULT 0,
     articles_failed INTEGER DEFAULT 0,
+    entities_created INTEGER DEFAULT 0,
+    entities_updated INTEGER DEFAULT 0,
+    events_created INTEGER DEFAULT 0,
+    relationships_created INTEGER DEFAULT 0,
+    error_details TEXT,
+    metadata TEXT DEFAULT '{}'
+);
+
+-- Indexes for performance
+CREATE INDEX IF NOT EXISTS idx_entities_type ON entities(entity_type);
+CREATE INDEX IF NOT EXISTS idx_entities_name ON entities(canonical_name);
+CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type);
+CREATE INDEX IF NOT EXISTS idx_events_time ON events(event_time);
+CREATE INDEX IF NOT EXISTS idx_articles_url_hash ON articles(url_hash);
+CREATE INDEX IF NOT EXISTS idx_articles_published_at ON articles(published_at);
+CREATE INDEX IF NOT EXISTS idx_relationships_source ON relationships(source_id);
+CREATE INDEX IF NOT EXISTS idx_relationships_target ON relationships(target_id);
+CREATE INDEX IF NOT EXISTS idx_relationships_type ON relationships(relationship_type);
+CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_claims_article ON claims(source_article_id);
+CREATE INDEX IF NOT EXISTS idx_claims_subject ON claims(subject_entity_id);
+CREATE INDEX IF NOT EXISTS idx_claims_event ON claims(event_id);
+"""
+
+FTS_SQL = """
+CREATE VIRTUAL TABLE IF NOT EXISTS entities_fts USING fts5(
+    id UNINDEXED,
+    canonical_name,
+    description,
+    aliases
+);
+
+CREATE VIRTUAL TABLE IF NOT EXISTS events_fts USING fts5(
+    id UNINDEXED,
+    summary,
+    location
+);
+"""
+
+
+def init_db(db_path: Optional[Path] = None) -> None:
+    """Initialize database schema, indexes, and full text search tables."""
+    path = db_path or settings.db_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with get_db() as conn:
+        conn.executescript(SCHEMA_SQL)
+        try:
+            conn.executescript(FTS_SQL)
+        except sqlite3.OperationalError:
+            # FTS5 might already exist or need table rebuild
+            pass
+        conn.commit()
+
+    seed_from_graph_json_if_empty()
+
+
+def seed_from_graph_json_if_empty() -> None:
+    """If database has 0 entities, seed from existing graph.json to preserve historical baseline."""
+    with get_db() as conn:
+        count = conn.execute("SELECT COUNT(*) FROM entities").fetchone()[0]
+        if count > 0:
+            return
+
+        graph_file = settings.data_dir.parent / "graph.json"
+        if not graph_file.exists():
+            return
+
+        try:
+            with open(graph_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            now = data.get("generated_at", utc_now_iso())
+            nodes = data.get("nodes", [])
+            links = data.get("links", [])
+
+            cursor = conn.cursor()
+            for node in nodes:
+                nid = node.get("id")
+                label = node.get("label", nid)
