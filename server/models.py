@@ -118,3 +118,96 @@ class Message(BaseModel):
 
 
 class IngestionJob(BaseModel):
+    id: str
+    job_type: str  # scheduled | manual | query_triggered
+    status: str  # running | completed | failed | cancelled
+    started_at: str = Field(default_factory=utc_now_iso)
+    completed_at: Optional[str] = None
+    trigger: Optional[str] = "scheduler"
+    articles_discovered: int = 0
+    articles_processed: int = 0
+    articles_skipped: int = 0
+    articles_failed: int = 0
+    entities_created: int = 0
+    entities_updated: int = 0
+    events_created: int = 0
+    relationships_created: int = 0
+    error_details: Optional[str] = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# ---------------------------------------------------------------------------
+# API Contract Models
+# ---------------------------------------------------------------------------
+
+class Citation(BaseModel):
+    id: str
+    headline: Optional[str] = None
+    publisher: Optional[str] = None
+    url: str
+    published_at: Optional[str] = None
+    summary: Optional[str] = None
+
+
+class QueryRequest(BaseModel):
+    question: str
+    conversation_id: Optional[str] = None
+    timezone: Optional[str] = "UTC"
+    force_research: bool = False
+
+
+class QueryResponse(BaseModel):
+    answer: str
+    citations: list[Citation] = Field(default_factory=list)
+    entity_ids: list[str] = Field(default_factory=list)
+    event_ids: list[str] = Field(default_factory=list)
+    research_metadata: dict[str, Any] = Field(default_factory=dict)
+    conversation_id: str
+    message_id: str
+
+
+class GraphNode(BaseModel):
+    id: str
+    label: str
+    type: str
+    description: Optional[str] = None
+    val: Optional[float] = None
+    connection_count: Optional[int] = 0
+    first_observed_at: Optional[str] = None
+
+
+class GraphLink(BaseModel):
+    source: str
+    target: str
+    type: str
+    description: Optional[str] = None
+
+
+class GraphResponse(BaseModel):
+    nodes: list[GraphNode]
+    links: list[GraphLink]
+    generated_at: str
+    entity_count: int
+    relationship_count: int
+
+
+class IngestRequest(BaseModel):
+    force: bool = False
+    max_articles_per_feed: Optional[int] = None
+
+
+class IngestResponse(BaseModel):
+    job_id: str
+    status: str
+    message: str
+    stats: dict[str, Any] = Field(default_factory=dict)
+
+
+class HealthResponse(BaseModel):
+    status: str
+    version: str
+    database: str
+    entity_count: int
+    relationship_count: int
+    article_count: int
+    last_ingestion: Optional[str] = None
