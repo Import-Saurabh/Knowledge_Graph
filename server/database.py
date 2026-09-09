@@ -258,3 +258,93 @@ def seed_from_graph_json_if_empty() -> None:
             for node in nodes:
                 nid = node.get("id")
                 label = node.get("label", nid)
+                ntype = node.get("type", "concept")
+                desc = node.get("description", "")
+                if nid:
+                    cursor.execute(
+                        """
+                        INSERT OR IGNORE INTO entities (id, entity_type, canonical_name, description, aliases, first_observed_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (nid, ntype, label, desc, json.dumps([label]), now, now),
+                    )
+                    # Index in FTS
+                    try:
+                        cursor.execute(
+                            "INSERT OR IGNORE INTO entities_fts (id, canonical_name, description, aliases) VALUES (?, ?, ?, ?)",
+                            (nid, label, desc, json.dumps([label])),
+                        )
+                    except Exception:
+                        pass
+
+            for link in links:
+                s = link.get("source")
+                t = link.get("target")
+                ltype = link.get("type", "RELATED_TO")
+                desc = link.get("description", "")
+                if s and t and s != t:
+                    lid = f"{s}_{ltype}_{t}"
+                    cursor.execute(
+                        """
+                        INSERT OR IGNORE INTO relationships (id, source_id, target_id, relationship_type, description, first_observed_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (lid, s, t, ltype, desc, now, now),
+                    )
+
+            conn.commit()
+            print(f"Database seeded from graph.json: {len(nodes)} entities, {len(links)} relationships.")
+        except Exception as e:
+            print(f"Notice: Could not seed from graph.json: {e}")
+
+
+# ---------------------------------------------------------------------------
+# Data Access Methods
+# ---------------------------------------------------------------------------
+
+class GraphStore:
+    """Data access repository for entities, events, relationships, articles, and chat."""
+
+    @staticmethod
+    def upsert_entity(entity: Entity) -> None:
+        with get_db() as conn:
+            conn.execute(
+                """
+                INSERT INTO entities (id, entity_type, canonical_name, description, aliases, external_ids, first_observed_at, updated_at, metadata)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    entity_type = excluded.entity_type,
+                    canonical_name = excluded.canonical_name,
+                    description = COALESCE(excluded.description, entities.description),
+                    aliases = excluded.aliases,
+                    external_ids = excluded.external_ids,
+                    updated_at = excluded.updated_at,
+                    metadata = excluded.metadata
+                """,
+                (
+                    entity.id,
+                    entity.entity_type,
+                    entity.canonical_name,
+                    entity.description,
+                    json.dumps(entity.aliases),
+                    json.dumps(entity.external_ids),
+                    entity.first_observed_at,
+                    entity.updated_at,
+                    json.dumps(entity.metadata),
+                ),
+            )
+            # Sync FTS
+            try:
+                conn.execute("DELETE FROM entities_fts WHERE id = ?", (entity.id,))
+                conn.execute(
+                    "INSERT INTO entities_fts (id, canonical_name, description, aliases) VALUES (?, ?, ?, ?)",
+                    (entity.id, entity.canonical_name, entity.description or "", json.dumps(entity.aliases)),
+                )
+            except Exception:
+                pass
+            conn.commit()
+
+    @staticmethod
+    def get_entity(entity_id: str) -> Optional[dict]:
+        with get_db() as conn:
+            row = conn.execute("SELECT * FROM entities WHERE id = ?", (entity_id,)).fetchone()
