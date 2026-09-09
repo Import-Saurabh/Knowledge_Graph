@@ -348,3 +348,103 @@ class GraphStore:
     def get_entity(entity_id: str) -> Optional[dict]:
         with get_db() as conn:
             row = conn.execute("SELECT * FROM entities WHERE id = ?", (entity_id,)).fetchone()
+            if not row:
+                return None
+            d = dict(row)
+            d["aliases"] = json.loads(d.get("aliases") or "[]")
+            d["external_ids"] = json.loads(d.get("external_ids") or "{}")
+            d["metadata"] = json.loads(d.get("metadata") or "{}")
+            return d
+
+    @staticmethod
+    def search_entities(query: str, limit: int = 20) -> list[dict]:
+        with get_db() as conn:
+            # Try FTS first
+            try:
+                clean_query = query.replace('"', '""').strip()
+                match_expr = f'"{clean_query}"*'
+                rows = conn.execute(
+                    """
+                    SELECT e.* FROM entities e
+                    JOIN entities_fts fts ON e.id = fts.id
+                    WHERE entities_fts MATCH ?
+                    LIMIT ?
+                    """,
+                    (match_expr, limit),
+                ).fetchall()
+                if rows:
+                    res = []
+                    for r in rows:
+                        d = dict(r)
+                        d["aliases"] = json.loads(d.get("aliases") or "[]")
+                        res.append(d)
+                    return res
+            except Exception:
+                pass
+
+            # Fallback to LIKE
+            rows = conn.execute(
+                """
+                SELECT * FROM entities
+                WHERE id LIKE ? OR canonical_name LIKE ? OR aliases LIKE ?
+                LIMIT ?
+                """,
+                (f"%{query}%", f"%{query}%", f"%{query}%", limit),
+            ).fetchall()
+            res = []
+            for r in rows:
+                d = dict(r)
+                d["aliases"] = json.loads(d.get("aliases") or "[]")
+                res.append(d)
+            return res
+
+    @staticmethod
+    def upsert_event(event: Event) -> None:
+        with get_db() as conn:
+            conn.execute(
+                """
+                INSERT INTO events (id, event_type, summary, event_time, event_time_precision, location, status, confidence, first_observed_at, updated_at, metadata)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    event_type = excluded.event_type,
+                    summary = excluded.summary,
+                    event_time = COALESCE(excluded.event_time, events.event_time),
+                    event_time_precision = excluded.event_time_precision,
+                    location = COALESCE(excluded.location, events.location),
+                    status = excluded.status,
+                    confidence = excluded.confidence,
+                    updated_at = excluded.updated_at,
+                    metadata = excluded.metadata
+                """,
+                (
+                    event.id,
+                    event.event_type,
+                    event.summary,
+                    event.event_time,
+                    event.event_time_precision,
+                    event.location,
+                    event.status,
+                    event.confidence,
+                    event.first_observed_at,
+                    event.updated_at,
+                    json.dumps(event.metadata),
+                ),
+            )
+            # Sync FTS
+            try:
+                conn.execute("DELETE FROM events_fts WHERE id = ?", (event.id,))
+                conn.execute(
+                    "INSERT INTO events_fts (id, summary, location) VALUES (?, ?, ?)",
+                    (event.id, event.summary, event.location or ""),
+                )
+            except Exception:
+                pass
+            conn.commit()
+
+    @staticmethod
+    def get_event(event_id: str) -> Optional[dict]:
+        with get_db() as conn:
+            row = conn.execute("SELECT * FROM events WHERE id = ?", (event_id,)).fetchone()
+            if not row:
+                return None
+            d = dict(row)
