@@ -31,7 +31,7 @@ def get_db_connection() -> sqlite3.Connection:
         conn = sqlite3.connect(
             str(settings.db_path),
             check_same_thread=False,
-            timeout=15.0,
+            timeout=30.0,
         )
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA journal_mode = WAL;")
