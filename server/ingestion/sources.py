@@ -13,7 +13,6 @@ from server.config import settings
 from server.models import Article, utc_now_iso
 
 
-# URL normalizer function
 def normalize_url(url: str) -> str:
     """Normalize URL by stripping tracking queries and standardizing formatting."""
     parsed = urlparse(url.strip())
