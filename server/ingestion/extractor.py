@@ -73,3 +73,65 @@ Respond with ONLY valid JSON in this exact structure:
       "subject": "entity-id-1",
       "predicate": "launched drone towards",
       "object": "entity-id-2",
+      "attribution": "Ministry of Defense spokesman",
+      "article_index": 1
+    }
+  ]
+}"""
+
+
+class LLMExtractor:
+    """Extracts structured graph entities, events, relationships, and claims using LLM."""
+
+    def __init__(self):
+        client_kwargs = {}
+        if settings.anthropic_base_url:
+            client_kwargs["base_url"] = settings.anthropic_base_url
+        if settings.anthropic_api_key:
+            client_kwargs["api_key"] = settings.anthropic_api_key
+        client_kwargs["timeout"] = settings.llm_timeout
+
+        self.client = Anthropic(**client_kwargs)
+        self.model = settings.llm_model
+
+    def extract(self, articles: list[Article]) -> dict[str, Any]:
+        """Perform structured extraction on a batch of articles."""
+        if not articles:
+            return {"entities": [], "events": [], "relationships": [], "claims": []}
+
+        articles_text = "\n\n".join(
+            f"ARTICLE {i + 1} ({a.publisher or 'Unknown Source'} - {a.published_at or 'Today'}):\n"
+            f"Title: {a.headline}\n"
+            f"Summary: {a.summary or a.content_excerpt or ''}\n"
+            f"URL: {a.url}"
+            for i, a in enumerate(articles)
+        )
+
+        prompt = (
+            f"Extract the news knowledge graph, events, relationships, and claims from these {len(articles)} articles:\n\n"
+            f"{articles_text}"
+        )
+
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=8192,
+                system=EXTRACTION_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw_text = response.content[0].text.strip()
+            # Strip markdown code blocks if wrapped
+            if raw_text.startswith("```"):
+                raw_text = re.sub(r"^```(?:json)?\s*", "", raw_text)
+                raw_text = re.sub(r"\s*```$", "", raw_text)
+
+            data = json.loads(raw_text)
+            return {
+                "entities": data.get("entities", []),
+                "events": data.get("events", []),
+                "relationships": data.get("relationships", []),
+                "claims": data.get("claims", []),
+            }
+        except Exception as e:
+            print(f"[LLMExtractor] Error during extraction: {e}", file=sys.stderr)
+            raise
