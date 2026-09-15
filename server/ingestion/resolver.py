@@ -38,3 +38,19 @@ class EntityResolver:
             # Check canonical name match (case-insensitive)
             if match["canonical_name"].strip().lower() == raw_label.strip().lower():
                 return match["id"]
+            # Check aliases
+            for alias in match.get("aliases", []):
+                if alias.strip().lower() == raw_label.strip().lower():
+                    return match["id"]
+
+        # If no confident match, return the new normalized slug
+        return normalized_id
+
+    @staticmethod
+    def merge_aliases(existing_aliases: list[str], new_alias: Optional[str]) -> list[str]:
+        if not new_alias or not new_alias.strip():
+            return existing_aliases
+        clean = new_alias.strip()
+        if clean not in existing_aliases:
+            return existing_aliases + [clean]
+        return existing_aliases
