@@ -48,3 +48,44 @@ class IngestionPipeline:
             job.articles_discovered = len(all_articles)
 
             # 2. Filter out already processed articles
+            new_articles = []
+            for art in all_articles:
+                if force or not GraphStore.article_exists_by_url(art.url):
+                    new_articles.append(art)
+                else:
+                    job.articles_skipped += 1
+
+            print(f"[Pipeline] Discovered: {job.articles_discovered}, Already stored: {job.articles_skipped}, New to process: {len(new_articles)}")
+
+            if not new_articles:
+                job.status = "completed"
+                job.completed_at = utc_now_iso()
+                GraphStore.record_job(job)
+                print("[Pipeline] No new articles to process. Job completed.")
+                return job
+
+            # 3. Extract knowledge graph using LLM
+            extracted = self.extractor.extract(new_articles)
+
+            # 4. Persist extraction transactionally
+            stats = self.writer.persist_extraction(new_articles, extracted)
+
+            job.articles_processed = len(new_articles)
+            job.entities_created = stats.get("entities_created", 0)
+            job.entities_updated = stats.get("entities_updated", 0)
+            job.events_created = stats.get("events_created", 0)
+            job.relationships_created = stats.get("relationships_created", 0)
+            job.status = "completed"
+            job.completed_at = utc_now_iso()
+
+            GraphStore.record_job(job)
+            print(f"[Pipeline] Job {job_id} completed successfully: {stats}")
+            return job
+
+        except Exception as e:
+            job.status = "failed"
+            job.completed_at = utc_now_iso()
+            job.error_details = str(e)
+            GraphStore.record_job(job)
+            print(f"[Pipeline] Job {job_id} failed: {e}", file=sys.stderr)
+            raise
