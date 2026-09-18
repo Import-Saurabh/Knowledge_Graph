@@ -23,3 +23,16 @@ def test_normalize_url():
 def test_detect_publisher():
     assert detect_publisher("http://feeds.bbci.co.uk/news/world/rss.xml") == "BBC News"
     assert detect_publisher("https://www.theguardian.com/world/rss") == "The Guardian"
+    assert detect_publisher("https://www.aljazeera.com/xml/rss/all.xml") == "Al Jazeera"
+    assert detect_publisher("https://feeds.npr.org/1001/rss.xml") == "NPR"
+
+
+def test_entity_resolver_aliases():
+    aliases = ["UN", "United Nations"]
+    new_aliases = EntityResolver.merge_aliases(aliases, "U.N.")
+    assert "U.N." in new_aliases
+    assert len(new_aliases) == 3
+
+    # Duplicate should not be re-added
+    same_aliases = EntityResolver.merge_aliases(new_aliases, "UN")
+    assert len(same_aliases) == 3
