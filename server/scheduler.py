@@ -33,3 +33,33 @@ def run_scheduled_ingestion():
 
 def start_scheduler() -> Optional[BackgroundScheduler]:
     """Start the background scheduler if enabled."""
+    global _scheduler
+    if not settings.scheduler_enabled:
+        print("[Scheduler] Background scheduler is disabled in configuration.")
+        return None
+
+    if _scheduler is not None and _scheduler.running:
+        return _scheduler
+
+    scheduler = BackgroundScheduler(daemon=True)
+    hours = max(1, settings.ingestion_schedule_hours)
+    scheduler.add_job(
+        run_scheduled_ingestion,
+        trigger=IntervalTrigger(hours=hours),
+        id="news_ingestion_hourly",
+        name="Scheduled News Ingestion",
+        replace_existing=True,
+    )
+    scheduler.start()
+    _scheduler = scheduler
+    print(f"[Scheduler] Background scheduler started (running every {hours} hour(s)).")
+    return _scheduler
+
+
+def shutdown_scheduler():
+    """Gracefully stop the background scheduler."""
+    global _scheduler
+    if _scheduler and _scheduler.running:
+        _scheduler.shutdown(wait=False)
+        print("[Scheduler] Background scheduler stopped.")
+        _scheduler = None
