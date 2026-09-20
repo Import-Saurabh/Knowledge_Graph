@@ -63,3 +63,62 @@ class GraphRetriever:
             SELECT DISTINCT ev.* FROM events ev
             LEFT JOIN entity_event_links eel ON ev.id = eel.event_id
             WHERE eel.entity_id IN ({placeholders})
+               OR ev.summary LIKE ?
+            ORDER BY ev.updated_at DESC LIMIT ?
+            """
+            params = list(entity_ids) + [f"%{entity_ids[0]}%", limit]
+            rows = conn.execute(query, params).fetchall()
+            events = []
+            for r in rows:
+                d = dict(r)
+                d["metadata"] = json.loads(d.get("metadata") or "{}")
+                events.append(d)
+            return events
+
+    @staticmethod
+    def get_claims_and_evidence(entity_ids: list[str], limit: int = 15) -> list[dict]:
+        """Retrieve factual claims and supporting articles for the entities."""
+        if not entity_ids:
+            return []
+
+        with get_db() as conn:
+            placeholders = ",".join(["?"] * len(entity_ids))
+            query = f"""
+            SELECT c.*, a.headline, a.publisher, a.url, a.published_at
+            FROM claims c
+            JOIN articles a ON c.source_article_id = a.id
+            WHERE c.subject_entity_id IN ({placeholders})
+               OR c.object_entity_id IN ({placeholders})
+            ORDER BY c.observed_at DESC LIMIT ?
+            """
+            params = list(entity_ids) + list(entity_ids) + [limit]
+            rows = conn.execute(query, params).fetchall()
+            return [dict(r) for r in rows]
+
+    @staticmethod
+    def get_recent_articles_for_entities(entity_ids: list[str], limit: int = 10) -> list[dict]:
+        """Retrieve recent articles associated with these entities through claims or relationships."""
+        if not entity_ids:
+            # Fallback to general recent articles
+            with get_db() as conn:
+                rows = conn.execute(
+                    "SELECT * FROM articles ORDER BY ingested_at DESC LIMIT ?",
+                    (limit,),
+                ).fetchall()
+                return [dict(r) for r in rows]
+
+        with get_db() as conn:
+            placeholders = ",".join(["?"] * len(entity_ids))
+            query = f"""
+            SELECT DISTINCT a.* FROM articles a
+            LEFT JOIN claims c ON a.id = c.source_article_id
+            LEFT JOIN relationships r ON a.id = r.source_article_id
+            WHERE c.subject_entity_id IN ({placeholders})
+               OR c.object_entity_id IN ({placeholders})
+               OR r.source_id IN ({placeholders})
+               OR r.target_id IN ({placeholders})
+            ORDER BY a.ingested_at DESC LIMIT ?
+            """
+            params = list(entity_ids) * 4 + [limit]
+            rows = conn.execute(query, params).fetchall()
+            return [dict(r) for r in rows]
