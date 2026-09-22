@@ -83,3 +83,82 @@ class AnswerSynthesizer:
         ]
 
         context_text = f"""### KNOWLEDGE GRAPH ENTITIES:
+{chr(10).join(ent_lines) or 'No specific entities found.'}
+
+### GRAPH RELATIONSHIPS:
+{chr(10).join(rel_lines) or 'No direct relationships found.'}
+
+### RECORDED EVENTS:
+{chr(10).join(event_lines) or 'No specific events recorded.'}
+
+### EVIDENCE CLAIMS:
+{chr(10).join(claim_lines) or 'No specific claims recorded.'}
+
+### SUPPORTING ARTICLES & SOURCES:
+{chr(10).join(art_lines) or 'No direct articles retrieved.'}
+"""
+
+        messages = []
+        if conversation_history:
+            for prev in conversation_history[-4:]:  # last 2 turns
+                messages.append({
+                    "role": prev["role"],
+                    "content": prev["content"],
+                })
+
+        user_content = (
+            f"User Question: {question}\n\n"
+            f"Evidence & Knowledge Graph Context:\n{context_text}\n\n"
+            f"Please synthesize a comprehensive, evidence-grounded briefing."
+        )
+        messages.append({"role": "user", "content": user_content})
+
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=1536,
+                system=SYNTHESIS_SYSTEM_PROMPT,
+                messages=messages,
+            )
+            raw_answer = response.content[0].text.strip()
+        except Exception as e:
+            raw_answer = f"Error during briefing synthesis: {e}"
+
+        # Extract explore_graph block
+        entity_ids = [e["id"] for e in entities]
+        event_ids = [ev["id"] for ev in events]
+
+        graph_match = re.search(r"```explore_graph\s*({.*?})\s*```", raw_answer, re.DOTALL)
+        if graph_match:
+            try:
+                gdata = json.loads(graph_match.group(1))
+                extracted_ents = gdata.get("entity_ids", [])
+                if extracted_ents:
+                    entity_ids = extracted_ents
+                extracted_evs = gdata.get("event_ids", [])
+                if extracted_evs:
+                    event_ids = extracted_evs
+            except Exception:
+                pass
+            # Clean explore_graph from user-visible answer
+            clean_answer = re.sub(r"```explore_graph\s*({.*?})\s*```", "", raw_answer, flags=re.DOTALL).strip()
+        else:
+            clean_answer = raw_answer
+
+        # Construct citations list
+        citations = []
+        seen_urls = set()
+        for art in articles:
+            u = art.get("url", "")
+            if u and u not in seen_urls:
+                seen_urls.add(u)
+                citations.append(Citation(
+                    id=art.get("id", str(len(citations))),
+                    headline=art.get("headline"),
+                    publisher=art.get("publisher"),
+                    url=u,
+                    published_at=art.get("published_at"),
+                    summary=art.get("summary"),
+                ))
+
+        return clean_answer, citations, entity_ids, event_ids
