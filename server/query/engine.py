@@ -63,3 +63,63 @@ class QueryEngine:
                 rows = conn.execute("""
                     SELECT e.* FROM entities e
                     LEFT JOIN (
+                        SELECT entity_id, COUNT(*) as deg FROM (
+                            SELECT source_id as entity_id FROM relationships
+                            UNION ALL
+                            SELECT target_id as entity_id FROM relationships
+                        ) GROUP BY entity_id
+                    ) d ON e.id = d.entity_id
+                    ORDER BY COALESCE(d.deg, 0) DESC
+                    LIMIT 10
+                """).fetchall()
+                entities = [dict(r) for r in rows]
+
+        entity_ids = [e["id"] for e in entities]
+
+        # 5. Retrieve graph context: subgraphs, events, claims, and articles
+        subgraph = self.retriever.get_multi_hop_context(entity_ids, max_hops=2)
+        events = self.retriever.get_events_for_entities(entity_ids, limit=8)
+        claims = self.retriever.get_claims_and_evidence(entity_ids, limit=12)
+        articles = self.retriever.get_recent_articles_for_entities(entity_ids, limit=8)
+        if research_meta.get("articles"):
+            existing_urls = {a.get("url") for a in articles}
+            for ra in research_meta["articles"]:
+                if ra.get("url") not in existing_urls:
+                    articles.append(ra)
+                    existing_urls.add(ra.get("url"))
+
+        # 6. Synthesize evidence-backed response
+        answer, citations, ref_entity_ids, ref_event_ids = self.synthesizer.synthesize(
+            question=question,
+            entities=entities,
+            subgraph=subgraph,
+            events=events,
+            claims=claims,
+            articles=articles,
+            conversation_history=conv_history,
+        )
+
+        # 7. Save assistant message
+        asst_msg_id = str(uuid.uuid4())
+        asst_msg = Message(
+            id=asst_msg_id,
+            conversation_id=conv_id,
+            role="assistant",
+            content=answer,
+            citations=[c.model_dump() for c in citations],
+            entity_ids=ref_entity_ids,
+            event_ids=ref_event_ids,
+            research_metadata=research_meta,
+            created_at=utc_now_iso(),
+        )
+        GraphStore.save_message(asst_msg)
+
+        return QueryResponse(
+            answer=answer,
+            citations=citations,
+            entity_ids=ref_entity_ids,
+            event_ids=ref_event_ids,
+            research_metadata=research_meta,
+            conversation_id=conv_id,
+            message_id=asst_msg_id,
+        )
