@@ -26,3 +26,27 @@ def execute_query(req: QueryRequest):
     try:
         return _query_engine.answer_question(req)
     except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
+
+
+@router.get("/conversations")
+def list_conversations(limit: int = 50):
+    """List recent conversation sessions."""
+    return GraphStore.list_conversations(limit=limit)
+
+
+@router.post("/conversations")
+def create_conversation(req: CreateConversationRequest):
+    """Create a new conversation session."""
+    conv_id = str(uuid.uuid4())
+    conv = GraphStore.create_conversation(conv_id, title=req.title or "New Conversation")
+    return conv.model_dump()
+
+
+@router.get("/conversations/{conversation_id}")
+def get_conversation_history(conversation_id: str):
+    """Retrieve conversation details and chronological messages."""
+    conv = GraphStore.get_conversation(conversation_id)
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return conv
