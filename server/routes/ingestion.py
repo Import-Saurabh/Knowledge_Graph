@@ -30,3 +30,27 @@ def trigger_ingestion(
     try:
         job = pipeline.run(
             trigger="api_manual",
+            max_per_feed=req.max_articles_per_feed,
+            force=req.force,
+        )
+        return IngestResponse(
+            job_id=job.id,
+            status=job.status,
+            message="Ingestion run completed.",
+            stats={
+                "discovered": job.articles_discovered,
+                "processed": job.articles_processed,
+                "skipped": job.articles_skipped,
+                "entities_created": job.entities_created,
+                "events_created": job.events_created,
+                "relationships_created": job.relationships_created,
+            },
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
+
+
+@router.get("/status")
+def get_ingestion_history(limit: int = 20):
+    """Retrieve history of background and manual ingestion jobs."""
+    return GraphStore.list_jobs(limit=limit)
