@@ -998,3 +998,403 @@ function getLinkColor(link) {
     return SENTIMENT_COLOR.neutral;
   }
   return LINK_COLOR[link.type] || LINK_COLOR.default;
+}
+
+function dimHex(hex) {
+  // Return a very dark version of the colour for neighbourhood dimming
+  return 'rgba(30,32,42,0.3)';
+}
+
+function effectiveNodeColor(node) {
+  if (state.highlightedNodeIds && state.highlightedNodeIds.size > 0) {
+    if (!state.highlightedNodeIds.has(node.id)) return dimHex(getNodeColor(node));
+  }
+  if (state.hoveredNode && node !== state.hoveredNode && !state.hoveredNeighbours.has(node.id)) {
+    return dimHex(getNodeColor(node));
+  }
+  if (state.searchQuery) {
+    const q = state.searchQuery.toLowerCase();
+    const name = (node.label || node.canonical_name || node.id || '').toLowerCase();
+    const desc = (node.description || '').toLowerCase();
+    const type = (node.type || '').toLowerCase();
+    const matches = name.includes(q) || desc.includes(q) || type.includes(q);
+    if (!matches) return dimHex(getNodeColor(node));
+  }
+  return getNodeColor(node);
+}
+
+function effectiveLinkColor(link) {
+  const sId = link.source.id ?? link.source;
+  const tId = link.target.id ?? link.target;
+  if (state.highlightedNodeIds && state.highlightedNodeIds.size > 0) {
+    if (!state.highlightedNodeIds.has(sId) || !state.highlightedNodeIds.has(tId)) {
+      return 'rgba(30,32,42,0.1)';
+    }
+  }
+  if (state.hoveredNode) {
+    const hId = state.hoveredNode.id;
+    if (sId !== hId && tId !== hId) return 'rgba(30,32,42,0.15)';
+  }
+  if (state.searchQuery) {
+    const q = state.searchQuery.toLowerCase();
+    const sNode = nodeById.get(sId);
+    const tNode = nodeById.get(tId);
+    const sName = (sNode?.label || sNode?.canonical_name || sNode?.id || '').toLowerCase();
+    const tName = (tNode?.label || tNode?.canonical_name || tNode?.id || '').toLowerCase();
+    if (!sName.includes(q) && !tName.includes(q)) {
+      return 'rgba(30,32,42,0.08)';
+    }
+  }
+  return getLinkColor(link);
+}
+
+// ── Community detection (label propagation) ──────────────────────────────────
+
+function labelPropagation(data, iterations = 15) {
+  const labels = new Map(data.nodes.map(n => [n.id, n.id]));
+  const adj = new Map(data.nodes.map(n => [n.id, []]));
+  data.links.forEach(l => {
+    const s = l.source.id ?? l.source;
+    const t = l.target.id ?? l.target;
+    adj.get(s)?.push(t);
+    adj.get(t)?.push(s);
+  });
+  for (let i = 0; i < iterations; i++) {
+    const order = [...data.nodes.map(n => n.id)].sort(() => Math.random() - 0.5);
+    for (const id of order) {
+      const neighbours = adj.get(id);
+      if (!neighbours.length) continue;
+      const freq = new Map();
+      for (const nb of neighbours) {
+        const l = labels.get(nb);
+        freq.set(l, (freq.get(l) || 0) + 1);
+      }
+      let best = null, bestCount = 0;
+      for (const [l, c] of freq) {
+        if (c > bestCount) { best = l; bestCount = c; }
+      }
+      if (best) labels.set(id, best);
+    }
+  }
+  const uniqueLabels = [...new Set(labels.values())];
+  const labelToInt = new Map(uniqueLabels.map((l, i) => [l, i]));
+  return new Map([...labels.entries()].map(([id, l]) => [id, labelToInt.get(l)]));
+}
+
+// ── Graph setup ──────────────────────────────────────────────────────────────
+
+let G;
+let isTouchDevice = false;
+
+window.addEventListener('touchstart', () => { isTouchDevice = true; }, { once: true });
+
+async function loadData() {
+  const res = await fetch('graph.json', { cache: 'no-store' });
+  return res.json();
+}
+
+async function main() {
+  let data;
+  try { data = await loadData(); } catch (e) {
+    document.body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#f87171;font-size:18px;font-family:sans-serif;">
+      Could not load graph.json — run <code style="background:#1e2030;padding:2px 6px;border-radius:4px;">pipeline.py</code> first.</div>`;
+    return;
+  }
+
+  state.rawData = data;
+  state.lastGeneratedAt = data.generated_at;
+  state.communities = labelPropagation(data);
+  buildAdjacency(data);
+
+  G = ForceGraph3D()(document.getElementById('graph'))
+    .backgroundColor('#0f1117')
+    .showNavInfo(false)
+    .graphData(data)
+    .nodeVal(node => nodeVal(node))
+    .nodeColor(node => effectiveNodeColor(node))
+    .nodeOpacity(0.9)
+    .nodeResolution(24)
+    .nodeThreeObjectExtend(true)
+    .nodeThreeObject(node => {
+      const sprite = new SpriteText(node.label);
+      sprite.color = '#cccccc';
+      sprite.textHeight = 8;
+      sprite.material.depthWrite = false;
+      node.__labelSprite = sprite;
+      sprite.position.y = nodeVal(node) * 0.9 + 12; // default until sim settles
+      return sprite;
+    })
+    .linkColor(link => effectiveLinkColor(link))
+    .linkOpacity(0.5)
+    .linkWidth(1)
+    .linkDirectionalParticles(1)
+    .linkDirectionalParticleWidth(1.5)
+    .linkDirectionalParticleColor(link => getLinkColor(link))
+    .linkDirectionalParticleOffset(link => link.__particleOffset ?? (link.__particleOffset = Math.random()))
+    .linkDirectionalParticleSpeed(link => link.__particleSpeed ?? (link.__particleSpeed = 0.003 + Math.random() * 0.004))
+    .nodeVisibility(node => !state.hiddenTypes.has(node.type))
+    .linkVisibility(link => {
+      const s = link.source.type ?? nodeById.get(link.source.id ?? link.source)?.type;
+      const t = link.target.type ?? nodeById.get(link.target.id ?? link.target)?.type;
+      return !state.hiddenTypes.has(s) && !state.hiddenTypes.has(t);
+    })
+    .onNodeClick(node => {
+      document.getElementById('hint-bar')?.classList.add('hidden');
+      openPanel(node);
+      const hyp = Math.hypot(node.x, node.y, node.z) || 1;
+      const ratio = 1 + 120 / hyp;
+      G.cameraPosition(
+        { x: node.x * ratio, y: node.y * ratio, z: node.z * ratio },
+        node, 1500
+      );
+      startPulse(node);
+    })
+    .onNodeHover(node => {
+      if (isTouchDevice) return;
+      document.body.style.cursor = node ? 'pointer' : 'default';
+      state.hoveredNode = node;
+      state.hoveredNeighbours = node ? (adjSet.get(node.id) ?? new Set()) : new Set();
+      refreshColors();
+      if (node) showTooltip(node.label, node.type, node.description);
+      else hideTooltip();
+    })
+    .onLinkHover(link => {
+      if (isTouchDevice) return;
+      document.body.style.cursor = link ? 'pointer' : 'default';
+      if (link) showTooltip(
+        `${link.source.label} → ${link.target.label}`,
+        link.type.replace(/_/g, ' '),
+        link.description
+      );
+      else hideTooltip();
+    })
+    .onBackgroundClick(() => closePanel());
+
+  G.d3Force('charge').strength(-400);
+  G.d3Force('link').distance(80);
+
+  let initialFocusDone = false;
+  G.onEngineStop(() => {
+    if (initialFocusDone) return;
+    initialFocusDone = true;
+    // Reposition each label away from its neighbours
+    G.graphData().nodes.forEach(node => {
+      if (!node.__labelSprite) return;
+      const offset = nodeVal(node) * 0.9 + 12;
+      const neighbours = [...(adjSet.get(node.id) || [])]
+        .map(id => nodeById.get(id)).filter(Boolean);
+
+      if (!neighbours.length) {
+        node.__labelSprite.position.set(0, offset, 0);
+        return;
+      }
+
+      let dx = 0, dy = 0, dz = 0;
+      neighbours.forEach(n => {
+        dx += (n.x || 0) - (node.x || 0);
+        dy += (n.y || 0) - (node.y || 0);
+        dz += (n.z || 0) - (node.z || 0);
+      });
+
+      // Point away from neighbours, with a slight upward bias
+      let nx = -dx, ny = -dy + Math.abs(dx) * 0.3, nz = -dz;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      node.__labelSprite.position.set(
+        (nx / len) * offset,
+        (ny / len) * offset,
+        (nz / len) * offset
+      );
+    });
+
+    const ls = document.getElementById('loading-screen');
+    ls.classList.add('done');
+    setTimeout(() => {
+      ls.remove();
+      if (state.highlightedNodeIds && state.highlightedNodeIds.size > 0) {
+        applyHighlightFocus();
+      } else {
+        runFlyover();
+      }
+    }, 700);
+
+    if (!state.highlightedNodeIds || state.highlightedNodeIds.size === 0) {
+      const topNode = G.graphData().nodes.reduce((best, n) =>
+        (degreeMap[n.id] || 0) > (degreeMap[best?.id] || 0) ? n : best, null);
+      if (topNode?.x !== undefined) {
+        const dist = 280;
+        const mag = Math.hypot(topNode.x, topNode.y, topNode.z) || 1;
+        const ratio = (mag + dist) / mag;
+        G.cameraPosition(
+          { x: topNode.x * ratio, y: topNode.y * ratio, z: topNode.z * ratio },
+          topNode,
+          0
+        );
+        startPulse(topNode);
+      }
+    }
+  });
+
+  // Fix near clipping plane so nodes don't vanish when zoomed in
+  const camera = G.camera();
+  camera.near = 0.5;
+  camera.updateProjectionMatrix();
+
+  // Reverse rotation direction on touch — feels more natural (content follows finger)
+  if ('ontouchstart' in window) {
+    G.controls().rotateSpeed = -1;
+  }
+
+  // Enhance scene lighting for 3D sphere shading
+  const scene = G.scene();
+  scene.children
+    .filter(o => o.isAmbientLight)
+    .forEach(l => { l.intensity = 0.35; });
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+  keyLight.position.set(200, 300, 200);
+  scene.add(keyLight);
+  const fillLight = new THREE.DirectionalLight(0x6699cc, 0.35);
+  fillLight.position.set(-200, -150, -200);
+  scene.add(fillLight);
+
+  buildToolbar();
+  buildFilterButtons();
+  renderLegend();
+
+  if (window.innerWidth <= 640) {
+    document.getElementById('btn-community').textContent = 'Community';
+    document.getElementById('btn-sentiment').textContent = 'Sentiment';
+  }
+  updateStats(data);
+  setupSearch();
+  setupPanelClose();
+  updateSubtitle(data);
+  loadVersion();
+
+  // Check URL query parameters for ?highlight=id1,id2 from Graph Chat
+  const urlParams = new URLSearchParams(window.location.search);
+  const hlParam = urlParams.get('highlight');
+  if (hlParam) {
+    const ids = hlParam.split(',').map(s => s.trim()).filter(Boolean);
+    state.highlightedNodeIds = new Set(ids);
+  }
+
+  document.getElementById('clear-highlight-btn')?.addEventListener('click', () => {
+    state.highlightedNodeIds.clear();
+    const banner = document.getElementById('highlight-banner');
+    if (banner) banner.style.display = 'none';
+    refreshColors();
+    window.history.pushState(null, '', window.location.pathname);
+    G.zoomToFit(1000);
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (document.getElementById('tooltip').classList.contains('visible')) moveTooltip(e);
+  });
+  updateToolbarHeight();
+  window.addEventListener('resize', () => {
+    updateToolbarHeight();
+    G.width(window.innerWidth);
+    G.height(window.innerHeight);
+  });
+
+  setInterval(checkForUpdates, 5 * 60 * 1000);
+}
+
+function applyHighlightFocus() {
+  const targetNodes = G.graphData().nodes.filter(n => state.highlightedNodeIds.has(n.id));
+  if (targetNodes.length > 0) {
+    const banner = document.getElementById('highlight-banner');
+    const btext = document.getElementById('highlight-banner-text');
+    if (banner && btext) {
+      btext.textContent = `Filtered by Graph Chat (${targetNodes.length} entities)`;
+      banner.style.display = 'flex';
+    }
+    let cx = 0, cy = 0, cz = 0;
+    targetNodes.forEach(n => { cx += n.x || 0; cy += n.y || 0; cz += n.z || 0; });
+    cx /= targetNodes.length; cy /= targetNodes.length; cz /= targetNodes.length;
+    G.cameraPosition({ x: cx, y: cy, z: cz + 320 }, { x: cx, y: cy, z: cz }, 1500);
+    refreshColors();
+  }
+}
+
+// ── Pulse animation on top node ──────────────────────────────────────────────
+
+function startPulse(node) {
+  const scene = G.scene();
+  const cam   = G.camera();
+  const color = new THREE.Color(NODE_COLOR[node.type] || '#f97316');
+
+  function spawnRing() {
+    const geo = new THREE.RingGeometry(1, 1.4, 48);
+    const mat = new THREE.MeshBasicMaterial({
+      color, transparent: true, opacity: 0.75, side: THREE.DoubleSide,
+    });
+    const ring = new THREE.Mesh(geo, mat);
+    ring.position.set(node.x || 0, node.y || 0, node.z || 0);
+    scene.add(ring);
+
+    const start    = Date.now();
+    const duration = 2200;
+    const maxScale = 18;
+
+    function tick() {
+      const t = (Date.now() - start) / duration;
+      if (t >= 1) { scene.remove(ring); geo.dispose(); mat.dispose(); return; }
+      const s = 1 + t * maxScale;
+      ring.scale.set(s, s, s);
+      mat.opacity = 0.75 * (1 - t);
+      ring.quaternion.copy(cam.quaternion);
+      requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  spawnRing();
+  setTimeout(spawnRing,  900);
+  setTimeout(spawnRing, 1800);
+}
+
+// ── Layout helpers ───────────────────────────────────────────────────────────
+
+function updateToolbarHeight() {
+  const h = document.getElementById('toolbar').offsetHeight;
+  document.documentElement.style.setProperty('--toolbar-h', h + 'px');
+}
+
+// ── Refresh colours without rebuilding graph ─────────────────────────────────
+
+function refreshColors() {
+  G.nodeColor(G.nodeColor());
+  G.linkColor(G.linkColor());
+  if (G && G.graphData && G.graphData().nodes) {
+    const isSearching = Boolean(state.searchQuery);
+    G.graphData().nodes.forEach(node => {
+      if (node.__labelSprite) {
+        if (isSearching) {
+          const q = state.searchQuery.toLowerCase();
+          const name = (node.label || node.canonical_name || node.id || '').toLowerCase();
+          const desc = (node.description || '').toLowerCase();
+          const type = (node.type || '').toLowerCase();
+          const matches = name.includes(q) || desc.includes(q) || type.includes(q);
+          node.__labelSprite.color = matches ? '#ffffff' : 'rgba(100,116,139,0.2)';
+        } else {
+          node.__labelSprite.color = '#cccccc';
+        }
+      }
+    });
+  }
+}
+
+// ── Reset / zoom ─────────────────────────────────────────────────────────────
+
+function resetView() {
+  const input = document.getElementById('search-input');
+  if (input) input.value = '';
+  document.getElementById('search-clear')?.classList.remove('visible');
+  closeSearchDropdown();
+  state.searchQuery = '';
+  refreshColors();
+  closePanel();
+  const sorted = Object.values(degreeMap).sort((a, b) => b - a);
+  const threshold = sorted[Math.floor(sorted.length * 0.3)] || 1;
+  const hasCluster = G.graphData().nodes.some(n => (degreeMap[n.id] || 0) >= threshold && !state.hiddenTypes.has(n.type));
