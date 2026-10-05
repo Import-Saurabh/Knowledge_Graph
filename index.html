@@ -1797,3 +1797,190 @@ function closePanel() {
 }
 
 // ── Tooltip ──────────────────────────────────────────────────────────────────
+
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(label, type, desc) {
+  tooltip.querySelector('.tt-label').textContent = label;
+  tooltip.querySelector('.tt-type').textContent = type;
+  tooltip.querySelector('.tt-desc').textContent = desc;
+  tooltip.classList.add('visible');
+}
+function moveTooltip(e) {
+  tooltip.style.left = Math.min(e.clientX + 16, window.innerWidth - 280) + 'px';
+  tooltip.style.top = (e.clientY - 10) + 'px';
+}
+function hideTooltip() { tooltip.classList.remove('visible'); }
+
+// ── Stats ────────────────────────────────────────────────────────────────────
+
+function updateStats(data) {
+  document.getElementById('stats').textContent =
+    `${data.nodes.length} entities · ${data.links.length} relationships`;
+}
+
+// ── Subtitle ─────────────────────────────────────────────────────────────────
+
+function updateSubtitle(data) {
+  if (!data.generated_at) return;
+  const generated = new Date(data.generated_at);
+  const ageHours  = (Date.now() - generated) / 3_600_000;
+  const ts = generated.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
+  const el = document.getElementById('site-subtitle');
+  if (ageHours >= 2) {
+    const label = ageHours < 3   ? 'a couple of hours'
+                : ageHours < 6   ? `${Math.floor(ageHours)} hours`
+                : ageHours < 24  ? 'several hours'
+                : `${Math.floor(ageHours / 24)} day${Math.floor(ageHours / 24) > 1 ? 's' : ''}`;
+    el.innerHTML = `Last updated: ${ts} <span style="color:#f59e0b;font-size:10px;">· data is ${label} old</span>`;
+  } else {
+    el.textContent = `Last updated: ${ts}`;
+  }
+}
+
+// ── Version ──────────────────────────────────────────────────────────────────
+
+async function loadVersion() {
+  try {
+    const res = await fetch('version.json', { cache: 'no-store' });
+    const { version } = await res.json();
+    document.getElementById('version-badge').textContent = version;
+  } catch (e) { /* silent — not critical */ }
+}
+
+// ── Auto-refresh ─────────────────────────────────────────────────────────────
+
+async function checkForUpdates() {
+  try {
+    const data = await loadData();
+    if (data.generated_at && data.generated_at !== state.lastGeneratedAt) {
+      state.lastGeneratedAt = data.generated_at;
+      state.rawData = data;
+      state.communities = labelPropagation(data);
+      buildAdjacency(data);
+      closePanel();
+      state.hoveredNode = null;
+      G.graphData(data);
+      updateSubtitle(data);
+      updateStats(data);
+      renderLegend();
+      flashRefreshBadge();
+    }
+  } catch (e) { /* silent */ }
+}
+
+function flashRefreshBadge() {
+  const badge = document.getElementById('refresh-badge');
+  badge.classList.add('show');
+  setTimeout(() => badge.classList.remove('show'), 3000);
+}
+
+main();
+
+// ── Flyover ──────────────────────────────────────────────────────────────────
+
+function shouldRunFlyover() { return true; }
+function markFlyoverDone() {}
+
+async function runFlyover() {
+  if (!shouldRunFlyover()) return;
+
+  // Pick top 4 nodes by degree
+  const nodes = [...G.graphData().nodes]
+    .sort((a, b) => (degreeMap[b.id] || 0) - (degreeMap[a.id] || 0))
+    .slice(0, 4);
+
+  if (nodes.length < 2) return;
+
+  const bar    = document.getElementById('flyover-bar');
+  const label  = document.getElementById('flyover-label');
+  const dots   = document.getElementById('flyover-dots');
+  const skip   = document.getElementById('flyover-skip');
+
+  // Build dots
+  nodes.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'flyover-dot';
+    d.id = `fdot-${i}`;
+    dots.appendChild(d);
+  });
+
+  bar.classList.add('active');
+
+  let cancelled = false;
+  const cancel = () => { cancelled = true; };
+  skip.addEventListener('click', cancel, { once: true });
+
+  const wait = ms => new Promise(res => {
+    const t = setTimeout(res, ms);
+    // Check cancellation every 100ms
+    const check = setInterval(() => { if (cancelled) { clearTimeout(t); clearInterval(check); res(); } }, 100);
+    setTimeout(() => clearInterval(check), ms + 50);
+  });
+
+  for (let i = 0; i < nodes.length; i++) {
+    if (cancelled) break;
+    const node = nodes[i];
+
+    // Update dot
+    document.querySelectorAll('.flyover-dot').forEach(d => d.classList.remove('active'));
+    document.getElementById(`fdot-${i}`)?.classList.add('active');
+    label.textContent = node.label;
+
+    // Fly to node — a bit further out than the click handler so connections are visible
+    const dist = 180;
+    const mag  = Math.hypot(node.x || 0, node.y || 0, node.z || 0) || 1;
+    const ratio = (mag + dist) / mag;
+    G.cameraPosition(
+      { x: node.x * ratio, y: node.y * ratio, z: node.z * ratio },
+      node, 1800
+    );
+
+    await wait(2000);
+    if (cancelled) break;
+
+    // Open panel
+    openPanel(node);
+    await wait(4200);
+    if (cancelled) break;
+
+    closePanel();
+    await wait(600);
+  }
+
+  // Clean up
+  bar.classList.remove('active');
+  markFlyoverDone();
+
+  if (!cancelled) {
+    // Settle on the top node at a close viewing distance
+    const topNode = nodes[0];
+    const dist  = 160;
+    const mag   = Math.hypot(topNode.x || 0, topNode.y || 0, topNode.z || 0) || 1;
+    const ratio = (mag + dist) / mag;
+    G.cameraPosition(
+      { x: topNode.x * ratio, y: topNode.y * ratio, z: topNode.z * ratio },
+      topNode, 1200
+    );
+  }
+}
+
+// ── About modal ───────────────────────────────────────────────────────────────
+const aboutBackdrop = document.getElementById('about-backdrop');
+document.getElementById('about-btn').addEventListener('click', () => {
+  track('about-open');
+  aboutBackdrop.classList.add('open');
+});
+document.getElementById('about-close').addEventListener('click', () => aboutBackdrop.classList.remove('open'));
+aboutBackdrop.addEventListener('click', e => { if (e.target === aboutBackdrop) aboutBackdrop.classList.remove('open'); });
+document.getElementById('about-github')?.addEventListener('click', () => track('about-github'));
+document.querySelector('#about-modal a[href*="vercel"]')?.addEventListener('click', () => track('about-portfolio'));
+
+// ── Tracking ─────────────────────────────────────────────────────────────────
+function track(event) {
+  fetch(`/t/${event}`, { method: 'HEAD' }).catch(() => {});
+}
+</script>
+</body>
+</html>
