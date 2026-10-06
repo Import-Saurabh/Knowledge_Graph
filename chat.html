@@ -298,3 +298,253 @@
       font-size: 12px;
       font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .citation-item {
+      font-size: 12.5px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .citation-item:last-child { border-bottom: none; }
+    .citation-badge {
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Suggested Prompts Grid */
+    #prompt-suggestions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+    .prompt-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+    .prompt-chip:hover {
+      border-color: var(--accent);
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+    .prompt-chip span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* Loading Status Card */
+    .loading-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-dim);
+      width: fit-content;
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      from { transform: scale(0.8); opacity: 0.5; }
+      to { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* ── Chat Input Footer ── */
+    #chat-footer {
+      border-top: 1px solid var(--border);
+      background: var(--sidebar-bg);
+      padding: 14px 20px;
+    }
+    .input-box-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      transition: border-color 0.15s;
+    }
+    .input-row:focus-within {
+      border-color: var(--border-focus);
+    }
+    #chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 14.5px;
+      resize: none;
+      max-height: 140px;
+      min-height: 24px;
+      line-height: 1.4;
+      font-family: inherit;
+    }
+    .send-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .send-btn:hover { background: #ea580c; }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .input-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-dim);
+      padding: 0 4px;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2">
+        <circle cx="6" cy="6" r="3"/>
+        <circle cx="18" cy="18" r="3"/>
+        <circle cx="18" cy="6" r="3"/>
+        <line x1="8.5" y1="7.5" x2="15.5" y2="16.5"/>
+        <line x1="8.5" y1="6" x2="15.5" y2="6"/>
+      </svg>
+      <span class="brand-title">DriftForge</span>
+      <span class="brand-tag">Intelligence</span>
+    </div>
+
+    <!-- Workspace Navigation -->
+    <div class="nav-section">
+      <a href="/" class="nav-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span>3D Knowledge Graph</span>
+      </a>
+      <a href="/chat" class="nav-item active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Graph Chat</span>
+      </a>
+    </div>
+
+    <!-- Conversations Section -->
+    <div class="conv-header">
+      <span>Conversations</span>
+      <button class="new-chat-btn" id="new-chat-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        New Chat
+      </button>
+    </div>
+
+    <div class="conv-list" id="conv-list">
+      <!-- Conversation history dynamically loaded here -->
+    </div>
+  </aside>
+
+  <!-- Main Chat Workspace -->
+  <main id="main">
+    <header class="chat-topbar">
+      <div class="chat-topbar-title">
+        <span class="live-indicator"></span>
+        <span id="current-conv-title">Graph Chat Workspace</span>
+      </div>
+      <div>
+        <a href="/" class="explore-btn" style="padding:6px 12px; font-size:12px;">
+          View 3D Graph
+        </a>
+      </div>
+    </header>
+
+    <div id="chat-messages">
+      <!-- Welcome card and prompt suggestions -->
+      <div id="welcome-state" style="text-align:center; padding: 40px 10px;">
+        <h1 style="font-size:26px; font-weight:700; color:#fff; margin-bottom:8px;">
+          Evidence-Backed News Intelligence
+        </h1>
+        <p style="color:var(--text-dim); max-width:540px; margin:0 auto; font-size:14px; line-height:1.5;">
+          Ask deep geopolitical questions. Responses are grounded in live graph topologies, cross-referenced entities, and verified RSS news sources.
+        </p>
+
+        <div id="prompt-suggestions">
+          <div class="prompt-chip" data-prompt="Give me today's major updates on Saudi Arabia–Houthi developments.">
+            <strong>Saudi Arabia–Houthi Developments</strong>
+            <span>Investigate strikes, diplomatic talks, and regional statements.</span>
+          </div>
+          <div class="prompt-chip" data-prompt="Summarize current geopolitical tensions involving the US and Iran.">
+            <strong>US & Iran Conflict</strong>
+            <span>Explore military actions, internal dissent, and diplomacy.</span>
+          </div>
+          <div class="prompt-chip" data-prompt="What recent events have been reported in Myanmar?">
+            <strong>Myanmar Situation</strong>
+            <span>Trace junta conscription, militia resistance, and civilian impact.</span>
+          </div>
+          <div class="prompt-chip" data-prompt="What are the latest developments in the Russia-Ukraine war?">
+            <strong>Russia & Ukraine War</strong>
+            <span>Analyze recent strikes, political statements, and trade issues.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Box Footer -->
+    <footer id="chat-footer">
+      <div class="input-box-container">
+        <div class="input-row">
