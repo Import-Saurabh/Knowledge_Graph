@@ -548,3 +548,203 @@
     <footer id="chat-footer">
       <div class="input-box-container">
         <div class="input-row">
+          <textarea
+            id="chat-input"
+            rows="1"
+            placeholder="Ask a question about current world events, entities, or connections..."
+          ></textarea>
+          <button id="send-btn" class="send-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="input-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="force-research-check">
+            <span>Force live RSS news discovery for this query</span>
+          </label>
+          <span>Shift+Enter for new line · Grounded in Persistent Graph</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    let currentConversationId = null;
+
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const welcomeState = document.getElementById('welcome-state');
+    const convList = document.getElementById('conv-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
+    const convTitle = document.getElementById('current-conv-title');
+    const forceResearchCheck = document.getElementById('force-research-check');
+
+    // Auto-resize textarea
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
+      sendBtn.disabled = !chatInput.value.trim();
+    });
+
+    // Enter to send
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+    newChatBtn.addEventListener('click', startNewChat);
+
+    // Prompt chips click
+    document.querySelectorAll('.prompt-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chatInput.value = chip.dataset.prompt;
+        chatInput.dispatchEvent(new Event('input'));
+        sendMessage();
+      });
+    });
+
+    async function loadConversations() {
+      try {
+        const res = await fetch('/api/conversations');
+        if (!res.ok) return;
+        const convs = await res.json();
+        convList.innerHTML = '';
+        convs.forEach(c => {
+          const item = document.createElement('div');
+          item.className = 'conv-item' + (c.id === currentConversationId ? ' active' : '');
+          item.textContent = c.title || 'Untitled Conversation';
+          item.addEventListener('click', () => loadConversation(c.id));
+          convList.appendChild(item);
+        });
+      } catch (e) {
+        console.warn('Could not load conversations:', e);
+      }
+    }
+
+    async function startNewChat() {
+      currentConversationId = null;
+      convTitle.textContent = 'New Conversation';
+      chatMessages.innerHTML = '';
+      chatMessages.appendChild(welcomeState);
+      welcomeState.style.display = 'block';
+      loadConversations();
+    }
+
+    async function loadConversation(id) {
+      currentConversationId = id;
+      try {
+        const res = await fetch(`/api/conversations/${id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        convTitle.textContent = data.title || 'Conversation';
+        chatMessages.innerHTML = '';
+        welcomeState.style.display = 'none';
+
+        data.messages.forEach(m => {
+          if (m.role === 'user') {
+            renderUserMessage(m.content);
+          } else {
+            renderAssistantMessage(m.content, m.citations || [], m.entity_ids || [], m.event_ids || [], m.research_metadata);
+          }
+        });
+        loadConversations();
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch (e) {
+        console.error('Error loading conversation:', e);
+      }
+    }
+
+    function renderUserMessage(text) {
+      if (welcomeState) welcomeState.style.display = 'none';
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-user';
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function renderAssistantMessage(markdownText, citations, entityIds, eventIds, researchMeta) {
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-assistant';
+
+      // Parse markdown safely with fallback
+      if (window.marked && typeof marked.parse === 'function') {
+        bubble.innerHTML = marked.parse(markdownText || '');
+      } else {
+        bubble.textContent = markdownText || '';
+      }
+
+      // Add Citations Section if citations exist
+      if (citations && citations.length > 0) {
+        const citeSec = document.createElement('div');
+        citeSec.className = 'citations-section';
+        citeSec.innerHTML = `<div class="citations-header">Verified Sources & Evidence (${citations.length})</div>`;
+        citations.forEach(c => {
+          const item = document.createElement('div');
+          item.className = 'citation-item';
+          item.innerHTML = `
+            <span class="citation-badge">${c.publisher || 'Source'}</span>
+            <a href="${c.url}" target="_blank" rel="noopener">${c.headline || c.url}</a>
+          `;
+          citeSec.appendChild(item);
+        });
+        bubble.appendChild(citeSec);
+      }
+
+      // Add Explore in Graph Button if entities or events were identified
+      if (entityIds && entityIds.length > 0) {
+        const exploreBar = document.createElement('div');
+        exploreBar.className = 'explore-bar';
+        const targetUrl = `/?highlight=${encodeURIComponent(entityIds.join(','))}`;
+
+        exploreBar.innerHTML = `
+          <div style="font-size:12px; color:var(--text-dim);">
+            Referenced <strong>${entityIds.length}</strong> graph entities in this answer
+          </div>
+          <a href="${targetUrl}" class="explore-btn" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+            </svg>
+            Explore in 3D Graph
+          </a>
+        `;
+        bubble.appendChild(exploreBar);
+      }
+
+      row.appendChild(bubble);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      renderUserMessage(text);
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+      sendBtn.disabled = true;
+
+      // Render loading state
+      const loadingRow = document.createElement('div');
+      loadingRow.className = 'msg-row';
+      loadingRow.id = 'active-loading-row';
+      loadingRow.innerHTML = `
+        <div class="loading-card">
+          <div class="pulse-dot"></div>
+          <span>Synthesizing briefing from knowledge graph & evidence...</span>
+        </div>
+      `;
