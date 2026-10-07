@@ -748,3 +748,51 @@
           <span>Synthesizing briefing from knowledge graph & evidence...</span>
         </div>
       `;
+      chatMessages.appendChild(loadingRow);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const payload = {
+          question: text,
+          conversation_id: currentConversationId,
+          force_research: forceResearchCheck.checked,
+        };
+
+        const res = await fetch('/api/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        loadingRow.remove();
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          renderAssistantMessage(`**Error:** ${err.detail || 'Could not complete query.'}`, [], [], [], {});
+          return;
+        }
+
+        const data = await res.json();
+        currentConversationId = data.conversation_id;
+        renderAssistantMessage(
+          data.answer,
+          data.citations || [],
+          data.entity_ids || [],
+          data.event_ids || [],
+          data.research_metadata || {}
+        );
+        loadConversations();
+      } catch (err) {
+        loadingRow.remove();
+        renderAssistantMessage(`**Connection Error:** ${err.message}`, [], [], [], {});
+      } finally {
+        sendBtn.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    // Initial load
+    loadConversations();
+  </script>
+</body>
+</html>
