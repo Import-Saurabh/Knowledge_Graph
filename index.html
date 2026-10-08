@@ -1013,7 +1013,7 @@ function effectiveNodeColor(node) {
     return dimHex(getNodeColor(node));
   }
   if (state.searchQuery) {
-    const q = state./* search query */ searchQuery.toLowerCase();
+    const q = state.searchQuery.toLowerCase();
     const name = (node.label || node.canonical_name || node.id || '').toLowerCase();
     const desc = (node.description || '').toLowerCase();
     const type = (node.type || '').toLowerCase();
@@ -1036,7 +1036,7 @@ function effectiveLinkColor(link) {
     if (sId !== hId && tId !== hId) return 'rgba(30,32,42,0.15)';
   }
   if (state.searchQuery) {
-    const q = state./* search query */ searchQuery.toLowerCase();
+    const q = state.searchQuery.toLowerCase();
     const sNode = nodeById.get(sId);
     const tNode = nodeById.get(tId);
     const sName = (sNode?.label || sNode?.canonical_name || sNode?.id || '').toLowerCase();
@@ -1371,7 +1371,7 @@ function refreshColors() {
     G.graphData().nodes.forEach(node => {
       if (node.__labelSprite) {
         if (isSearching) {
-          const q = state./* search query */ searchQuery.toLowerCase();
+          const q = state.searchQuery.toLowerCase();
           const name = (node.label || node.canonical_name || node.id || '').toLowerCase();
           const desc = (node.description || '').toLowerCase();
           const type = (node.type || '').toLowerCase();
