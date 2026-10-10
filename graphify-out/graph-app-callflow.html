@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>graph-app — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>graph-app — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 319 nodes, 757 edges, 16 communities. Commit: d0d1bbd</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#build-graph">Graph Build</a>
+    <a href="#analysis-clustering">Analysis &amp; Clustering</a>
+    <a href="#cli-skills">CLI &amp; Skill Installers</a>
+    <a href="#serve-api">Serving API</a>
+    <a href="#tests-fixtures">Tests &amp; Fixtures</a>
+    <a href="#og-image-generator">OG Image Generator</a>
+    <a href="#ingestion-package">Ingestion Package</a>
+    <a href="#server-package">Server Package</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>76 nodes</small>")
+    class BUILD_GRAPH_321CBB04 module;
+    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>129 nodes</small>")
+    class ANALYSIS_CLUSTERING_C79796DA module;
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>28 nodes</small>")
+    class CLI_SKILLS_9964CBB8 module;
+    SERVE_API_35EC8E86("Serving API<br/><small>33 nodes</small>")
+    class SERVE_API_35EC8E86 module;
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>44 nodes</small>")
+    class TESTS_FIXTURES_B84B1DCC module;
+    OG_IMAGE_GENERATOR_6A7C2BEF("OG Image Generator<br/><small>5 nodes</small>")
+    class OG_IMAGE_GENERATOR_6A7C2BEF module;
+    INGESTION_PACKAGE_CF12243A("Ingestion Package<br/><small>2 nodes</small>")
+    class INGESTION_PACKAGE_CF12243A module;
+    SERVER_PACKAGE_03F894F0("Server Package<br/><small>2 nodes</small>")
+    class SERVER_PACKAGE_03F894F0 module;
+    ANALYSIS_CLUSTERING_C79796DA -->|imports x50| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|calls x39| ANALYSIS_CLUSTERING_C79796DA
+    ANALYSIS_CLUSTERING_C79796DA -->|imports x22| TESTS_FIXTURES_B84B1DCC
+    SERVE_API_35EC8E86 -->|imports x16| ANALYSIS_CLUSTERING_C79796DA
+    TESTS_FIXTURES_B84B1DCC -->|imports x13| ANALYSIS_CLUSTERING_C79796DA
+    TESTS_FIXTURES_B84B1DCC -->|imports x11| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|calls x4| TESTS_FIXTURES_B84B1DCC
+    ANALYSIS_CLUSTERING_C79796DA -->|imports x4| SERVE_API_35EC8E86
+    SERVE_API_35EC8E86 -->|imports x4| TESTS_FIXTURES_B84B1DCC
+    SERVE_API_35EC8E86 -->|imports x2| BUILD_GRAPH_321CBB04
+    BUILD_GRAPH_321CBB04 -->|imports| SERVE_API_35EC8E86
+    TESTS_FIXTURES_B84B1DCC -->|imports| SERVE_API_35EC8E86
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Graph Build</td><td>76</td><td><code>0, 5</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>129</td><td><code>1, 2, 6, 8, 13</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>28</td><td><code>4</code></td></tr><tr><td>Serving API</td><td>33</td><td><code>3, 14</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>44</td><td><code>7, 9, 15</code></td></tr><tr><td>OG Image Generator</td><td>5</td><td><code>10</code></td></tr><tr><td>Ingestion Package</td><td>2</td><td><code>11</code></td></tr><tr><td>Server Package</td><td>2</td><td><code>12</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">CLI &amp; Skill Installers -&gt; Graph Build -&gt; Analysis &amp; Clustering -&gt; Tests &amp; Fixtures -&gt; Serving API -&gt; OG Image Generator -&gt; Ingestion Package</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>319 nodes · 757 edges · 16 communities (9 shown, 7 thin omitted)</li>
+      <li>Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 83 edges (avg confidence: 0.92)</li>
+      <li>Token cost: 812 input · 143 output</li>
+      <li>1. `GraphStore` - 58 edges</li>
+      <li>2. `get_db()` - 33 edges</li>
+      <li>3. `Article` - 20 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Graph Build ====== -->
+<h2 id="build-graph">2. Graph Build</h2>
+<p>Graph Build groups implementation around server, databasepy, log, routes, mostly in server/database.py, server/routes/graph.py, cf_log_shipper.py. This section covers 76 nodes and 145 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Graph Build (76 nodes, 145 edges)
+    subgraph build_graph_server_database_py_534bc6e1["server/database.py"]
+        server_database_graphstore_a470a546("GraphStore<br/><small>server/database.py</small>")
+        server_database_graphstore_upsert_entity_f91a961f("upsert_entity()<br/><small>server/database.py</small>")
+        server_database_graphstore_get_entity_831deca3("get_entity()<br/><small>server/database.py</small>")
+        server_database_graphstore_search_entities_9c925662("search_entities()<br/><small>server/database.py</small>")
+        server_database_graphstore_upsert_event_2c6db058("upsert_event()<br/><small>server/database.py</small>")
+        server_database_graphstore_get_event_82f488b6("get_event()<br/><small>server/database.py</small>")
+        server_database_graphstore_upsert_relationship_ed4146c4("upsert_relationship()<br/><small>server/database.py</small>")
+        server_database_graphstore_get_relationships_for_306ed882("get_relationships_for_entity()<br/><small>server/database.py</small>")
+        server_database_graphstore_upsert_article_3d86b435("upsert_article()<br/><small>server/database.py</small>")
+        server_database_graphstore_get_article_346f60eb("get_article()<br/><small>server/database.py</small>")
+        server_database_graphstore_get_all_graph_data_24bf3b6e("get_all_graph_data()<br/><small>server/database.py</small>")
+        server_database_graphstore_get_subgraph_666d6384("get_subgraph()<br/><small>server/database.py</small>")
+        server_database_graphstore_list_jobs_192f522f("list_jobs()<br/><small>server/database.py</small>")
+    end
+    subgraph build_graph_tests_test_database_py_28d291d4["tests/test_database.py"]
+        tests_test_database_test_relationship_and_subgra_a23939ac("relationship and subgraph()<br/><small>tests/test_database.py</small>")
+        tests_test_database_test_entity_crud_and_search_50e1c2de("crud and search()<br/><small>tests/test_database.py</small>")
+    end
+    cf_log_shipper_lambda_handler_3d6febf5("lambda_handler()<br/><small>cf_log_shipper.py</small>")
+    pipeline_992b5d66("pipeline.py")
+    server_ingestion_writer_graphwriter_persist_extr_affc5ea4("persist_extraction()<br/><small>server/ingestion/writer.py</small>")
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_upsert_entity_f91a961f
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_get_entity_831deca3
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_search_entities_9c925662
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_upsert_event_2c6db058
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_get_event_82f488b6
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_upsert_relationship_ed4146c4
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_get_relationships_for_306ed882
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_upsert_article_3d86b435
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_get_article_346f60eb
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_get_all_graph_data_24bf3b6e
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_get_subgraph_666d6384
+    server_database_graphstore_a470a546 -->|method| server_database_graphstore_list_jobs_192f522f
+    server_ingestion_writer_graphwriter_persist_extr_affc5ea4 -->|calls| server_database_graphstore_upsert_event_2c6db058
+    server_ingestion_writer_graphwriter_persist_extr_affc5ea4 -->|calls| server_database_graphstore_upsert_relationship_ed4146c4
+    server_ingestion_writer_graphwriter_persist_extr_affc5ea4 -->|calls| server_database_graphstore_upsert_article_3d86b435
+    server_ingestion_writer_graphwriter_persist_extr_affc5ea4 -->|calls| server_database_graphstore_get_entity_831deca3
+    server_ingestion_writer_graphwriter_persist_extr_affc5ea4 -->|calls| server_database_graphstore_upsert_entity_f91a961f
+    tests_test_database_test_entity_crud_and_search_50e1c2de -->|calls| server_database_graphstore_upsert_entity_f91a961f
+    tests_test_database_test_entity_crud_and_search_50e1c2de -->|calls| server_database_graphstore_get_entity_831deca3
+    tests_test_database_test_entity_crud_and_search_50e1c2de -->|calls| server_database_graphstore_search_entities_9c925662
+    tests_test_database_test_relationship_and_subgra_a23939ac -->|calls| server_database_graphstore_upsert_entity_f91a961f
+    tests_test_database_test_relationship_and_subgra_a23939ac -->|calls| server_database_graphstore_upsert_relationship_ed4146c4
+    tests_test_database_test_relationship_and_subgra_a23939ac -->|calls| server_database_graphstore_get_relationships_for_306ed882
+    tests_test_database_test_relationship_and_subgra_a23939ac -->|calls| server_database_graphstore_get_subgraph_666d6384
+    %% Omitted for readability: 58 nodes, 2 edges
+    class server_database_graphstore_a470a546 ui;
+    class server_database_graphstore_upsert_entity_f91a961f function;
+    class server_database_graphstore_get_entity_831deca3 function;
+    class server_database_graphstore_search_entities_9c925662 function;
+    class server_database_graphstore_upsert_event_2c6db058 function;
+    class server_database_graphstore_get_event_82f488b6 function;
+    class server_database_graphstore_upsert_relationship_ed4146c4 function;
+    class server_database_graphstore_get_relationships_for_306ed882 function;
+    class server_database_graphstore_upsert_article_3d86b435 function;
+    class server_database_graphstore_get_article_346f60eb function;
+    class server_database_graphstore_get_all_graph_data_24bf3b6e function;
+    class server_database_graphstore_get_subgraph_666d6384 function;
+    class server_database_graphstore_list_jobs_192f522f function;
+    class tests_test_database_test_relationship_and_subgra_a23939ac test;
+    class tests_test_database_test_entity_crud_and_search_50e1c2de test;
+    class cf_log_shipper_lambda_handler_3d6febf5 function;
+    class pipeline_992b5d66 module;
+    class server_ingestion_writer_graphwriter_persist_extr_affc5ea4 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>conversations and messages()</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>create_conversation()</code><br><small style="color:var(--muted)">server/routes/query.py</small><br>+28 more</td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>article_exists_by_url()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>Conversation</code><br><small style="color:var(--muted)">server/models.py</small><br>+22 more</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Entity</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>crud and search()</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+5 more</td>
+  <td>No direct outbound edge</td>
+  <td>Entity node in server/models.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Event</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br>+4 more</td>
+  <td>No direct outbound edge</td>
+  <td>Event node in server/models.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>GraphResponse</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>get_graph()</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>graph.py</code><br><small style="color:var(--muted)">server/routes/graph.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Relationship</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br>+4 more</td>
+  <td>No direct outbound edge</td>
+  <td>Relationship node in server/models.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>.get_all_graph_data()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>export_graph_snapshot()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>get_graph()</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>utc_now_iso()</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>.get_article()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.get_article() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>.get_entity()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crud and search()</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>get_entity_detail()</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+2 more</td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.get_entity() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>.get_event()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>get_event_detail()</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>test_event_crud()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.get_event() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.get_relationships_for_entity()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>get_entity_detail()</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>relationship and subgraph()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.get_relationships_for_entity() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.get_subgraph()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>get_multi_hop_context()</code><br><small style="color:var(--muted)">server/query/retriever.py</small><br><code>get_subgraph()</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+1 more</td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.list_jobs()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>get_ingestion_history()</code><br><small style="color:var(--muted)">server/routes/ingestion.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.list_jobs() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.search_entities()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crud and search()</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>identify_entities_in_text()</code><br><small style="color:var(--muted)">server/query/retriever.py</small><br>+2 more</td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.search_entities() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>.upsert_article()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>test_article_deduplication()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.upsert_article() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>.upsert_entity()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crud and search()</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br>+1 more</td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.upsert_entity() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>.upsert_event()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>test_event_crud()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.upsert_event() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.upsert_relationship()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>relationship and subgraph()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.upsert_relationship() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.resolve_entity_id()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>EntityResolver</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td><code>get_entity()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>search_entities()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>slugify()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small></td>
+  <td>.resolve_entity_id() node in server/ingestion/resolver.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>.export_graph_snapshot()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td><code>get_all_graph_data()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>.persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>perform_research()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><code>Claim</code><br><small style="color:var(--muted)">server/models.py</small><br><code>Entity</code><br><small style="color:var(--muted)">server/models.py</small><br><code>Event</code><br><small style="color:var(--muted)">server/models.py</small><br>+11 more</td>
+  <td>.persist_extraction() node in server/ingestion/writer.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>.identify_entities_in_text()</code><br><small style="color:var(--muted)">server/query/retriever.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>answer_question()</code><br><small style="color:var(--muted)">server/query/engine.py</small><br><code>GraphRetriever</code><br><small style="color:var(--muted)">server/query/retriever.py</small></td>
+  <td><code>search_entities()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.identify_entities_in_text() node in server/query/retriever.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>get_entity_detail()</code><br><small style="color:var(--muted)">server/routes/graph.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>get_entity()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>get_relationships_for_entity()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>get_entity_detail() node in server/routes/graph.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>get_event_detail()</code><br><small style="color:var(--muted)">server/routes/graph.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>get_event()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>get_event_detail() node in server/routes/graph.py.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>get_graph()</code><br><small style="color:var(--muted)">server/routes/graph.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>get_all_graph_data()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphResponse</code><br><small style="color:var(--muted)">server/models.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>get_subgraph()</code><br><small style="color:var(--muted)">server/routes/graph.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>get_subgraph()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>search_entities()</code><br><small style="color:var(--muted)">server/routes/graph.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>search_entities()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>search_entities() node in server/routes/graph.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>get_ingestion_history()</code><br><small style="color:var(--muted)">server/routes/ingestion.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>list_jobs()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>test_article_deduplication()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>upsert_article()</code><br><small style="color:var(--muted)">server/database.py</small><br>+1 more</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>test_entity_crud_and_search()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Entity</code><br><small style="color:var(--muted)">server/models.py</small><br><code>get_entity()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+2 more</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>test_event_crud()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Event</code><br><small style="color:var(--muted)">server/models.py</small><br><code>get_event()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+1 more</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>server/database.py</code></td><td>17 nodes</td></tr>
+<tr><td><code>server/routes/graph.py</code></td><td>12 nodes</td></tr>
+<tr><td><code>cf_log_shipper.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>pipeline.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>server/ingestion/writer.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>server/models.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>tests/test_database.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>server/ingestion/resolver.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x60, contains x20, explains x18, uses x14. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. Analysis & Clustering ====== -->
+<h2 id="analysis-clustering">3. Analysis &amp; Clustering</h2>
+<p>Analysis &amp; Clustering groups implementation around server, query, ingestion, modelspy, mostly in server/models.py, server/database.py, server/query/retriever.py. This section covers 129 nodes and 304 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Analysis &amp; Clustering (129 nodes, 304 edges)
+    subgraph analysis_clustering_server_ingestion_sources_py_e2c90396["server/ingestion/sources.py"]
+        server_ingestion_sources_rssconnector_f442bd43("RSSConnector<br/><small>server/ingestion/sources.py</small>")
+        server_ingestion_sources_rssconnector_discover_a_eca200d8("discover_articles()<br/><small>server/ingestion/sources.py</small>")
+        server_ingestion_sources_rssconnector_search_top_1321e5ee("search_topic_articles()<br/><small>server/ingestion/sources.py</small>")
+        server_ingestion_sources_rssconnector_init_14e1f4e8("__init__()<br/><small>server/ingestion/sources.py</small>")
+        server_ingestion_sources_rssconnector_fetch_sing_e9c01921("_fetch_single_feed()<br/><small>server/ingestion/sources.py</small>")
+    end
+    subgraph analysis_clustering_server_ingestion_pipeline_py_3cc7c1e4["server/ingestion/pipeline.py"]
+        server_ingestion_pipeline_753482f3("pipeline.py")
+        server_ingestion_pipeline_ingestionpipeline_c2fd99a5("IngestionPipeline<br/><small>server/ingestion/pipeline.py</small>")
+        server_ingestion_pipeline_ingestionpipeline_init_e9773327("__init__()<br/><small>server/ingestion/pipeline.py</small>")
+        server_ingestion_pipeline_ingestionpipeline_run_a0965563("run()<br/><small>server/ingestion/pipeline.py</small>")
+    end
+    subgraph analysis_clustering_server_ingestion_extractor_p_e05a8427["server/ingestion/extractor.py"]
+        server_ingestion_extractor_llmextractor_b7fade5f("LLMExtractor<br/><small>server/ingestion/extractor.py</small>")
+        server_ingestion_extractor_llmextractor_init_460671ec("__init__()<br/><small>server/ingestion/extractor.py</small>")
+        server_ingestion_extractor_llmextractor_extract_cab2f011("extract()<br/><small>server/ingestion/extractor.py</small>")
+    end
+    subgraph analysis_clustering_server_query_engine_py_2ff83d0b["server/query/engine.py"]
+        server_query_engine_fd3c3523("engine.py")
+        server_query_engine_queryengine_answer_question_48413679("answer_question()<br/><small>server/query/engine.py</small>")
+        server_query_engine_queryengine_293f62d3("QueryEngine<br/><small>server/query/engine.py</small>")
+    end
+    subgraph analysis_clustering_server_query_researcher_py_ca739420["server/query/researcher.py"]
+        server_query_researcher_ea4234b6("researcher.py")
+        server_query_researcher_queryresearcher_27860765("QueryResearcher<br/><small>server/query/researcher.py</small>")
+    end
+    server_routes_query_3f1bd0bf("query.py")
+    server_ingestion_extractor_llmextractor_b7fade5f -->|method| server_ingestion_extractor_llmextractor_init_460671ec
+    server_ingestion_extractor_llmextractor_b7fade5f -->|method| server_ingestion_extractor_llmextractor_extract_cab2f011
+    server_ingestion_pipeline_ingestionpipeline_c2fd99a5 -->|method| server_ingestion_pipeline_ingestionpipeline_init_e9773327
+    server_ingestion_pipeline_ingestionpipeline_c2fd99a5 -->|method| server_ingestion_pipeline_ingestionpipeline_run_a0965563
+    server_ingestion_sources_rssconnector_f442bd43 -->|method| server_ingestion_sources_rssconnector_discover_a_eca200d8
+    server_ingestion_sources_rssconnector_f442bd43 -->|method| server_ingestion_sources_rssconnector_search_top_1321e5ee
+    server_ingestion_sources_rssconnector_f442bd43 -->|method| server_ingestion_sources_rssconnector_init_14e1f4e8
+    server_ingestion_sources_rssconnector_f442bd43 -->|method| server_ingestion_sources_rssconnector_fetch_sing_e9c01921
+    server_query_engine_queryengine_293f62d3 -->|method| server_query_engine_queryengine_answer_question_48413679
+    server_ingestion_pipeline_ingestionpipeline_init_e9773327 -->|calls| server_ingestion_sources_rssconnector_f442bd43
+    server_ingestion_pipeline_ingestionpipeline_init_e9773327 -->|calls| server_ingestion_extractor_llmextractor_b7fade5f
+    server_ingestion_pipeline_753482f3 -->|imports| server_ingestion_extractor_llmextractor_b7fade5f
+    server_ingestion_pipeline_753482f3 -->|imports| server_ingestion_sources_rssconnector_f442bd43
+    server_query_researcher_ea4234b6 -->|imports| server_ingestion_extractor_llmextractor_b7fade5f
+    server_query_researcher_ea4234b6 -->|imports| server_ingestion_sources_rssconnector_f442bd43
+    server_query_engine_fd3c3523 -->|imports| server_query_researcher_queryresearcher_27860765
+    server_query_engine_fd3c3523 -->|imports| server_query_researcher_ea4234b6
+    server_routes_query_3f1bd0bf -->|imports| server_query_engine_queryengine_293f62d3
+    server_routes_query_3f1bd0bf -->|imports| server_query_engine_fd3c3523
+    server_ingestion_pipeline_ingestionpipeline_c2fd99a5 -->|uses| server_ingestion_sources_rssconnector_f442bd43
+    server_ingestion_pipeline_ingestionpipeline_c2fd99a5 -->|uses| server_ingestion_extractor_llmextractor_b7fade5f
+    server_query_researcher_queryresearcher_27860765 -->|uses| server_ingestion_sources_rssconnector_f442bd43
+    server_query_researcher_queryresearcher_27860765 -->|uses| server_ingestion_extractor_llmextractor_b7fade5f
+    server_query_engine_queryengine_293f62d3 -->|uses| server_query_researcher_queryresearcher_27860765
+    %% Omitted for readability: 111 nodes, 2 edges
+    class server_ingestion_sources_rssconnector_f442bd43 klass;
+    class server_ingestion_sources_rssconnector_discover_a_eca200d8 function;
+    class server_ingestion_sources_rssconnector_search_top_1321e5ee function;
+    class server_ingestion_sources_rssconnector_init_14e1f4e8 function;
+    class server_ingestion_sources_rssconnector_fetch_sing_e9c01921 function;
+    class server_ingestion_pipeline_753482f3 module;
+    class server_ingestion_pipeline_ingestionpipeline_c2fd99a5 klass;
+    class server_ingestion_pipeline_ingestionpipeline_init_e9773327 function;
+    class server_ingestion_pipeline_ingestionpipeline_run_a0965563 function;
+    class server_ingestion_extractor_llmextractor_b7fade5f klass;
+    class server_ingestion_extractor_llmextractor_init_460671ec function;
+    class server_ingestion_extractor_llmextractor_extract_cab2f011 function;
+    class server_query_engine_fd3c3523 module;
+    class server_query_engine_queryengine_answer_question_48413679 function;
+    class server_query_engine_queryengine_293f62d3 klass;
+    class server_query_researcher_ea4234b6 module;
+    class server_query_researcher_queryresearcher_27860765 klass;
+    class server_routes_query_3f1bd0bf module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>LLMExtractor</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>__init__()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br>+3 more</td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>extract()</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td>LLMExtractor node in server/ingestion/extractor.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>ingestion.py</code><br><small style="color:var(--muted)">server/routes/ingestion.py</small><br><code>run_scheduled_ingestion()</code><br><small style="color:var(--muted)">server/scheduler.py</small><br><code>scheduler.py</code><br><small style="color:var(--muted)">server/scheduler.py</small><br>+1 more</td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br>+4 more</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>__init__()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br>+3 more</td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>_fetch_single_feed()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br>+2 more</td>
+  <td>RSSConnector node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>__init__()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br>+3 more</td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>Claim</code><br><small style="color:var(--muted)">server/models.py</small><br><code>Entity</code><br><small style="color:var(--muted)">server/models.py</small><br>+6 more</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>extractor.py</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+9 more</td>
+  <td>No direct outbound edge</td>
+  <td>Article node in server/models.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>IngestionJob</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>QueryResearcher</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/query/engine.py</small><br><code>engine.py</code><br><small style="color:var(--muted)">server/query/engine.py</small><br><code>QueryEngine</code><br><small style="color:var(--muted)">server/query/engine.py</small></td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br>+5 more</td>
+  <td>QueryResearcher node in server/query/researcher.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>.article_exists_by_url()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>perform_research()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.article_exists_by_url() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>.record_job()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>.record_job() node in server/database.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>.extract()</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>LLMExtractor</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br><code>perform_research()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.extract() node in server/ingestion/extractor.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>LLMExtractor</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__init__() node in server/ingestion/extractor.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>LLMExtractor</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td>.__init__() node in server/ingestion/pipeline.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>.run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>run_scheduled_ingestion()</code><br><small style="color:var(--muted)">server/scheduler.py</small><br><code>trigger_ingestion()</code><br><small style="color:var(--muted)">server/routes/ingestion.py</small></td>
+  <td><code>article_exists_by_url()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>discover_articles()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>extract()</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br>+3 more</td>
+  <td>.run() node in server/ingestion/pipeline.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>compute_sha256()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_fetch_single_feed()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>search_topic_articles()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><code>hashlib</code></td>
+  <td>compute_sha256() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>.discover_articles()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>perform_research()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.discover_articles() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>._fetch_single_feed()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><code>compute_sha256()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>detect_publisher()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>normalize_url()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br>+1 more</td>
+  <td>._fetch_single_feed() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__init__() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>.search_topic_articles()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>perform_research()</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><code>compute_sha256()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>normalize_url()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>utc_now_iso()</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td>.search_topic_articles() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>utc_now_iso()</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_fetch_single_feed()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>answer_question()</code><br><small style="color:var(--muted)">server/query/engine.py</small><br><code>create_conversation()</code><br><small style="color:var(--muted)">server/database.py</small><br>+11 more</td>
+  <td>No direct outbound edge</td>
+  <td>utc_now_iso() node in server/models.py.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>QueryResearcher</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>LLMExtractor</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br><code>RSSConnector</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td>.__init__() node in server/query/researcher.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>.perform_research()</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>answer_question()</code><br><small style="color:var(--muted)">server/query/engine.py</small><br><code>QueryResearcher</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><code>article_exists_by_url()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>discover_articles()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>extract()</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br>+2 more</td>
+  <td>.perform_research() node in server/query/researcher.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>extractor.py</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>pipeline.py</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>researcher.py</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><code>anthropic</code><br><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br>+5 more</td>
+  <td>Module file in server/ingestion/extractor.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>ingestion/pipeline.py</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>ingestion.py</code><br><small style="color:var(--muted)">server/routes/ingestion.py</small><br><code>scheduler.py</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>extractor.py</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br>+12 more</td>
+  <td>Module file in server/ingestion/pipeline.py.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>sources.py</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>pipeline.py</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>researcher.py</code><br><small style="color:var(--muted)">server/query/researcher.py</small><br><code>test_ingestion.py</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small></td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>feedparser</code><br>+7 more</td>
+  <td>Module file in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>writer.py</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>pipeline.py</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>researcher.py</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>Claim</code><br><small style="color:var(--muted)">server/models.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br>+13 more</td>
+  <td>Module file in server/ingestion/writer.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>researcher.py</code><br><small style="color:var(--muted)">server/query/researcher.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>engine.py</code><br><small style="color:var(--muted)">server/query/engine.py</small></td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br>+11 more</td>
+  <td>Module file in server/query/researcher.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>LLM-based entity, event, relationship, and evidence extraction.</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for LLM-based entity, event, relationship, and evidence extraction..</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Extracts structured graph entities, events, relationships, and claims using LLM.</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Extracts structured graph entities, events, relationships, and claims using LLM..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>server/models.py</code></td><td>17 nodes</td></tr>
+<tr><td><code>server/database.py</code></td><td>15 nodes</td></tr>
+<tr><td><code>server/query/retriever.py</code></td><td>12 nodes</td></tr>
+<tr><td><code>server/ingestion/sources.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>server/routes/query.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>server/query/researcher.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>server/ingestion/extractor.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>server/query/synthesizer.py</code></td><td>7 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x61, imports x48, imports x42, explains x39. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
+<p>CLI &amp; Skill Installers groups implementation around implementation, planmd, phase, graph, mostly in IMPLEMENTATION_PLAN.md, chat.html, index.html. This section covers 28 nodes and 38 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CLI &amp; Skill Installers (28 nodes, 38 edges)
+    subgraph cli_skills_IMPLEMENTATION_PLAN_md_d09dc48a["IMPLEMENTATION_PLAN.md"]
+        implementation_plan_md_37542bf4("DriftForge Implementation Plan<br/><small>IMPLEMENTATION_PLAN.md</small>")
+        implementation_plan_phase8_6ab29f99("Implementation Phase 8 — Graph Chat Wor...<br/><small>IMPLEMENTATION_PLAN.md</small>")
+        implementation_plan_phase10_a8e38863("Implementation Phase 10 — Production Ha...<br/><small>IMPLEMENTATION_PLAN.md</small>")
+        implementation_plan_phase9_7bc0ec0d("Implementation Phase 9 — 3D Graph Integ...<br/><small>IMPLEMENTATION_PLAN.md</small>")
+        implementation_plan_phase4_23c0719d("Implementation Phase 4 — Ingestion Foun...<br/><small>IMPLEMENTATION_PLAN.md</small>")
+    end
+    subgraph cli_skills_chat_html_dc926a51["chat.html"]
+        chat_html_5dc8efd8("Graph Chat Workspace HTML<br/><small>chat.html</small>")
+        graph_chat_flow_0cafa827("Graph Chat Query Flow<br/><small>chat.html</small>")
+    end
+    subgraph cli_skills_index_html_cb904709["index.html"]
+        highlight_deep_link_flow_92a02a96("Highlight URL Parameter Deep Link Flow<br/><small>index.html</small>")
+        index_html_acc39d30("3D News Knowledge Graph HTML<br/><small>index.html</small>")
+    end
+    github_workflows_deploy_yml_aed57f73("GitHub Actions Deploy Workflow<br/><small>.github/workflows/deploy.yml</small>")
+    readme_md_eeb98ce0("DriftForge README<br/><small>README.md</small>")
+    apple_touch_icon_png_9634bd2c("Apple Touch Icon<br/><small>apple-touch-icon.png</small>")
+    docker_compose_yml_02381e6c("DriftForge Docker Compose<br/><small>docker-compose.yml</small>")
+    favicon_svg_8befa045("DriftForge Favicon<br/><small>favicon.svg</small>")
+    og_image_png_bf177d41("Open Graph Social Preview<br/><small>og-image.png</small>")
+    photo_jpg_555f1bc5("Author Photo<br/><small>photo.jpg</small>")
+    requirements_txt_c3ce17be("Python Dependencies Manifest<br/><small>requirements.txt</small>")
+    robots_txt_9c972925("Robots Allow-All<br/><small>robots.txt</small>")
+    chat_html_5dc8efd8 -->|implements| graph_chat_flow_0cafa827
+    chat_html_5dc8efd8 -->|implements| highlight_deep_link_flow_92a02a96
+    chat_html_5dc8efd8 -->|references| index_html_acc39d30
+    chat_html_5dc8efd8 -->|references| implementation_plan_phase8_6ab29f99
+    docker_compose_yml_02381e6c -->|references| implementation_plan_phase10_a8e38863
+    favicon_svg_8befa045 -->|references| index_html_acc39d30
+    github_workflows_deploy_yml_aed57f73 -->|references| index_html_acc39d30
+    github_workflows_deploy_yml_aed57f73 -->|references| apple_touch_icon_png_9634bd2c
+    github_workflows_deploy_yml_aed57f73 -->|references| favicon_svg_8befa045
+    github_workflows_deploy_yml_aed57f73 -->|references| og_image_png_bf177d41
+    github_workflows_deploy_yml_aed57f73 -->|references| photo_jpg_555f1bc5
+    github_workflows_deploy_yml_aed57f73 -->|references| robots_txt_9c972925
+    index_html_acc39d30 -->|implements| highlight_deep_link_flow_92a02a96
+    index_html_acc39d30 -->|references| implementation_plan_phase9_7bc0ec0d
+    requirements_txt_c3ce17be -->|references| implementation_plan_phase4_23c0719d
+    implementation_plan_md_37542bf4 -->|references| implementation_plan_phase10_a8e38863
+    implementation_plan_md_37542bf4 -->|references| implementation_plan_phase4_23c0719d
+    implementation_plan_md_37542bf4 -->|references| implementation_plan_phase8_6ab29f99
+    implementation_plan_md_37542bf4 -->|references| implementation_plan_phase9_7bc0ec0d
+    apple_touch_icon_png_9634bd2c -->|references| index_html_acc39d30
+    og_image_png_bf177d41 -->|references| index_html_acc39d30
+    og_image_png_bf177d41 -->|semantically similar to| favicon_svg_8befa045
+    apple_touch_icon_png_9634bd2c -->|semantically similar to| favicon_svg_8befa045
+    %% Omitted for readability: 10 nodes, 0 edges
+    class implementation_plan_md_37542bf4 concept;
+    class implementation_plan_phase8_6ab29f99 klass;
+    class implementation_plan_phase10_a8e38863 klass;
+    class implementation_plan_phase9_7bc0ec0d klass;
+    class implementation_plan_phase4_23c0719d klass;
+    class chat_html_5dc8efd8 klass;
+    class graph_chat_flow_0cafa827 klass;
+    class highlight_deep_link_flow_92a02a96 klass;
+    class index_html_acc39d30 function;
+    class github_workflows_deploy_yml_aed57f73 klass;
+    class readme_md_eeb98ce0 concept;
+    class apple_touch_icon_png_9634bd2c klass;
+    class docker_compose_yml_02381e6c klass;
+    class favicon_svg_8befa045 klass;
+    class og_image_png_bf177d41 klass;
+    class photo_jpg_555f1bc5 klass;
+    class requirements_txt_c3ce17be klass;
+    class robots_txt_9c972925 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Graph Chat Workspace HTML</code><br><small style="color:var(--muted)">chat.html</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Claude Command: Engagement Analytics</code><br><small style="color:var(--muted)">.claude/commands/engagement.md</small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Claude Command: Visitor Trend</code><br><small style="color:var(--muted)">.claude/commands/trend.md</small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Claude Command: Visitor Trend node in .claude/commands/trend.md.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Claude Command: Visitor Summary</code><br><small style="color:var(--muted)">.claude/commands/visitors.md</small></td>
+  <td><span class="tag tag-cmd">Entry</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Claude Command: Visitor Summary node in .claude/commands/visitors.md.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>DriftForge Docker Compose</code><br><small style="color:var(--muted)">docker-compose.yml</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DriftForge Docker Compose node in docker-compose.yml.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>DriftForge Favicon</code><br><small style="color:var(--muted)">favicon.svg</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DriftForge Favicon node in favicon.svg.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>GitHub Actions Deploy Workflow</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>3D News Knowledge Graph HTML</code><br><small style="color:var(--muted)">index.html</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Python Dependencies Manifest</code><br><small style="color:var(--muted)">requirements.txt</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Python Dependencies Manifest node in requirements.txt.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Robots Allow-All</code><br><small style="color:var(--muted)">robots.txt</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Robots Allow-All node in robots.txt.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Graph Chat Query Flow</code><br><small style="color:var(--muted)">chat.html</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Highlight URL Parameter Deep Link Flow</code><br><small style="color:var(--muted)">index.html</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Highlight URL Parameter Deep Link Flow node in index.html.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Implementation Phase 10 — Production Hardening</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Implementation Phase 10 — Production Hardening node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Implementation Phase 11 — Verification</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Implementation Phase 11 — Verification node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Implementation Phase 3 — Persistence Foundation</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Implementation Phase 3 — Persistence Foundation node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Implementation Phase 4 — Ingestion Foundation</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Implementation Phase 5 — Background Operations</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Implementation Phase 5 — Background Operations node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Implementation Phase 6 — Query and Research Engine</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Implementation Phase 6 — Query and Research Engine node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Implementation Phase 7 — Backend API</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Implementation Phase 7 — Backend API node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Implementation Phase 8 — Graph Chat Workspace</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Implementation Phase 9 — 3D Graph Integration</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>SQLite Persistent Knowledge Schema</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>SQLite Persistent Knowledge Schema node in IMPLEMENTATION_PLAN.md.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>DriftForge AWS Architecture Diagram</code><br><small style="color:var(--muted)">architecture.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing DriftForge AWS Architecture Diagram.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>DriftForge Implementation Plan</code><br><small style="color:var(--muted)">IMPLEMENTATION_PLAN.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing DriftForge Implementation Plan.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>DriftForge README</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing DriftForge README.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Apple Touch Icon</code><br><small style="color:var(--muted)">apple-touch-icon.png</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Apple Touch Icon node in apple-touch-icon.png.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Open Graph Social Preview</code><br><small style="color:var(--muted)">og-image.png</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Author Photo</code><br><small style="color:var(--muted)">photo.jpg</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Author Photo node in photo.jpg.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>IMPLEMENTATION_PLAN.md</code></td><td>11 nodes</td></tr>
+<tr><td><code>chat.html</code></td><td>2 nodes</td></tr>
+<tr><td><code>index.html</code></td><td>2 nodes</td></tr>
+<tr><td><code>.claude/commands/engagement.md</code></td><td>1 nodes</td></tr>
+<tr><td><code>.claude/commands/trend.md</code></td><td>1 nodes</td></tr>
+<tr><td><code>.claude/commands/visitors.md</code></td><td>1 nodes</td></tr>
+<tr><td><code>.github/workflows/deploy.yml</code></td><td>1 nodes</td></tr>
+<tr><td><code>README.md</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x29, implements x3, relates x3, semantically similar to x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Serving API ====== -->
+<h2 id="serve-api">5. Serving API</h2>
+<p>Serving API groups implementation around server, apppy, schedulerpy, serve, mostly in server/app.py, server/scheduler.py, server/routes/__init__.py. This section covers 33 nodes and 41 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serving API (33 nodes, 41 edges)
+    subgraph serve_api_External_generated_a71e9f44["External / generated"]
+        fastapi_responses_a75a9e69("fastapi_responses")
+        fastapi_staticfiles_ddb151bc("fastapi_staticfiles")
+        contextlib_534e5e22("contextlib")
+        fastapi_41a1373c("FastAPI")
+        fastapi_middleware_cors_2b7bf539("fastapi_middleware_cors")
+        threading_c3015aa7("threading")
+        apscheduler_schedulers_background_a493500c("apscheduler schedulers background")
+        apscheduler_triggers_interval_c16de232("apscheduler triggers interval")
+        backgroundscheduler_d953cc03("BackgroundScheduler")
+        server_app_py_get_4fcfa502("get")
+    end
+    subgraph serve_api_server_app_py_3945679b["server/app.py"]
+        server_app_a94c98d7("app.py")
+        server_app_lifespan_291de58d("lifespan()<br/><small>server/app.py</small>")
+        server_app_health_check_6bb3f4ff("health_check()<br/><small>server/app.py</small>")
+        server_app_serve_chat_d9f8e730("serve_chat()<br/><small>server/app.py</small>")
+        server_app_serve_graph_json_062e57e7("serve_graph_json()<br/><small>server/app.py</small>")
+    end
+    subgraph serve_api_server_scheduler_py_3bd6210e["server/scheduler.py"]
+        server_scheduler_c7389339("scheduler.py")
+        server_scheduler_start_scheduler_ab3e631c("start_scheduler()<br/><small>server/scheduler.py</small>")
+        server_scheduler_shutdown_scheduler_c5935ca0("shutdown_scheduler()<br/><small>server/scheduler.py</small>")
+    end
+    server_app_lifespan_291de58d -->|calls| server_scheduler_start_scheduler_ab3e631c
+    server_app_lifespan_291de58d -->|calls| server_scheduler_shutdown_scheduler_c5935ca0
+    server_app_a94c98d7 -->|imports| server_scheduler_shutdown_scheduler_c5935ca0
+    server_app_a94c98d7 -->|imports| server_scheduler_start_scheduler_ab3e631c
+    server_app_a94c98d7 -->|imports| fastapi_responses_a75a9e69
+    server_app_a94c98d7 -->|imports| fastapi_staticfiles_ddb151bc
+    server_app_a94c98d7 -->|imports| server_scheduler_c7389339
+    server_app_a94c98d7 -->|imports| contextlib_534e5e22
+    server_app_a94c98d7 -->|imports| fastapi_41a1373c
+    server_app_a94c98d7 -->|imports| fastapi_middleware_cors_2b7bf539
+    server_scheduler_c7389339 -->|imports| threading_c3015aa7
+    server_scheduler_c7389339 -->|imports| apscheduler_schedulers_background_a493500c
+    server_scheduler_c7389339 -->|imports| apscheduler_triggers_interval_c16de232
+    %% Omitted for readability: 15 nodes, 0 edges
+    class fastapi_responses_a75a9e69 api;
+    class fastapi_staticfiles_ddb151bc api;
+    class contextlib_534e5e22 function;
+    class fastapi_41a1373c api;
+    class fastapi_middleware_cors_2b7bf539 api;
+    class threading_c3015aa7 function;
+    class apscheduler_schedulers_background_a493500c function;
+    class apscheduler_triggers_interval_c16de232 function;
+    class backgroundscheduler_d953cc03 klass;
+    class server_app_py_get_4fcfa502 function;
+    class server_app_a94c98d7 module;
+    class server_app_lifespan_291de58d function;
+    class server_app_health_check_6bb3f4ff function;
+    class server_app_serve_chat_d9f8e730 function;
+    class server_app_serve_graph_json_062e57e7 function;
+    class server_scheduler_c7389339 module;
+    class server_scheduler_start_scheduler_ab3e631c function;
+    class server_scheduler_shutdown_scheduler_c5935ca0 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>health_check()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>HealthResponse</code><br><small style="color:var(--muted)">server/models.py</small></td>
+  <td>health_check() node in server/app.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>lifespan()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>init_db()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>shutdown_scheduler()</code><br><small style="color:var(--muted)">server/scheduler.py</small><br><code>start_scheduler()</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td>lifespan() node in server/app.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>serve_chat()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>serve_graph_json()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>serve_root()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>serve_root() node in server/app.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>serve_version_json()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>serve_version_json() node in server/app.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>run_scheduled_ingestion()</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>start_scheduler()</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><code>IngestionPipeline</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small><br><code>run()</code><br><small style="color:var(--muted)">server/ingestion/pipeline.py</small></td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>shutdown_scheduler()</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>lifespan()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>shutdown_scheduler() node in server/scheduler.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>start_scheduler()</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>lifespan()</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><code>run_scheduled_ingestion()</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td>start_scheduler() node in server/scheduler.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>BackgroundScheduler</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>BackgroundScheduler node in project.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>FastAPI</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>graph.py</code><br><small style="color:var(--muted)">server/routes/graph.py</small><br><code>ingestion.py</code><br><small style="color:var(--muted)">server/routes/ingestion.py</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>FastAPI node in project.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>test_api.py</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>contextlib</code><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br>+17 more</td>
+  <td>Module file in server/app.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>get</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>get node in project.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>scheduler.py</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><code>apscheduler schedulers background</code><br><code>apscheduler triggers interval</code><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br>+5 more</td>
+  <td>Module file in server/scheduler.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Main FastAPI application for DriftForge News Intelligence Platform.</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Main FastAPI application for DriftForge News Intelligence Platform..</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Serve the dedicated Graph Chat workspace.</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Serve the dedicated Graph Chat workspace..</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Serve the active knowledge graph data payload.</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Serve the active knowledge graph data payload..</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Serve the version metadata.</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Serve the version metadata..</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Verify service health and database integrity.</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Verify service health and database integrity..</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Serve the primary 3D Knowledge Graph visualization.</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Serve the primary 3D Knowledge Graph visualization..</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Background ingestion scheduler using APScheduler.</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Background ingestion scheduler using APScheduler..</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Worker task executed periodically by the background scheduler.</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Worker task executed periodically by the background scheduler..</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Start the background scheduler if enabled.</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Start the background scheduler if enabled..</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Gracefully stop the background scheduler.</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Gracefully stop the background scheduler..</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>apscheduler_schedulers_background</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>scheduler.py</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>apscheduler_schedulers_background node in project.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>apscheduler_triggers_interval</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>scheduler.py</code><br><small style="color:var(--muted)">server/scheduler.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>apscheduler_triggers_interval node in project.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>contextlib</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>contextlib node in project.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>fastapi_middleware_cors</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>fastapi_middleware_cors node in project.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>fastapi_responses</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>fastapi_responses node in project.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>fastapi_staticfiles</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>fastapi_staticfiles node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>server/app.py</code></td><td>13 nodes</td></tr>
+<tr><td><code>server/scheduler.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>server/routes/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x11, contains x9, imports x8, references x7. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Tests & Fixtures ====== -->
+<h2 id="tests-fixtures">6. Tests &amp; Fixtures</h2>
+<p>Tests &amp; Fixtures groups implementation around test, tests, server, ingestion, mostly in tests/test_api.py, server/ingestion/resolver.py, tests/test_ingestion.py. This section covers 44 nodes and 56 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Tests &amp; Fixtures (44 nodes, 56 edges)
+    subgraph tests_fixtures_tests_test_ingestion_py_f96f80b3["tests/test_ingestion.py"]
+        tests_test_ingestion_6ba601bb("test_ingestion.py")
+        tests_test_ingestion_test_entity_resolver_aliase_3230ece6("entity resolver aliases()<br/><small>tests/test_ingestion.py</small>")
+        tests_test_ingestion_test_detect_publisher_beedd70e("test_detect_publisher()<br/><small>tests/test_ingestion.py</small>")
+        tests_test_ingestion_test_normalize_url_78b91c91("test_normalize_url()<br/><small>tests/test_ingestion.py</small>")
+        tests_test_ingestion_test_slugify_9fce23c2("test_slugify()<br/><small>tests/test_ingestion.py</small>")
+    end
+    subgraph tests_fixtures_External_generated_473753cb["External / generated"]
+        tempfile_30fe567d("tempfile")
+        os_999a3419("os")
+        unicodedata_61e641af("unicodedata")
+        re_c387c982("re")
+    end
+    subgraph tests_fixtures_server_ingestion_resolver_py_4613ffee["server/ingestion/resolver.py"]
+        server_ingestion_resolver_entityresolver_78624e85("EntityResolver<br/><small>server/ingestion/resolver.py</small>")
+        server_ingestion_resolver_entityresolver_merge_a_60c41c99("merge_aliases()<br/><small>server/ingestion/resolver.py</small>")
+        server_ingestion_resolver_slugify_4b2bcdb1("slugify()<br/><small>server/ingestion/resolver.py</small>")
+    end
+    subgraph tests_fixtures_server_ingestion_sources_py_9eb31438["server/ingestion/sources.py"]
+        server_ingestion_sources_detect_publisher_a9548ce9("detect_publisher()<br/><small>server/ingestion/sources.py</small>")
+        server_ingestion_sources_normalize_url_3697f61e("normalize_url()<br/><small>server/ingestion/sources.py</small>")
+    end
+    subgraph tests_fixtures_tests_test_database_py_316104ef["tests/test_database.py"]
+        tests_test_database_87a609ff("test_database.py")
+        tests_test_database_test_db_9ab5ab80("test_db()<br/><small>tests/test_database.py</small>")
+    end
+    server_config_0fa9f349("config.py")
+    tests_test_api_8a295473("test_api.py")
+    server_ingestion_resolver_entityresolver_78624e85 -->|method| server_ingestion_resolver_entityresolver_merge_a_60c41c99
+    tests_test_database_test_db_9ab5ab80 -->|calls| tempfile_30fe567d
+    tests_test_database_test_db_9ab5ab80 -->|calls| os_999a3419
+    server_ingestion_resolver_slugify_4b2bcdb1 -->|calls| unicodedata_61e641af
+    server_ingestion_resolver_slugify_4b2bcdb1 -->|calls| re_c387c982
+    tests_test_ingestion_test_detect_publisher_beedd70e -->|calls| server_ingestion_sources_detect_publisher_a9548ce9
+    tests_test_ingestion_test_entity_resolver_aliase_3230ece6 -->|calls| server_ingestion_resolver_entityresolver_merge_a_60c41c99
+    tests_test_ingestion_test_normalize_url_78b91c91 -->|calls| server_ingestion_sources_normalize_url_3697f61e
+    tests_test_ingestion_test_slugify_9fce23c2 -->|calls| server_ingestion_resolver_slugify_4b2bcdb1
+    server_config_0fa9f349 -->|imports| os_999a3419
+    tests_test_api_8a295473 -->|imports| server_config_0fa9f349
+    tests_test_database_87a609ff -->|imports| os_999a3419
+    tests_test_database_87a609ff -->|imports| tempfile_30fe567d
+    tests_test_database_87a609ff -->|imports| server_config_0fa9f349
+    tests_test_ingestion_6ba601bb -->|imports| server_ingestion_resolver_entityresolver_78624e85
+    tests_test_ingestion_6ba601bb -->|imports| server_ingestion_resolver_slugify_4b2bcdb1
+    tests_test_ingestion_6ba601bb -->|imports| server_ingestion_sources_detect_publisher_a9548ce9
+    tests_test_ingestion_6ba601bb -->|imports| server_ingestion_sources_normalize_url_3697f61e
+    tests_test_ingestion_test_entity_resolver_aliase_3230ece6 -->|uses| server_ingestion_resolver_entityresolver_78624e85
+    %% Omitted for readability: 26 nodes, 0 edges
+    class tests_test_ingestion_6ba601bb test;
+    class tests_test_ingestion_test_entity_resolver_aliase_3230ece6 test;
+    class tests_test_ingestion_test_detect_publisher_beedd70e test;
+    class tests_test_ingestion_test_normalize_url_78b91c91 test;
+    class tests_test_ingestion_test_slugify_9fce23c2 test;
+    class tempfile_30fe567d function;
+    class os_999a3419 function;
+    class unicodedata_61e641af function;
+    class re_c387c982 function;
+    class server_ingestion_resolver_entityresolver_78624e85 klass;
+    class server_ingestion_resolver_entityresolver_merge_a_60c41c99 function;
+    class server_ingestion_resolver_slugify_4b2bcdb1 function;
+    class server_ingestion_sources_detect_publisher_a9548ce9 function;
+    class server_ingestion_sources_normalize_url_3697f61e function;
+    class tests_test_database_87a609ff test;
+    class tests_test_database_test_db_9ab5ab80 test;
+    class server_config_0fa9f349 module;
+    class tests_test_api_8a295473 test;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Settings</code><br><small style="color:var(--muted)">server/config.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Settings node in server/config.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>test_conversations_flow()</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>test_graph_endpoint()</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>test_health_endpoint()</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>test_ingest_auth_protection()</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>test_static_page_serves()</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>test_subgraph_endpoint()</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>test_db()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>init_db()</code><br><small style="color:var(--muted)">server/database.py</small><br><code>os</code><br><code>tempfile</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>fixture</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>fixture node in project.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br><code>extractor.py</code><br><small style="color:var(--muted)">server/ingestion/extractor.py</small><br>+9 more</td>
+  <td><code>dotenv</code><br><code>os</code><br><code>pathlib</code><br>+1 more</td>
+  <td>Module file in server/config.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>BaseModel</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>BaseModel node in project.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>test_api.py</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>fastapi_testclient</code><br>+1 more</td>
+  <td>Module file in tests/test_api.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>test_database.py</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Article</code><br><small style="color:var(--muted)">server/models.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>Conversation</code><br><small style="color:var(--muted)">server/models.py</small><br>+14 more</td>
+  <td>Module file in tests/test_database.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Configuration management for DriftForge News Intelligence Platform.</code><br><small style="color:var(--muted)">server/config.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Configuration management for DriftForge News Intelligence Platform..</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Integration tests for FastAPI endpoints.</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Integration tests for FastAPI endpoints..</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Unit tests for SQLite database layer, models, and graph queries.</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Unit tests for SQLite database layer, models, and graph queries..</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Use a temporary database file for testing.</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Use a temporary database file for testing..</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>dotenv</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>pipeline.py</code><br><small style="color:var(--muted)">pipeline.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>dotenv node in project.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>fastapi_testclient</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>test_api.py</code><br><small style="color:var(--muted)">tests/test_api.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>os</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>pipeline.py</code><br><small style="color:var(--muted)">pipeline.py</small><br>+2 more</td>
+  <td>No direct outbound edge</td>
+  <td>os node in project.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>pathlib</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>app.py</code><br><small style="color:var(--muted)">server/app.py</small><br><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>database.py</code><br><small style="color:var(--muted)">server/database.py</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>pathlib node in project.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>pydantic</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">server/config.py</small><br><code>models.py</code><br><small style="color:var(--muted)">server/models.py</small><br><code>query.py</code><br><small style="color:var(--muted)">server/routes/query.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>pydantic node in project.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>pytest</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>test_api.py</code><br><small style="color:var(--muted)">tests/test_api.py</small><br><code>test_database.py</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>test_ingestion.py</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>tempfile</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>test_database.py</code><br><small style="color:var(--muted)">tests/test_database.py</small><br><code>test_db()</code><br><small style="color:var(--muted)">tests/test_database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>tempfile node in project.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>EntityResolver</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>entity resolver aliases()</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small><br><code>GraphWriter</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small><br><code>test_ingestion.py</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small><br>+1 more</td>
+  <td><code>GraphStore</code><br><small style="color:var(--muted)">server/database.py</small><br><code>merge_aliases()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small><br><code>resolve_entity_id()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small></td>
+  <td>EntityResolver node in server/ingestion/resolver.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>.merge_aliases()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>entity resolver aliases()</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small><br><code>EntityResolver</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small><br><code>persist_extraction()</code><br><small style="color:var(--muted)">server/ingestion/writer.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.merge_aliases() node in server/ingestion/resolver.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>slugify()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>resolve_entity_id()</code><br><small style="color:var(--muted)">server/ingestion/resolver.py</small><br><code>test_ingestion.py</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small><br><code>test_slugify()</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small></td>
+  <td><code>re</code><br><code>unicodedata</code></td>
+  <td>slugify() node in server/ingestion/resolver.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>detect_publisher()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_fetch_single_feed()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>test_detect_publisher()</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small><br><code>test_ingestion.py</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>detect_publisher() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>normalize_url()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>_fetch_single_feed()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>search_topic_articles()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small><br><code>test_ingestion.py</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>normalize_url() node in server/ingestion/sources.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>test_detect_publisher()</code><br><small style="color:var(--muted)">tests/test_ingestion.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>detect_publisher()</code><br><small style="color:var(--muted)">server/ingestion/sources.py</small></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>tests/test_api.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>server/ingestion/resolver.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>tests/test_ingestion.py</code></td><td>6 nodes</td></tr>
+<tr><td><code>tests/test_database.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>server/config.py</code></td><td>3 nodes</td></tr>
+<tr><td><code>server/ingestion/sources.py</code></td><td>3 nodes</td></tr>
+<tr><td><code>tests/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x14, imports x12, explains x10, calls x8. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. OG Image Generator ====== -->
+<h2 id="og-image-generator">7. OG Image Generator</h2>
+<p>OG Image Generator groups implementation around make, imagepy, try, font, mostly in make_og_image.py. This section covers 5 nodes and 4 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: OG Image Generator (5 nodes, 4 edges)
+    subgraph og_image_generator_make_og_image_py_4b265b1f["make_og_image.py"]
+        make_og_image_59ece2f0("make_og_image.py")
+        make_og_image_try_font_0e09ff14("try_font()<br/><small>make_og_image.py</small>")
+        make_og_image_rationale_1_0b413f94("Generate og-image.png (1200x630) for Op...<br/><small>make_og_image.py</small>")
+    end
+    subgraph og_image_generator_External_generated_44473ecb["External / generated"]
+        math_7a488390("math")
+        pil_c5452450("pil")
+    end
+    make_og_image_59ece2f0 -->|imports| math_7a488390
+    make_og_image_59ece2f0 -->|imports| pil_c5452450
+    class make_og_image_59ece2f0 module;
+    class make_og_image_try_font_0e09ff14 function;
+    class make_og_image_rationale_1_0b413f94 concept;
+    class math_7a488390 function;
+    class pil_c5452450 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>try_font()</code><br><small style="color:var(--muted)">make_og_image.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>try_font() node in make_og_image.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>make_og_image.py</code><br><small style="color:var(--muted)">make_og_image.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>pil</code></td>
+  <td>Module file in make_og_image.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Generate og-image.png (1200x630) for Open Graph / social previews. Mirrors the…</code><br><small style="color:var(--muted)">make_og_image.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Generate og-image.png (1200x630) for Open Graph / social previews. Mirrors the….</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>math</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>make_og_image.py</code><br><small style="color:var(--muted)">make_og_image.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>math node in project.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>pil</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>make_og_image.py</code><br><small style="color:var(--muted)">make_og_image.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>pil node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>make_og_image.py</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x1, imports x1, contains x1, explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Ingestion Package ====== -->
+<h2 id="ingestion-package">8. Ingestion Package</h2>
+<p>Ingestion Package groups implementation around ingestion, server, package, driftforge, mostly in server/ingestion/__init__.py. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Ingestion Package (2 nodes, 1 edges)
+    server_ingestion_init_rationale_1_e37c2a32("Ingestion package for DriftForge.<br/><small>server/ingestion/__init__.py</small>")
+    server_ingestion_init_f154cebc("__init__.py")
+    server_ingestion_init_rationale_1_e37c2a32 -->|explains| server_ingestion_init_f154cebc
+    class server_ingestion_init_rationale_1_e37c2a32 concept;
+    class server_ingestion_init_f154cebc module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ingestion/__init__.py</code><br><small style="color:var(--muted)">server/ingestion/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in server/ingestion/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Ingestion package for DriftForge.</code><br><small style="color:var(--muted)">server/ingestion/__init__.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Ingestion package for DriftForge..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>server/ingestion/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Server Package ====== -->
+<h2 id="server-package">9. Server Package</h2>
+<p>Server Package groups implementation around server, driftforge, news, intelligence, mostly in server/__init__.py. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Server Package (2 nodes, 1 edges)
+    server_init_rationale_1_9de0f9e8("DriftForge News Intelligence Platform s...<br/><small>server/__init__.py</small>")
+    server_init_30b59bde("__init__.py")
+    server_init_rationale_1_9de0f9e8 -->|explains| server_init_30b59bde
+    class server_init_rationale_1_9de0f9e8 concept;
+    class server_init_30b59bde module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>server/__init__.py</code><br><small style="color:var(--muted)">server/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in server/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>DriftForge News Intelligence Platform server package.</code><br><small style="color:var(--muted)">server/__init__.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for DriftForge News Intelligence Platform server package..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>server/__init__.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="hyperedges">Group Relationships (Hyperedges)</h2>
+<div class="grid">
+
+  <div class="card">
+    <h4>AWS Deployment Pipeline (Static Hosting + CI)</h4>
+    <p><code>participate_in</code> — 4 participants</p>
+    <ul>
+      <li><code>github_workflows_deploy_yml</code></li>
+      <li><code>docker_compose_yml</code></li>
+      <li><code>architecture_md</code></li>
+      <li><code>requirements_txt</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Persistent Knowledge Stack (Schema + Phases 3–7 + README)</h4>
+    <p><code>form</code> — 7 participants</p>
+    <ul>
+      <li><code>sql_schema</code></li>
+      <li><code>implementation_plan_phase3</code></li>
+      <li><code>implementation_plan_phase4</code></li>
+      <li><code>implementation_plan_phase5</code></li>
+      <li><code>implementation_plan_phase6</code></li>
+      <li>... and 2 more</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Cross-Page Navigation Surfaces (Graph ↔ Chat)</h4>
+    <p><code>form</code> — 4 participants</p>
+    <ul>
+      <li><code>index_html</code></li>
+      <li><code>chat_html</code></li>
+      <li><code>highlight_deep_link_flow</code></li>
+      <li><code>graph_chat_flow</code></li>
+    </ul>
+  </div>
+</div>
+<hr>
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>319</td></tr>
+      <tr><td>Edges</td><td>757</td></tr>
+      <tr><td>Hyperedges</td><td>3</td></tr>
+      <tr><td>Communities</td><td>16</td></tr>
+      <tr><td>Documented Sections</td><td>8</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>673</td></tr>
+      <tr><td>INFERRED</td><td>83</td></tr>
+      <tr><td>AMBIGUOUS</td><td>1</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>graph-app — Architecture Documentation</p>
+  <p>Generated: 2026-10-11 20:18 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>
