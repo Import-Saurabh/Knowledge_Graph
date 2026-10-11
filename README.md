@@ -2,7 +2,7 @@
 
 A production-grade, persistent, continuously updated, evidence-backed news intelligence platform with an interactive **3D Knowledge Graph** visualization and a dedicated conversational **Graph Chat** workspace.
 
-Live site: **https://driftforge.cloud**
+
 
 ---
 
