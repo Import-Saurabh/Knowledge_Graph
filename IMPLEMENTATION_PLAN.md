@@ -398,3 +398,380 @@ CREATE VIRTUAL TABLE events_fts USING fts5(
     "reporting_period": "2026-10-10 to 2026-10-11",
     "limitations": ["France24 feed unavailable"]
   },
+  "conversation_id": "uuid",
+  "message_id": "uuid"
+}
+```
+
+**GET /api/graph**
+```json
+{
+  "nodes": [
+    {
+      "id": "saudi-arabia",
+      "label": "Saudi Arabia",
+      "type": "country",
+      "description": "...",
+      "connection_count": 12,
+      "first_observed_at": "2026-10-01T..."
+    }
+  ],
+  "links": [
+    {
+      "source": "saudi-arabia",
+      "target": "houthi-movement",
+      "type": "OPPOSED_TO",
+      "description": "..."
+    }
+  ],
+  "generated_at": "2026-10-11T12:00:00Z",
+  "entity_count": 150,
+  "relationship_count": 280
+}
+```
+
+---
+
+## 5. Implementation Phases
+
+### Phase 3 — Persistence Foundation
+**Objective**: Implement SQLite database, schema, migrations, and data access layer.
+
+**Files to create**:
+- `server/database.py` — DB initialization, connection management, migrations
+- `server/models.py` — Pydantic models for all data types
+- `server/config.py` — Centralized configuration from environment variables
+
+**Dependencies**: None (first implementation phase)
+
+**Steps**:
+1. Create `server/` package directory
+2. Implement config.py with env var loading and validation
+3. Implement database.py with schema creation, migrations, connection management
+4. Implement models.py with typed Pydantic models
+5. Write unit tests for database initialization and model validation
+
+**Completion criteria**:
+- [x] Database file created and persists across restarts
+- [ ] Schema matches the data model specification
+- [ ] FTS5 indexes created
+- [ ] Unique constraints enforced
+- [ ] Models validate correctly
+
+### Phase 4 — Ingestion Foundation
+**Objective**: Implement RSS connectors, LLM extraction, entity resolution, and incremental writes.
+
+**Files to create**:
+- `server/ingestion/pipeline.py` — Orchestrates the ingestion flow
+- `server/ingestion/sources.py` — RSS feed connectors
+- `server/ingestion/extractor.py` — LLM-based entity/event extraction
+- `server/ingestion/resolver.py` — Entity resolution and deduplication
+- `server/ingestion/writer.py` — Transactional database writes
+
+**Dependencies**: Phase 3
+
+**Steps**:
+1. Port `fetch_articles()` from existing `pipeline.py` to `sources.py`
+2. Enhance extraction prompt to include temporal data, article references, event types
+3. Implement entity resolver with alias matching and slug normalization
+4. Implement idempotent upsert operations in writer.py
+5. Implement pipeline orchestrator that chains fetch→extract→resolve→write
+6. Test idempotent ingestion (process same articles twice, verify no duplicates)
+
+**Completion criteria**:
+- [ ] Articles stored with URL dedup
+- [ ] Entities created with stable IDs
+- [ ] Events created with temporal data
+- [ ] Relationships stored with provenance
+- [ ] Duplicate ingestion is idempotent
+
+### Phase 5 — Background Operations
+**Objective**: Implement scheduled ingestion with APScheduler.
+
+**Files to create**:
+- `server/scheduler.py` — APScheduler configuration, job registration
+
+**Dependencies**: Phase 4
+
+**Steps**:
+1. Configure APScheduler with SQLite job store
+2. Register default ingestion job (configurable schedule)
+3. Implement job locking to prevent overlapping runs
+4. Record job history in ingestion_jobs table
+5. Test scheduler start/stop and job execution
+
+**Completion criteria**:
+- [ ] Scheduled job runs at configured interval
+- [ ] Overlapping jobs prevented
+- [ ] Job history recorded
+- [ ] Configurable schedule via env vars
+
+### Phase 6 — Query and Research Engine
+**Objective**: Implement graph retrieval, freshness assessment, query-triggered research, and answer synthesis.
+
+**Files to create**:
+- `server/query/engine.py` — Query orchestration
+- `server/query/retriever.py` — Graph database queries
+- `server/query/researcher.py` — Fresh news research
+- `server/query/synthesizer.py` — LLM answer generation with citations
+
+**Dependencies**: Phase 4
+
+**Steps**:
+1. Implement graph retrieval: entity lookup, relationship traversal, time-bounded queries
+2. Implement freshness assessment (when to trigger research)
+3. Implement query-triggered research using same ingestion pipeline
+4. Implement answer synthesis with graph context + citations
+5. Test query flow end-to-end
+
+**Completion criteria**:
+- [ ] Entity/event lookup works
+- [ ] Multi-hop relationship traversal works
+- [ ] Fresh research triggers when appropriate
+- [ ] Answers include real citations
+- [ ] Research budgets enforced
+
+### Phase 7 — Backend API
+**Objective**: Implement FastAPI application with all endpoints.
+
+**Files to create**:
+- `server/app.py` — FastAPI application, routes, middleware
+- `server/routes/graph.py` — Graph data endpoints
+- `server/routes/query.py` — Query/chat endpoints
+- `server/routes/ingestion.py` — Ingestion management endpoints
+
+**Dependencies**: Phases 3–6
+
+**Steps**:
+1. Create FastAPI app with CORS, error handling, request logging
+2. Implement graph endpoints (GET /api/graph, /api/entities/{id}, etc.)
+3. Implement query endpoint (POST /api/query)
+4. Implement conversation endpoints
+5. Implement ingestion endpoints with API key auth
+6. Implement health endpoint with DB check
+7. Configure static file serving for index.html and assets
+8. Test all endpoints
+
+**Completion criteria**:
+- [ ] All endpoints return correct responses
+- [ ] Error handling works
+- [ ] Static files served
+- [ ] Health check reports DB status
+
+### Phase 8 — Graph Chat Workspace
+**Objective**: Add sidebar navigation and Graph Chat page to the frontend.
+
+**Files to create/modify**:
+- `chat.html` — Graph Chat page
+- `index.html` — Add sidebar navigation
+
+**Dependencies**: Phase 7
+
+**Steps**:
+1. Create chat.html with ChatGPT-style interface matching DriftForge design
+2. Implement conversation list, message display, input area
+3. Implement real API integration (POST /api/query)
+4. Implement citations display and evidence inspection
+5. Add "Explore in Graph" button
+6. Add sidebar navigation to index.html linking to chat.html
+7. Test responsive design and keyboard accessibility
+
+**Completion criteria**:
+- [ ] Chat page renders and sends real queries
+- [ ] Citations displayed with source links
+- [ ] Conversation history works
+- [ ] Navigation between Graph and Chat works
+- [ ] Responsive on mobile
+
+### Phase 9 — 3D Graph Integration
+**Objective**: Implement "Explore in Graph" navigation and node highlighting.
+
+**Files to modify**:
+- `index.html` — Add highlight-from-URL-params capability
+- `chat.html` — Wire "Explore in Graph" buttons
+
+**Dependencies**: Phase 8
+
+**Steps**:
+1. Add URL parameter handling to index.html for `?highlight=id1,id2`
+2. Implement node/link highlighting with visual distinction
+3. Add "Clear selection" button
+4. Wire "Explore in Graph" in chat.html to navigate with entity/event IDs
+5. Handle missing nodes gracefully (refresh from API)
+
+**Completion criteria**:
+- [ ] Clicking "Explore in Graph" navigates to 3D view
+- [ ] Correct nodes highlighted
+- [ ] Selection clearable
+- [ ] Missing nodes handled gracefully
+
+### Phase 10 — Production Hardening
+**Objective**: Security, observability, deployment configuration.
+
+**Files to create**:
+- `.env.example` — Documented environment variables
+- `Dockerfile` — Container build
+- `docker-compose.yml` — Local development setup
+- `server/middleware.py` — Request logging, rate limiting
+
+**Dependencies**: Phases 7–9
+
+**Steps**:
+1. Input validation on all endpoints
+2. API key authentication for ingestion endpoints
+3. Rate limiting on query endpoint
+4. Structured logging with request correlation IDs
+5. CORS configuration
+6. Dockerfile and docker-compose.yml
+7. Database backup documentation
+8. Update README with full operational docs
+
+**Completion criteria**:
+- [ ] No secrets in code
+- [ ] Protected endpoints require auth
+- [ ] Rate limits enforced
+- [ ] Structured logging works
+- [ ] Docker build succeeds
+
+### Phase 11 — Verification
+**Objective**: Run acceptance tests and update documentation.
+
+**Dependencies**: All phases
+
+**Steps**:
+1. Run all automated tests
+2. Verify persistence across restarts
+3. Verify idempotent ingestion
+4. Test full query→research→answer flow
+5. Test Graph Chat end-to-end
+6. Test "Explore in Graph" flow
+7. Update IMPLEMENTATION_PLAN.md with results
+8. Update README.md
+
+---
+
+## 6. Production Readiness
+
+### 6.1 Security
+- API key required for ingestion endpoints (`ADMIN_API_KEY` env var)
+- Input validation via Pydantic models
+- Parameterized SQL queries (no string interpolation)
+- CORS whitelist configuration
+- Request size limits (1MB default)
+- Timeouts on external requests (30s default)
+- URL validation for article fetching (no SSRF)
+- HTML sanitization in chat answers
+
+### 6.2 Reliability
+- SQLite WAL mode for concurrent reads
+- Transaction boundaries for ingestion batches
+- Per-source error isolation (one feed failure doesn't stop others)
+- Bounded retries with backoff for LLM calls
+- Graceful shutdown handling
+- Recovery from interrupted ingestion (status tracking)
+
+### 6.3 Performance
+- FTS5 for full-text entity/event search
+- Indexed columns for all query patterns
+- Bounded graph traversal (max depth 3, max nodes 500)
+- Pagination on list endpoints (default 50, max 200)
+- Connection pooling via check_same_thread=False
+- Incremental ingestion (skip processed articles)
+
+### 6.4 Observability
+- Structured JSON logging
+- Request correlation IDs
+- Ingestion job metrics in database
+- Health endpoint with DB connectivity check
+- Configurable log level
+
+### 6.5 Deployment
+- Single Python process (FastAPI + APScheduler)
+- SQLite database file in configurable path
+- Docker support for containerized deployment
+- Environment variable configuration
+- Graceful startup (DB init + migration)
+
+---
+
+## 7. Definition of Done
+
+### Repository Integrity
+- [ ] Existing 3D graph functionality preserved
+- [ ] Graphify artifacts preserved and not modified
+- [ ] IMPLEMENTATION_PLAN.md created before code changes
+- [ ] New code follows existing conventions
+
+### Persistent Storage
+- [ ] Entities stored in SQLite
+- [ ] Events stored with temporal data
+- [ ] Articles stored with deduplication
+- [ ] Relationships stored with provenance
+- [ ] Data survives process restart
+- [ ] Schema migrations work
+
+### Incremental Ingestion
+- [ ] Articles discovered from RSS feeds
+- [ ] Entities/events extracted via LLM
+- [ ] Duplicate articles skipped
+- [ ] Entity resolution works
+- [ ] One failed source doesn't stop others
+
+### Scheduled Ingestion
+- [ ] APScheduler configured with job
+- [ ] Configurable schedule
+- [ ] Job history recorded
+- [ ] Overlapping jobs prevented
+
+### Query & Research
+- [ ] Graph queries retrieve entities/events
+- [ ] Fresh research triggers when needed
+- [ ] Answers include citations
+- [ ] Research budgets enforced
+
+### Graph Chat
+- [ ] Separate page with sidebar navigation
+- [ ] Real backend integration
+- [ ] Citations displayed
+- [ ] Conversation history
+- [ ] "Explore in Graph" button
+
+### 3D Graph Integration
+- [ ] URL-param-based highlighting
+- [ ] Correct nodes highlighted
+- [ ] Selection clearable
+
+### Production Quality
+- [ ] No committed secrets
+- [ ] Input validation
+- [ ] Error handling
+- [ ] Structured logging
+- [ ] Docker configuration
+- [ ] Updated README
+
+---
+
+## 8. Risk Register
+
+| Risk | Impact | Mitigation | Fallback |
+|---|---|---|---|
+| MiniMax API rate limits (hourly) | Ingestion and queries may fail | Implement backoff, cache results, configure budgets | Answer from existing graph data, disclose limitation |
+| SQLite write concurrency | Concurrent ingestion + queries may conflict | WAL mode, short transactions, retry on SQLITE_BUSY | Serialize writes via queue |
+| LLM extraction quality | Entities may be poorly extracted or duplicated | Detailed extraction prompt, entity resolution, manual review capability | Preserve raw extraction alongside resolved entities |
+| Large graph in browser | Performance degradation with >1000 nodes | Paginated graph API, configurable node limit, subgraph retrieval | Default to recent entities only |
+| No AWS credentials locally | S3 upload fails, Lambda features unavailable | Graceful fallback (already implemented), local-only mode | Local development doesn't require AWS |
+| Single-process architecture | No horizontal scaling | Sufficient for current traffic; document migration to multi-process if needed | Add Gunicorn workers if needed |
+
+---
+
+## Appendix: Migration from Existing Pipeline
+
+The existing `pipeline.py` will be preserved but its logic will be refactored into the new service layer:
+
+- `fetch_articles()` → `server/ingestion/sources.py:RSSConnector`
+- `extract_graph()` → `server/ingestion/extractor.py:LLMExtractor`
+- `build_graph()` → `server/ingestion/writer.py:GraphWriter`
+- `main()` → `server/ingestion/pipeline.py:IngestionPipeline.run()`
+- `lambda_handler()` → preserved for AWS Lambda compatibility
+
+The original `pipeline.py` remains functional for direct Lambda deployment. The new server modules provide the same functionality plus persistence, deduplication, and incremental updates.
