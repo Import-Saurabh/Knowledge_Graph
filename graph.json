@@ -6,10 +6,10 @@
       "canonical_name": "Houthi Movement",
       "type": "armed_group",
       "entity_type": "armed_group",
-      "description": "Yemeni armed group imposing a chokehold on Red Sea shipping, targeted by Saudi military plans",
-      "val": 680,
-      "connection_count": 26,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
+      "description": "Yemeni armed group that struck Riyadh airport and another Saudi facility, killing 13 people.",
+      "val": 733,
+      "connection_count": 27,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "saudi-arabia",
@@ -17,32 +17,10 @@
       "canonical_name": "Saudi Arabia",
       "type": "country",
       "entity_type": "country",
-      "description": "Planning a military assault on Houthis to break the Red Sea shipping chokehold",
-      "val": 328,
-      "connection_count": 18,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "donald-trump",
-      "label": "Donald Trump",
-      "canonical_name": "Donald Trump",
-      "type": "person",
-      "entity_type": "person",
-      "description": "U.S. President who commented on the French protests, blaming mass migration and Islam",
-      "val": 148,
-      "connection_count": 12,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "united-states",
-      "label": "United States",
-      "canonical_name": "United States",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country of origin for the study identifying the first water cloud changes outside the solar system.",
-      "val": 104,
-      "connection_count": 10,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
+      "description": "Country whose airports were struck by the Houthis; vowed a serious response.",
+      "val": 488,
+      "connection_count": 22,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "russia",
@@ -50,10 +28,43 @@
       "canonical_name": "Russia",
       "type": "country",
       "entity_type": "country",
-      "description": "Country at war with Ukraine; targeted by Ukrainian strikes and forming battalions from Ukrainian POWs and defectors.",
-      "val": 53,
-      "connection_count": 7,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "description": "Country accused by Zelenskyy of violating the energy ceasefire and subject to nearly 1,600 new EU sanctions on its military-industrial complex.",
+      "val": 328,
+      "connection_count": 18,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "united-states",
+      "label": "United States",
+      "canonical_name": "United States",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Major external power with interests in the Red Sea and Middle East; voters reportedly fatigued by Mideast turmoil.",
+      "val": 200,
+      "connection_count": 14,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "donald-trump",
+      "label": "Donald Trump",
+      "canonical_name": "Donald Trump",
+      "type": "person",
+      "entity_type": "person",
+      "description": "US president who brokered an 'energy ceasefire' between Russia and Ukraine and faces backlash over plans to import Russian diesel.",
+      "val": 173,
+      "connection_count": 13,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "abhijeet-dipke",
+      "label": "Abhijeet Dipke",
+      "canonical_name": "Abhijeet Dipke",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Founder of the Cockroach Janta Party whose past ties to AAP have raised questions.",
+      "val": 148,
+      "connection_count": 12,
+      "first_observed_at": "2026-10-12T10:04:38.727195+00:00"
     },
     {
       "id": "ukraine",
@@ -61,10 +72,54 @@
       "canonical_name": "Ukraine",
       "type": "country",
       "entity_type": "country",
-      "description": "Country engaged in conflict with Russia since 2022 full-scale invasion; conducting strikes on Russian infrastructure.",
-      "val": 53,
-      "connection_count": 7,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "description": "Country at war with Russia; accusing Moscow of violating the Trump-brokered energy ceasefire.",
+      "val": 104,
+      "connection_count": 10,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "dhruv-rathee",
+      "label": "Dhruv Rathee",
+      "canonical_name": "Dhruv Rathee",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Indian YouTuber and content creator; subject of all three articles regarding his net worth, YouTube journey, and educational qualifications.",
+      "val": 104,
+      "connection_count": 10,
+      "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
+    },
+    {
+      "id": "cjp",
+      "label": "Campaign for Judicial and Political Accountability (CJP)",
+      "canonical_name": "Campaign for Judicial and Political Accountability (CJP)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian civil rights organisation whose founder and members were detained ahead of a planned demonstration.",
+      "val": 85,
+      "connection_count": 9,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "navi-pillay",
+      "label": "Navi Pillay",
+      "canonical_name": "Navi Pillay",
+      "type": "person",
+      "entity_type": "person",
+      "description": "South African former UN human rights chief and current ICJ judge who chaired the UN commission finding Israel committed genocide in Gaza; awarded the 2026 Nobel Peace Prize.",
+      "val": 68,
+      "connection_count": 8,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "cockroach-movement",
+      "label": "'Cockroach' Movement",
+      "canonical_name": "'Cockroach' Movement",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Indian protest movement framed around the 'cockroach' social media post, testing the Modi government",
+      "val": 68,
+      "connection_count": 8,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "james-webb-space-telescope",
@@ -75,40 +130,7 @@
       "description": "Space observatory commonly associated with deep-universe and exoplanet atmospheric studies referenced in the coverage.",
       "val": 53,
       "connection_count": 7,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
-    },
-    {
-      "id": "navi-pillay",
-      "label": "Navi Pillay",
-      "canonical_name": "Navi Pillay",
-      "type": "person",
-      "entity_type": "person",
-      "description": "South African former UN human rights chief and current ICJ judge; awarded the 2026 Nobel Peace Prize for promoting international law.",
-      "val": 40,
-      "connection_count": 6,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "cockroach-movement",
-      "label": "'Cockroach' Movement",
-      "canonical_name": "'Cockroach' Movement",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Youth-led protest movement in India demanding electoral reforms and the ouster of the Chief Election Commissioner",
-      "val": 40,
-      "connection_count": 6,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
-    },
-    {
-      "id": "hurricane-isaias",
-      "label": "Hurricane Isaias",
-      "canonical_name": "Hurricane Isaias",
-      "type": "concept",
-      "entity_type": "concept",
-      "description": "First Atlantic hurricane of the 2026 season; expected to make landfall on the US northern Gulf coast.",
-      "val": 29,
-      "connection_count": 5,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "israel",
@@ -116,10 +138,98 @@
       "canonical_name": "Israel",
       "type": "country",
       "entity_type": "country",
-      "description": "Accused by the Houthis of being behind Saudi airstrikes in Yemen; cited as a shared adversary.",
-      "val": 20,
-      "connection_count": 4,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "description": "Country that a UN commission chaired by Pillay concluded was guilty of genocide in Gaza.",
+      "val": 53,
+      "connection_count": 7,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "delhi-police",
+      "label": "Delhi Police",
+      "canonical_name": "Delhi Police",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Law enforcement agency that detained CJP leaders and offered to facilitate Dipke's return for family rites",
+      "val": 53,
+      "connection_count": 7,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "hurricane-isaias",
+      "label": "Hurricane Isaias",
+      "canonical_name": "Hurricane Isaias",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "First Atlantic hurricane of the 2026 season, expected to make landfall on the US northern Gulf coast.",
+      "val": 40,
+      "connection_count": 6,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "iran",
+      "label": "Iran",
+      "canonical_name": "Iran",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Regional backer of the Houthi movement.",
+      "val": 40,
+      "connection_count": 6,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "india",
+      "label": "India",
+      "canonical_name": "India",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country where AAP, BJP, and Cockroach Janta Party operate and where Punjab elections are forthcoming.",
+      "val": 40,
+      "connection_count": 6,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "middle-east-oil-market",
+      "label": "Middle East Oil Market",
+      "canonical_name": "Middle East Oil Market",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "The regional oil supply system already described as fragile, vulnerable to further route disruption",
+      "val": 40,
+      "connection_count": 6,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "egypt",
+      "label": "Egypt",
+      "canonical_name": "Egypt",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country whose authorities arrested and charged six Matsadaash journalists with terrorism offences.",
+      "val": 29,
+      "connection_count": 5,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "bjp",
+      "label": "Bharatiya Janata Party (BJP)",
+      "canonical_name": "Bharatiya Janata Party (BJP)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian political party accused by AAP of plotting to defame AAP by linking it to drug traffickers ahead of Punjab elections.",
+      "val": 29,
+      "connection_count": 5,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "aam-aadmi-party",
+      "label": "Aam Aadmi Party (AAP)",
+      "canonical_name": "Aam Aadmi Party (AAP)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian political party alleged to have past links with the founder of Cockroach Janta Party; accused BJP of a plot to defame it by linking it to drug traffickers ahead of Punjab polls.",
+      "val": 29,
+      "connection_count": 5,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
     },
     {
       "id": "russian-ukrainian-pow-battalion",
@@ -130,18 +240,7 @@
       "description": "Russian-formed military unit composed of Ukrainian prisoners of war and defectors ordered to fight Ukrainian forces.",
       "val": 20,
       "connection_count": 4,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "iran",
-      "label": "Iran",
-      "canonical_name": "Iran",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Accused by Saudi Arabia of backing the Houthis through arms and training.",
-      "val": 20,
-      "connection_count": 4,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "red-sea",
@@ -149,21 +248,10 @@
       "canonical_name": "Red Sea",
       "type": "location",
       "entity_type": "location",
-      "description": "Strategic maritime corridor linking Europe and Asia via the Suez Canal; site of multiple recent crises",
+      "description": "Strategic waterway where Houthi attacks on shipping and Israel-linked vessels have escalated regional tensions.",
       "val": 20,
       "connection_count": 4,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "delhi-police",
-      "label": "Delhi Police",
-      "canonical_name": "Delhi Police",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Law enforcement agency that detained protesters and enforced restrictions in Delhi",
-      "val": 20,
-      "connection_count": 4,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "french-students",
@@ -174,7 +262,7 @@
       "description": "Students, teachers, and school staff participating in nationwide protests against school conditions",
       "val": 20,
       "connection_count": 4,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "exoplanet-water-cloud-study",
@@ -185,7 +273,7 @@
       "description": "American research effort that found the first observed changes in water clouds outside the solar system.",
       "val": 20,
       "connection_count": 4,
-      "first_observed_at": "2026-10-11T15:03:52.029163+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "ethiopia",
@@ -199,6 +287,94 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
+      "id": "rfk-jr",
+      "label": "Robert F. Kennedy Jr.",
+      "canonical_name": "Robert F. Kennedy Jr.",
+      "type": "person",
+      "entity_type": "person",
+      "description": "US Secretary of Health and Human Services and longtime vaccine opponent championing a controversial hepatitis B vaccine trial.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "gaza",
+      "label": "Gaza War",
+      "canonical_name": "Gaza War",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Palestinian enclave where the UN commission found genocide had been committed by Israel.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "united-kingdom",
+      "label": "United Kingdom",
+      "canonical_name": "United Kingdom",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country offering defensive support, including aerial refueling, to Saudi Arabia to counter Houthi attacks.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "delhi",
+      "label": "Delhi",
+      "canonical_name": "Delhi",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Indian capital city and a focal point for the planned CJP demonstration.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "matsadaash",
+      "label": "Matsadaash",
+      "canonical_name": "Matsadaash",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Egyptian independent factchecking and investigative platform whose staff were charged with terrorism.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "uae",
+      "label": "United Arab Emirates",
+      "canonical_name": "United Arab Emirates",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Gulf state and key member of the Saudi-led coalition in Yemen.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "saudi-led-coalition",
+      "label": "Saudi-led Coalition",
+      "canonical_name": "Saudi-led Coalition",
+      "type": "armed_group",
+      "entity_type": "armed_group",
+      "description": "Military alliance led by Saudi Arabia and the UAE that intervened in Yemen in 2015 against the Houthis.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "yemeni-civil-war",
+      "label": "Yemeni Civil War",
+      "canonical_name": "Yemeni Civil War",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Multi-sided armed conflict in Yemen that reignited in late 2026 after a fragile calm.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
       "id": "volodymyr-zelensky",
       "label": "Volodymyr Zelensky",
       "canonical_name": "Volodymyr Zelensky",
@@ -207,40 +383,7 @@
       "description": "Ukrainian president condemned by Trump over diesel deal with Russia.",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "rfk-jr",
-      "label": "Robert F. Kennedy Jr.",
-      "canonical_name": "Robert F. Kennedy Jr.",
-      "type": "person",
-      "entity_type": "person",
-      "description": "Secretary of the US Department of Health and Human Services (HHS) and longtime vaccine opponent who has championed this trial as central to his vaccine vision.",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "gaza",
-      "label": "Gaza War",
-      "canonical_name": "Gaza War",
-      "type": "location",
-      "entity_type": "location",
-      "description": "Location where UN commission concluded genocide was committed by Israel.",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "egypt",
-      "label": "Egypt",
-      "canonical_name": "Egypt",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Building a Red Sea alliance, positioned as regional counterweight to Ethiopia",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "us-midterms",
@@ -251,7 +394,7 @@
       "description": "November 3 elections where women are underrepresented; Trump's diesel criticisms tied to it.",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "un-human-rights-council-commission",
@@ -262,18 +405,7 @@
       "description": "UN body that found Israel committed genocide in Gaza, chaired by Navi Pillay.",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
-    },
-    {
-      "id": "india",
-      "label": "India",
-      "canonical_name": "India",
-      "type": "country",
-      "entity_type": "country",
-      "description": "South Asian nation experiencing youth-led protests in October 2026",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "us-department-of-health-and-human-services",
@@ -281,10 +413,10 @@
       "canonical_name": "US Department of Health and Human Services",
       "type": "government",
       "entity_type": "government",
-      "description": "US federal department headed by RFK Jr; has promoted the controversial hepatitis B vaccine trial.",
+      "description": "US federal department headed by RFK Jr., supporting the controversial African vaccine trial.",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T13:36:16.247789+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "yemen",
@@ -292,21 +424,10 @@
       "canonical_name": "Yemen",
       "type": "country",
       "entity_type": "country",
-      "description": "Country of origin for a deadly boat capsizing in the Red Sea; base of Houthi movement",
+      "description": "Arabian Peninsula state that has fallen back into full-scale war, according to the UN envoy.",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "united-kingdom",
-      "label": "United Kingdom",
-      "canonical_name": "United Kingdom",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country offering defensive support, including aerial refueling, to Saudi Arabia to counter Houthi attacks.",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "coalition-to-support-legitimacy-in-yemen",
@@ -317,29 +438,7 @@
       "description": "Coalition leading military operations against Houthi forces in Yemen",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
-    },
-    {
-      "id": "delhi",
-      "label": "Delhi",
-      "canonical_name": "Delhi",
-      "type": "location",
-      "entity_type": "location",
-      "description": "Capital city of India where major protests and police crackdowns occurred",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
-    },
-    {
-      "id": "french-police",
-      "label": "French Police",
-      "canonical_name": "French Police",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Law enforcement forces in France who fired tear gas and water cannons at protesters",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "frb-20250821a",
@@ -350,7 +449,7 @@
       "description": "The most distant fast radio burst ever detected, traced by JWST to a host galaxy",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "early-universe",
@@ -361,7 +460,7 @@
       "description": "The ancient epoch of cosmic history from which the record-breaking radio signal originated, billions of years ago",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "little-red-dots",
@@ -372,7 +471,106 @@
       "description": "Astronomical phenomenon discussed as potentially illuminating the origins of the universe, subject of a Washington Post opinion piece.",
       "val": 13,
       "connection_count": 3,
-      "first_observed_at": "2026-10-11T15:03:52.029163+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "noaa",
+      "label": "NOAA",
+      "canonical_name": "NOAA",
+      "type": "government",
+      "entity_type": "government",
+      "description": "US agency tracking Hurricane Isaias.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "muslim-brotherhood",
+      "label": "Muslim Brotherhood",
+      "canonical_name": "Muslim Brotherhood",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Outlawed Egyptian organization which Egyptian authorities accused the Matsadaash journalists of working for.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "un-security-council",
+      "label": "United Nations Security Council",
+      "canonical_name": "United Nations Security Council",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Principal UN organ dealing with international peace and security, briefed on the renewed Yemen war.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "indian-police",
+      "label": "Indian Police",
+      "canonical_name": "Indian Police",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Law enforcement agency of India reported to have carried out the pre-protest detentions.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
+    },
+    {
+      "id": "cockroach-janta-party",
+      "label": "Cockroach Janta Party (CJP)",
+      "canonical_name": "Cockroach Janta Party (CJP)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "A political party whose founder's alleged past ties to AAP have raised questions; its spokesperson is reported to have Pakistan links via Gavi organisation.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "ashutosh-ranka",
+      "label": "Ashutosh Ranka",
+      "canonical_name": "Ashutosh Ranka",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Spokesperson of the Cockroach Janta Party whose 'Gavi trail' reportedly leads to a former Pakistani minister.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "sania-nishtar",
+      "label": "Sania Nishtar",
+      "canonical_name": "Sania Nishtar",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Former minister under Imran Khan in Pakistan; reportedly linked to CJP spokesperson Ashutosh Ranka via the Gavi organisation.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "zelenskyy",
+      "label": "Volodymyr Zelenskyy",
+      "canonical_name": "Volodymyr Zelenskyy",
+      "type": "person",
+      "entity_type": "person",
+      "description": "President of Ukraine who accused Russia of violating Trump's 'energy ceasefire'.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "french-police",
+      "label": "French Police",
+      "canonical_name": "French Police",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Law enforcement forces in France who fired tear gas and water cannons at protesters",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "myanmar-junta",
@@ -383,7 +581,7 @@
       "description": "Desperate military regime conscripting young men to fight ethnic militias and resistance.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "myanmar",
@@ -394,18 +592,7 @@
       "description": "Country where junta is forcibly conscripting civilians.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "guinea-bissau",
-      "label": "Guinea-Bissau",
-      "canonical_name": "Guinea-Bissau",
-      "type": "country",
-      "entity_type": "country",
-      "description": "West African nation where the controversial vaccine trial will be conducted on newborns.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "vaccine-trial",
@@ -416,7 +603,7 @@
       "description": "Danish-led trial withholding recommended hepatitis B vaccine doses from African newborns.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "icj",
@@ -424,10 +611,10 @@
       "canonical_name": "International Court of Justice",
       "type": "organisation",
       "entity_type": "organisation",
-      "description": "Principal judicial organ of the UN, where Pillay serves as a judge.",
+      "description": "UN's principal judicial organ, where Navi Pillay serves as a judge.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "el-nino",
@@ -438,40 +625,7 @@
       "description": "Strong climate phenomenon contributing to a notably quiet 2026 Atlantic hurricane season.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "noaa",
-      "label": "NOAA",
-      "canonical_name": "NOAA",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "US agency tracking Hurricane Isaias, forecasting strengthening as it approaches the Gulf coast.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "matsadaash",
-      "label": "Matsadaash",
-      "canonical_name": "Matsadaash",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Egyptian independent journalism platform whose staff face torture allegations and terrorism charges.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
-    },
-    {
-      "id": "muslim-brotherhood",
-      "label": "Muslim Brotherhood",
-      "canonical_name": "Muslim Brotherhood",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Outlawed Egyptian group Egypt accuses detained journalists of working for.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "us-doj",
@@ -482,7 +636,7 @@
       "description": "Agency whose civil rights mission has been reshaped under Dhillon.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "pedro-sanchez",
@@ -493,7 +647,7 @@
       "description": "Spanish PM launching campaign for November 29 general election.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "alberto-feijoo",
@@ -504,7 +658,7 @@
       "description": "Spanish conservative opposition leader launching campaign against S\u00e1nchez.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "spain-election",
@@ -515,7 +669,7 @@
       "description": "General election set for November 29 with campaigns underway.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "georgia",
@@ -526,18 +680,7 @@
       "description": "Country that became a hub for surrogacy after Russia's 2022 invasion of Ukraine.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
-    },
-    {
-      "id": "danish-researchers",
-      "label": "Danish Researchers",
-      "canonical_name": "Danish Researchers",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Researchers from Denmark conducting the hepatitis B vaccine trial in Guinea-Bissau.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T13:36:16.247789+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "riyadh-airport",
@@ -545,54 +688,10 @@
       "canonical_name": "Riyadh Airport",
       "type": "location",
       "entity_type": "location",
-      "description": "Saudi Arabian airport struck by Houthis, killing at least 12 and wounding hundreds; closure extended.",
+      "description": "Saudi airport struck by Houthi attacks, part of a significant escalation.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "riyadh",
-      "label": "Riyadh",
-      "canonical_name": "Riyadh",
-      "type": "location",
-      "entity_type": "location",
-      "description": "Saudi capital targeted by Houthi missiles and drones.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:05:15.681885+00:00"
-    },
-    {
-      "id": "saudi-government",
-      "label": "Saudi Government",
-      "canonical_name": "Saudi Government",
-      "type": "government",
-      "entity_type": "government",
-      "description": "Saudi authorities extended airport closure, moved Riyadh schools online, and vowed a major response.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:05:15.681885+00:00"
-    },
-    {
-      "id": "international-community",
-      "label": "International Community",
-      "canonical_name": "International Community",
-      "type": "concept",
-      "entity_type": "concept",
-      "description": "World leaders condemned the deadly Houthi attack on Riyadh airport.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:05:15.681885+00:00"
-    },
-    {
-      "id": "uae",
-      "label": "United Arab Emirates",
-      "canonical_name": "United Arab Emirates",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Member of the Mecca security pact; has played a mediating role and joined Saudi Arabia in labeling the Houthis a terrorist organization.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "mecca-pact",
@@ -603,7 +702,7 @@
       "description": "2019 GCC mutual defense agreement triggered by attacks on Saudi Arabia; its invocation tests the limits of Gulf collective security.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "gcc",
@@ -614,7 +713,7 @@
       "description": "Six-member Gulf bloc bound by the 2019 Mecca security pact.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "narendra-modi",
@@ -622,21 +721,10 @@
       "canonical_name": "Narendra Modi",
       "type": "person",
       "entity_type": "person",
-      "description": "Prime Minister of India; subject of growing public anger according to reporting",
+      "description": "Prime Minister of India; government tested by the 'Cockroach' protests",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
-    },
-    {
-      "id": "cjp",
-      "label": "Campaign for Judicial and Political Accountability (CJP)",
-      "canonical_name": "Campaign for Judicial and Political Accountability (CJP)",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Group that organized a parallel protest at Jantar Mantar during the crackdown",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "china",
@@ -647,18 +735,7 @@
       "description": "Beneficiary of geopolitical shifts under Trump; positioned to shape a new global order",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "openai",
-      "label": "OpenAI",
-      "canonical_name": "OpenAI",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "AI company whose Codex tool was used to rapidly build a mass surveillance prototype",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "codex",
@@ -669,40 +746,7 @@
       "description": "AI coding tool that enabled rapid creation of a global mass surveillance site",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "csis",
-      "label": "Center for Strategic and International Studies",
-      "canonical_name": "Center for Strategic and International Studies",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Think tank analyzing recent events in Venezuela and their aftermath",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "fortune",
-      "label": "Fortune",
-      "canonical_name": "Fortune",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Business publication reporting on CEOs operating in wartime-like conditions",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "ceos",
-      "label": "Corporate CEOs",
-      "canonical_name": "Corporate CEOs",
-      "type": "concept",
-      "entity_type": "concept",
-      "description": "Business leaders now described as 'wartime CEOs' due to geopolitical pressures",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "france",
@@ -713,29 +757,7 @@
       "description": "Nation experiencing nationwide school protests and police crackdowns in October 2026",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
-    },
-    {
-      "id": "french-schools",
-      "label": "French Public Schools",
-      "canonical_name": "French Public Schools",
-      "type": "concept",
-      "entity_type": "concept",
-      "description": "Public school system in France at the center of the nationwide protests",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
-    },
-    {
-      "id": "nasa",
-      "label": "NASA",
-      "canonical_name": "NASA",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "U.S. space agency reporting on Webb's FRB distance measurement",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "fast-radio-burst-concept",
@@ -746,7 +768,7 @@
       "description": "Mysterious millisecond-long cosmic radio pulses; the subject of Webb's record-breaking observation",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "solar-system",
@@ -757,7 +779,7 @@
       "description": "Our planetary system, used as the reference point for studies of water clouds beyond it.",
       "val": 8,
       "connection_count": 2,
-      "first_observed_at": "2026-10-11T15:03:52.029163+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "eritrea",
@@ -793,6 +815,259 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
+      "id": "norwegian-nobel-committee",
+      "label": "Norwegian Nobel Committee",
+      "canonical_name": "Norwegian Nobel Committee",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Body that awards the Nobel Peace Prize, which it gave to Navi Pillay in 2026.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "jantar-mantar",
+      "label": "Jantar Mantar",
+      "canonical_name": "Jantar Mantar",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Historic site in Delhi historically used as a protest gathering point",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "saurabh-das",
+      "label": "Saurabh Das",
+      "canonical_name": "Saurabh Das",
+      "type": "person",
+      "entity_type": "person",
+      "description": "CJP leader detained ahead of the Jantar Mantar march",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:04:38.727195+00:00"
+    },
+    {
+      "id": "modi-government",
+      "label": "Modi Government",
+      "canonical_name": "Modi Government",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Indian national government led by PM Narendra Modi, target of protest criticism",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:04:38.727195+00:00"
+    },
+    {
+      "id": "delhi-courts",
+      "label": "Delhi Courts",
+      "canonical_name": "Delhi Courts",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Judiciary in Delhi that ordered the release of detained CJP leaders on bail/conditions",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:04:38.727195+00:00"
+    },
+    {
+      "id": "indian-government",
+      "label": "Government of India",
+      "canonical_name": "Government of India",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Indian state apparatus accused of curtailing civil society protest activity.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
+    },
+    {
+      "id": "cjp-protest-oct-2026",
+      "label": "CJP National Demonstration (Oct 2026)",
+      "canonical_name": "CJP National Demonstration (Oct 2026)",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "A planned major civil society protest organized by CJP in October 2026, prevented from occurring through pre-emptive detentions.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
+    },
+    {
+      "id": "youtube-content-creation",
+      "label": "YouTube Content Creation",
+      "canonical_name": "YouTube Content Creation",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Career activity through which Dhruv Rathee accumulated his wealth and public profile.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "gavi",
+      "label": "Gavi (the Vaccine Alliance)",
+      "canonical_name": "Gavi (the Vaccine Alliance)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "International health/vaccine organisation identified as the link through which CJP spokesperson Ashutosh Ranka allegedly connects to former Pakistani minister Sania Nishtar.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "pakistan",
+      "label": "Pakistan",
+      "canonical_name": "Pakistan",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country connected to the CJP spokesperson via former Imran Khan minister Sania Nishtar.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "punjab-state",
+      "label": "Punjab (India)",
+      "canonical_name": "Punjab (India)",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Indian state where upcoming elections are the backdrop for AAP's allegations against BJP.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "european-union",
+      "label": "European Union",
+      "canonical_name": "European Union",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Bloc that imposed nearly 1,600 new sanctions on Russia's military industrial complex.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "internationally-recognized-government-of-yemen",
+      "label": "Internationally Recognized Government of Yemen",
+      "canonical_name": "Internationally Recognized Government of Yemen",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Yemen's internationally recognized government, backed by the Saudi-led coalition and opposed to the Houthis.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "guinea-bissau",
+      "label": "Guinea-Bissau",
+      "canonical_name": "Guinea-Bissau",
+      "type": "country",
+      "entity_type": "country",
+      "description": "West African nation where a hepatitis B vaccine trial withholding doses from newborns was approved.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "danish-researchers",
+      "label": "Danish Researchers",
+      "canonical_name": "Danish Researchers",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Researchers from Denmark conducting the hepatitis B vaccine trial in Guinea-Bissau.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "riyadh",
+      "label": "Riyadh",
+      "canonical_name": "Riyadh",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Saudi capital targeted by Houthi missiles and drones.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "international-community",
+      "label": "International Community",
+      "canonical_name": "International Community",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "World leaders condemned the deadly Houthi attack on Riyadh airport.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "openai",
+      "label": "OpenAI",
+      "canonical_name": "OpenAI",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "AI company whose Codex tool was used to rapidly build a mass surveillance prototype",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "csis",
+      "label": "Center for Strategic and International Studies",
+      "canonical_name": "Center for Strategic and International Studies",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Think tank analyzing recent events in Venezuela and their aftermath",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "fortune",
+      "label": "Fortune",
+      "canonical_name": "Fortune",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Business publication reporting on CEOs operating in wartime-like conditions",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "ceos",
+      "label": "Corporate CEOs",
+      "canonical_name": "Corporate CEOs",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Business leaders now described as 'wartime CEOs' due to geopolitical pressures",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "french-schools",
+      "label": "French Public Schools",
+      "canonical_name": "French Public Schools",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Public school system in France at the center of the nationwide protests",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "nasa",
+      "label": "NASA",
+      "canonical_name": "NASA",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "U.S. space agency reporting on Webb's FRB distance measurement",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
       "id": "nobel-peace-prize",
       "label": "Nobel Peace Prize",
       "canonical_name": "Nobel Peace Prize",
@@ -801,7 +1076,7 @@
       "description": "Awarded to Navi Pillay for promoting international law.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "georgia-surrogacy",
@@ -812,7 +1087,7 @@
       "description": "Booming surrogacy hub since 2022 Russian invasion of Ukraine, with hidden costs.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "harmeet-dhillon",
@@ -823,7 +1098,7 @@
       "description": "Justice Department civil rights division leader reshaping workforce for ideological goals.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "yandex",
@@ -834,18 +1109,7 @@
       "description": "Russian tech giant forced to suspend operations after being targeted three times in one week by Ukrainian strikes on its data centres.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
-    },
-    {
-      "id": "norwegian-nobel-committee",
-      "label": "Norwegian Nobel Committee",
-      "canonical_name": "Norwegian Nobel Committee",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Committee that awarded the 2026 Nobel Peace Prize to Navi Pillay.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "surrogacy-industry",
@@ -856,7 +1120,7 @@
       "description": "Booming industry in Georgia with hidden costs for intended parents.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:27:08.739442+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "denmark",
@@ -867,18 +1131,7 @@
       "description": "Country of origin of the researchers conducting the trial.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:36:16.247789+00:00"
-    },
-    {
-      "id": "hepatitis-b-vaccine",
-      "label": "Hepatitis B Vaccine",
-      "canonical_name": "Hepatitis B Vaccine",
-      "type": "concept",
-      "entity_type": "concept",
-      "description": "Vaccine that will be withheld from some newborns in the trial.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:36:16.247789+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "vaccine-skepticism",
@@ -889,62 +1142,7 @@
       "description": "Movement associated with RFK Jr that questions vaccine safety and efficacy.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:36:16.247789+00:00"
-    },
-    {
-      "id": "saudi-arabian-government",
-      "label": "Saudi Arabian Government",
-      "canonical_name": "Saudi Arabian Government",
-      "type": "government",
-      "entity_type": "government",
-      "description": "Government of Saudi Arabia vowing a major response after the Houthi strike on Riyadh airport.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "us-government",
-      "label": "U.S. Government",
-      "canonical_name": "U.S. Government",
-      "type": "government",
-      "entity_type": "government",
-      "description": "U.S. federal government considering joining military action against Houthis.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "uk-government",
-      "label": "U.K. Government",
-      "canonical_name": "U.K. Government",
-      "type": "government",
-      "entity_type": "government",
-      "description": "British government pledging defensive military support and aerial refueling to Saudi Arabia.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
-    },
-    {
-      "id": "yemeni-government-forces",
-      "label": "Yemeni Government Forces",
-      "canonical_name": "Yemeni Government Forces",
-      "type": "armed_group",
-      "entity_type": "armed_group",
-      "description": "Yemeni forces targeting Houthi positions around Taiz.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:05:15.681885+00:00"
-    },
-    {
-      "id": "taiz",
-      "label": "Taiz",
-      "canonical_name": "Taiz",
-      "type": "location",
-      "entity_type": "location",
-      "description": "Yemeni city around which Yemeni forces targeted Houthi positions.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:05:15.681885+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "airline-industry",
@@ -955,29 +1153,7 @@
       "description": "Airlines warned by Houthis not to use Saudi Arabian airports.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:05:15.681885+00:00"
-    },
-    {
-      "id": "un-security-council",
-      "label": "United Nations Security Council",
-      "canonical_name": "United Nations Security Council",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Body to which GCC states have written regarding Houthi attacks.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
-    },
-    {
-      "id": "saudi-defence-ministry",
-      "label": "Saudi Ministry of Defense",
-      "canonical_name": "Saudi Ministry of Defense",
-      "type": "government",
-      "entity_type": "government",
-      "description": "Saudi government body reporting details of intercepted attacks and coalition strikes.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "al-jawf-governorate",
@@ -988,7 +1164,7 @@
       "description": "Yemeni governorate struck by Saudi-led coalition airstrikes targeting Houthi positions.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "abha-airport",
@@ -999,18 +1175,7 @@
       "description": "Saudi airport repeatedly targeted by Houthi drones.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
-    },
-    {
-      "id": "jantar-mantar",
-      "label": "Jantar Mantar",
-      "canonical_name": "Jantar Mantar",
-      "type": "location",
-      "entity_type": "location",
-      "description": "Historic observatory and protest site in central Delhi where demonstrations gathered",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "cec-of-india",
@@ -1021,18 +1186,7 @@
       "description": "Election chief whose ouster is demanded by the 'Cockroach' protesters",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
-    },
-    {
-      "id": "bjp",
-      "label": "Bharatiya Janata Party (BJP)",
-      "canonical_name": "Bharatiya Janata Party (BJP)",
-      "type": "government",
-      "entity_type": "government",
-      "description": "Incumbent ruling party of India, led by PM Narendra Modi",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "amnesty-international",
@@ -1043,7 +1197,7 @@
       "description": "International human rights NGO calling on Delhi police to facilitate peaceful protest",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "lok-sabha",
@@ -1054,7 +1208,7 @@
       "description": "Lower house of India's parliament; context for youth voter anger",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "youth-protesters",
@@ -1065,29 +1219,7 @@
       "description": "Predominantly young Indian demonstrators driven by discontent over electoral processes",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
-    },
-    {
-      "id": "the-guardian",
-      "label": "The Guardian",
-      "canonical_name": "The Guardian",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "British newspaper that reported on the detention of 'cockroach' leaders",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
-    },
-    {
-      "id": "reuters",
-      "label": "Reuters",
-      "canonical_name": "Reuters",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "News agency that reported on Saudi plans for an assault against the Houthis",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:34:42.142420+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "venezuela",
@@ -1098,7 +1230,7 @@
       "description": "Subject of recent geopolitical upheaval analyzed by CSIS",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "mass-surveillance",
@@ -1109,40 +1241,7 @@
       "description": "Concept of large-scale monitoring of individuals, now trivially achievable with AI tools",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "ms-now",
-      "label": "MS NOW",
-      "canonical_name": "MS NOW",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "News outlet reporting on Trump's geopolitical impact on China",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "the-diplomat",
-      "label": "The Diplomat",
-      "canonical_name": "The Diplomat",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Asia-Pacific current affairs magazine publishing piece on China's global order ambitions",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "pcmag",
-      "label": "PCMag",
-      "canonical_name": "PCMag",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Technology publication reporting on AI surveillance capabilities",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "global-order",
@@ -1153,18 +1252,7 @@
       "description": "The international rules-based system that China is positioned to reshape",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
-    },
-    {
-      "id": "vibe-coding",
-      "label": "Vibe Coding",
-      "canonical_name": "Vibe Coding",
-      "type": "concept",
-      "entity_type": "concept",
-      "description": "AI-assisted rapid software development approach used to build surveillance tool",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:48:45.428014+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "paris",
@@ -1175,7 +1263,7 @@
       "description": "Capital of France where thousands protested school conditions and were dispersed by police",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "french-government",
@@ -1186,7 +1274,7 @@
       "description": "Government of France facing nationwide protests over school conditions",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "mass-migration",
@@ -1197,7 +1285,7 @@
       "description": "Concept cited by Trump as a cause of the French protests",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "islam",
@@ -1208,18 +1296,7 @@
       "description": "Religion cited by Trump as a factor in the French protests",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
-    },
-    {
-      "id": "french-union-of-education-workers",
-      "label": "French Education Unions",
-      "canonical_name": "French Education Unions",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Trade unions representing education workers who called for nationwide action",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T14:50:25.258492+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "esa",
@@ -1230,7 +1307,7 @@
       "description": "Partner agency in the James Webb Space Telescope mission",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "csa",
@@ -1241,29 +1318,7 @@
       "description": "Partner agency in the James Webb Space Telescope mission",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
-    },
-    {
-      "id": "live-science",
-      "label": "Live Science",
-      "canonical_name": "Live Science",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "News outlet reporting on JWST's trace of the record-breaking radio signal",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
-    },
-    {
-      "id": "space-com",
-      "label": "Space.com",
-      "canonical_name": "Space.com",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "News outlet reporting on the most distant fast radio burst detection by JWST",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "host-galaxy-frb",
@@ -1274,7 +1329,7 @@
       "description": "Distant galaxy identified as the origin point of the farthest fast radio burst yet observed",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:00:24.247754+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "washington-post",
@@ -1285,18 +1340,7 @@
       "description": "US newspaper that published the opinion article on 'little red dots' on 11 October 2026.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:03:52.029163+00:00"
-    },
-    {
-      "id": "interesting-engineering",
-      "label": "Interesting Engineering",
-      "canonical_name": "Interesting Engineering",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Outlet that reported on the US study detecting the first water cloud changes outside the solar system.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:03:52.029163+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "universe",
@@ -1307,7 +1351,7 @@
       "description": "The cosmos whose origins are being investigated via 'little red dots' and exoplanet atmospheric studies.",
       "val": 5,
       "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:03:52.029163+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "grand-ethiopian-renaissance-dam",
@@ -1321,6 +1365,512 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
+      "id": "cockroach-leaders-controversy",
+      "label": "'Cockroach' Leaders Controversy",
+      "canonical_name": "'Cockroach' Leaders Controversy",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Reported derogatory framing used against detained civil society leaders, referenced in DW.com headline.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
+    },
+    {
+      "id": "youtube",
+      "label": "YouTube",
+      "canonical_name": "YouTube",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Video-sharing platform on which Dhruv Rathee built his career as a content creator.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "outlook-luxe",
+      "label": "Outlook Luxe",
+      "canonical_name": "Outlook Luxe",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian lifestyle and luxury publication that reported on Dhruv Rathee's net worth and lifestyle in 2026.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "india-today",
+      "label": "India Today",
+      "canonical_name": "India Today",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian news outlet that profiled Dhruv Rathee's educational degrees and the origins of his YouTube career.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "news18",
+      "label": "News18",
+      "canonical_name": "News18",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian news network that reported on Dhruv Rathee's educational qualifications and higher studies in Germany.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "germany",
+      "label": "Germany",
+      "canonical_name": "Germany",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country where Dhruv Rathee pursued higher studies, as reported by News18.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "mechanical-engineering",
+      "label": "Mechanical Engineering",
+      "canonical_name": "Mechanical Engineering",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Field of undergraduate study completed by Dhruv Rathee, mentioned by News18.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "dhruv-rathee-net-worth-2026",
+      "label": "Dhruv Rathee Net Worth 2026 Feature",
+      "canonical_name": "Dhruv Rathee Net Worth 2026 Feature",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Lifestyle/wealth profile of Dhruv Rathee published by Outlook Luxe in October 2026.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
+    },
+    {
+      "id": "imran-khan",
+      "label": "Imran Khan",
+      "canonical_name": "Imran Khan",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Former Prime Minister of Pakistan under whom Sania Nishtar served as minister.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "drug-trafficking",
+      "label": "Drug Trafficking",
+      "canonical_name": "Drug Trafficking",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Alleged linkage used by BJP (per AAP) to defame AAP ahead of Punjab polls.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "andy-burnham",
+      "label": "Andy Burnham",
+      "canonical_name": "Andy Burnham",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Mayor of Greater Manchester; stated it is 'clear' Russia interfered with the Brexit vote",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "mariupol",
+      "label": "Mariupol",
+      "canonical_name": "Mariupol",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Ukrainian city where the Donetsk Academic Regional Drama Theater was bombed in March 2022",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "kremlin",
+      "label": "Kremlin",
+      "canonical_name": "Kremlin",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Russian government; accused of historical revisionism and energy strikes on Ukraine",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "kyiv-government",
+      "label": "Government of Ukraine",
+      "canonical_name": "Government of Ukraine",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Ukrainian government accusing Russia of ceasefire violations",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "brexit",
+      "label": "Brexit",
+      "canonical_name": "Brexit",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "UK's withdrawal from the European Union; alleged target of Russian interference",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "energy-ceasefire",
+      "label": "Russia-Ukraine Energy Ceasefire",
+      "canonical_name": "Russia-Ukraine Energy Ceasefire",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Reported agreement by Trump that Russia and Ukraine would halt strikes on energy infrastructure",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "iraq",
+      "label": "Iraq",
+      "canonical_name": "Iraq",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Oil producer reliant on pipeline routes through Turkey for export",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "turkey",
+      "label": "Turkey",
+      "canonical_name": "Turkey",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Transit country for Iraqi oil pipeline exports to Mediterranean markets",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "persian-gulf",
+      "label": "Persian Gulf",
+      "canonical_name": "Persian Gulf",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Alternative oil transit region adjacent to the Strait of Hormuz",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "strait-of-hormuz",
+      "label": "Strait of Hormuz",
+      "canonical_name": "Strait of Hormuz",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Strategic chokepoint through which a large share of Middle East oil transits",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "habshan-fujairah-pipeline",
+      "label": "Habshan-Fujairah Pipeline",
+      "canonical_name": "Habshan-Fujairah Pipeline",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "UAE pipeline bypassing the Strait of Hormuz, often cited as an alternative oil route",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "us-iran-nuclear-talks",
+      "label": "US-Iran Nuclear Talks",
+      "canonical_name": "US-Iran Nuclear Talks",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Diplomatic negotiations whose reported progress is influencing shipper confidence in the Red Sea",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
+      "id": "un-envoy-for-yemen",
+      "label": "UN Special Envoy for Yemen",
+      "canonical_name": "UN Special Envoy for Yemen",
+      "type": "person",
+      "entity_type": "person",
+      "description": "UN mediator leading international efforts to end the Yemen conflict; warned the Security Council of a return to full-scale war.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "houthi-red-sea-campaign",
+      "label": "Houthi Red Sea Shipping Campaign",
+      "canonical_name": "Houthi Red Sea Shipping Campaign",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Houthi attacks on commercial shipping in the Red Sea in solidarity with Palestinians, escalating regional tensions.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "cairo",
+      "label": "Cairo",
+      "canonical_name": "Cairo",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Capital of Egypt where journalists plan protests over detention of colleagues.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "donald-tusk",
+      "label": "Donald Tusk",
+      "canonical_name": "Donald Tusk",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Polish Prime Minister targeted in a foiled alleged assassination attempt.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "poland",
+      "label": "Poland",
+      "canonical_name": "Poland",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country where police foiled an alleged plot to assassinate PM Donald Tusk.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "abramovich",
+      "label": "Roman Abramovich",
+      "canonical_name": "Roman Abramovich",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Russian oligarch whose wealth was concealed through falsified backdated documents to evade tax.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "saudi-government",
+      "label": "Saudi Government",
+      "canonical_name": "Saudi Government",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Saudi authorities extended airport closure, moved Riyadh schools online, and vowed a major response.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "hepatitis-b-vaccine",
+      "label": "Hepatitis B Vaccine",
+      "canonical_name": "Hepatitis B Vaccine",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Vaccine that will be withheld from some newborns in the trial.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "saudi-arabian-government",
+      "label": "Saudi Arabian Government",
+      "canonical_name": "Saudi Arabian Government",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Government of Saudi Arabia vowing a major response after the Houthi strike on Riyadh airport.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "us-government",
+      "label": "U.S. Government",
+      "canonical_name": "U.S. Government",
+      "type": "government",
+      "entity_type": "government",
+      "description": "U.S. federal government considering joining military action against Houthis.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "uk-government",
+      "label": "U.K. Government",
+      "canonical_name": "U.K. Government",
+      "type": "government",
+      "entity_type": "government",
+      "description": "British government pledging defensive military support and aerial refueling to Saudi Arabia.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "yemeni-government-forces",
+      "label": "Yemeni Government Forces",
+      "canonical_name": "Yemeni Government Forces",
+      "type": "armed_group",
+      "entity_type": "armed_group",
+      "description": "Yemeni forces targeting Houthi positions around Taiz.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "taiz",
+      "label": "Taiz",
+      "canonical_name": "Taiz",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Yemeni city around which Yemeni forces targeted Houthi positions.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "saudi-defence-ministry",
+      "label": "Saudi Ministry of Defense",
+      "canonical_name": "Saudi Ministry of Defense",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Saudi government body reporting details of intercepted attacks and coalition strikes.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "the-guardian",
+      "label": "The Guardian",
+      "canonical_name": "The Guardian",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "British newspaper that reported on the detention of 'cockroach' leaders",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "reuters",
+      "label": "Reuters",
+      "canonical_name": "Reuters",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "News agency that reported on Saudi plans for an assault against the Houthis",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "ms-now",
+      "label": "MS NOW",
+      "canonical_name": "MS NOW",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "News outlet reporting on Trump's geopolitical impact on China",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "the-diplomat",
+      "label": "The Diplomat",
+      "canonical_name": "The Diplomat",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Asia-Pacific current affairs magazine publishing piece on China's global order ambitions",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "pcmag",
+      "label": "PCMag",
+      "canonical_name": "PCMag",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Technology publication reporting on AI surveillance capabilities",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "vibe-coding",
+      "label": "Vibe Coding",
+      "canonical_name": "Vibe Coding",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "AI-assisted rapid software development approach used to build surveillance tool",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "french-union-of-education-workers",
+      "label": "French Education Unions",
+      "canonical_name": "French Education Unions",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Trade unions representing education workers who called for nationwide action",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "live-science",
+      "label": "Live Science",
+      "canonical_name": "Live Science",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "News outlet reporting on JWST's trace of the record-breaking radio signal",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "space-com",
+      "label": "Space.com",
+      "canonical_name": "Space.com",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "News outlet reporting on the most distant fast radio burst detection by JWST",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "interesting-engineering",
+      "label": "Interesting Engineering",
+      "canonical_name": "Interesting Engineering",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Outlet that reported on the US study detecting the first water cloud changes outside the solar system.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
       "id": "pope-leo",
       "label": "Pope Leo XIV",
       "canonical_name": "Pope Leo XIV",
@@ -1329,7 +1879,7 @@
       "description": "71-year-old pontiff set to undergo surgery for an early-stage lung nodule.",
       "val": 4,
       "connection_count": 0,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "delhi-protests",
@@ -1340,7 +1890,7 @@
       "description": "Protests in Delhi as leaders of a freed group vow to continue fighting despite police restrictions.",
       "val": 4,
       "connection_count": 0,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "djibouti-migrant-tragedy",
@@ -1351,7 +1901,7 @@
       "description": "Capsizing of vessel carrying 300+ people near Guhere; at least 109 dead, 100+ missing.",
       "val": 4,
       "connection_count": 0,
-      "first_observed_at": "2026-10-11T12:07:54.413277+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "iranian-government",
@@ -1362,7 +1912,7 @@
       "description": "Government in Tehran accused of backing the Houthi movement.",
       "val": 4,
       "connection_count": 0,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "yemen-war",
@@ -1373,7 +1923,7 @@
       "description": "Ongoing conflict in Yemen in which Saudi Arabia is involved against the Houthis, recently restarted after a series of miscalculations.",
       "val": 4,
       "connection_count": 0,
-      "first_observed_at": "2026-10-11T13:59:59.311155+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "mecca",
@@ -1384,7 +1934,7 @@
       "description": "Saudi holy city where the GCC security pact was signed in 2019.",
       "val": 4,
       "connection_count": 0,
-      "first_observed_at": "2026-10-11T14:08:37.207753+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "suez-canal",
@@ -1418,6 +1968,72 @@
       "val": 4,
       "connection_count": 0,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "chief-justice-of-india",
+      "label": "Chief Justice of India (CJI)",
+      "canonical_name": "Chief Justice of India (CJI)",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Head of India's judiciary, referenced via the 'CJP' officer directive",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T10:04:38.727195+00:00"
+    },
+    {
+      "id": "vladimir-putin",
+      "label": "Vladimir Putin",
+      "canonical_name": "Vladimir Putin",
+      "type": "person",
+      "entity_type": "person",
+      "description": "President of Russia; subject of ceasefire claims and accused of energy strikes",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "sanaa",
+      "label": "Sanaa",
+      "canonical_name": "Sanaa",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Yemeni capital under Houthi control.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "responsible-statecraft",
+      "label": "Responsible Statecraft",
+      "canonical_name": "Responsible Statecraft",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Media outlet publishing analysis of Saudi Arabia's return to war in Yemen.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "politico",
+      "label": "Politico",
+      "canonical_name": "Politico",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Media outlet reporting on Western voter fatigue with Middle East conflicts and the Houthi conflict.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "un-news",
+      "label": "UN News",
+      "canonical_name": "UN News",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Official news service of the United Nations, reporting on the Security Council briefing on Yemen.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
     }
   ],
   "links": [
@@ -1605,7 +2221,7 @@
       "source": "navi-pillay",
       "target": "icj",
       "type": "PARTICIPATED_IN",
-      "description": "Pillay serves as a judge at the International Court of Justice."
+      "description": "Serves as a judge on the International Court of Justice."
     },
     {
       "source": "navi-pillay",
@@ -1677,7 +2293,7 @@
       "source": "russia",
       "target": "ukraine",
       "type": "OPPOSES",
-      "description": "Russia and Ukraine have been at war since the 2022 full-scale invasion."
+      "description": "Russia is engaged in an ongoing war against Ukraine"
     },
     {
       "source": "russia",
@@ -1719,19 +2335,19 @@
       "source": "houthi-movement",
       "target": "saudi-arabia",
       "type": "OPPOSES",
-      "description": "Houthis are engaged in armed conflict with Saudi Arabia, launching cross-border strikes."
+      "description": "Houthi actions in the Red Sea threaten Saudi Arabian oil export routes"
     },
     {
       "source": "houthi-movement",
       "target": "iran",
       "type": "SUPPORTS",
-      "description": "Saudi Arabia accuses Iran of providing arms, training and satellite/communications support to the Houthis."
+      "description": "Iran is a key regional backer of the Houthi movement."
     },
     {
       "source": "iran",
       "target": "houthi-movement",
       "type": "SUPPORTS",
-      "description": "Iran denies arming the Houthis but is accused by Saudi Arabia of being behind cross-border attacks."
+      "description": "Iran is broadly understood as a regional backer of the Houthis"
     },
     {
       "source": "houthi-movement",
@@ -1743,7 +2359,7 @@
       "source": "saudi-arabia",
       "target": "houthi-movement",
       "type": "OPPOSES",
-      "description": "Saudi Arabia is planning military action against the Houthis"
+      "description": "Saudi Arabia opposes the Houthi movement and is fighting it in Yemen."
     },
     {
       "source": "saudi-arabia",
@@ -1755,7 +2371,7 @@
       "source": "houthi-movement",
       "target": "yemen",
       "type": "LOCATED_IN",
-      "description": "Houthis operate from northern Yemen and control large parts of the country."
+      "description": "The Houthis control much of northern Yemen, including Sanaa."
     },
     {
       "source": "united-kingdom",
@@ -1773,13 +2389,13 @@
       "source": "united-states",
       "target": "houthi-movement",
       "type": "OPPOSES",
-      "description": "The U.S. is weighing joining military action against the Houthis alongside Saudi Arabia."
+      "description": "The US opposes Houthi attacks on Red Sea shipping and has been drawn into the broader Middle East conflict."
     },
     {
       "source": "houthi-movement",
       "target": "red-sea",
       "type": "THREATENS",
-      "description": "Houthi attacks have threatened shipping and aviation across the Red Sea area."
+      "description": "The Houthis have launched attacks on commercial shipping in the Red Sea."
     },
     {
       "source": "iran",
@@ -1821,7 +2437,7 @@
       "source": "houthi-movement",
       "target": "israel",
       "type": "OPPOSES",
-      "description": "Houthis claim Israel is behind Saudi airstrikes in Yemen, framing Saudi Arabia and Israel as allies."
+      "description": "The Houthis have targeted Israel-linked shipping in the Red Sea."
     },
     {
       "source": "houthi-movement",
@@ -2194,9 +2810,507 @@
       "target": "houthi-movement",
       "type": "OPPOSES",
       "description": "Saudi-led coalition has a history of opposing Houthi forces in Yemen"
+    },
+    {
+      "source": "abhijeet-dipke",
+      "target": "cjp",
+      "type": "PARTICIPATED_IN",
+      "description": "Abhijeet Dipke is the founder and leading activist of CJP"
+    },
+    {
+      "source": "saurabh-das",
+      "target": "cjp",
+      "type": "PARTICIPATED_IN",
+      "description": "Saurabh Das is a leader in CJP and was detained alongside Dipke"
+    },
+    {
+      "source": "cjp",
+      "target": "cockroach-movement",
+      "type": "SUPPORTS",
+      "description": "CJP is the organisational backbone of the 'Cockroach' protest movement"
+    },
+    {
+      "source": "cockroach-movement",
+      "target": "modi-government",
+      "type": "OPPOSES",
+      "description": "The 'Cockroach' movement protests against and tests the Modi government"
+    },
+    {
+      "source": "delhi-police",
+      "target": "abhijeet-dipke",
+      "type": "ACCUSES",
+      "description": "Delhi Police detained Dipke ahead of the planned protest march"
+    },
+    {
+      "source": "delhi-police",
+      "target": "saurabh-das",
+      "type": "ACCUSES",
+      "description": "Delhi Police detained Saurabh Das ahead of the planned protest march"
+    },
+    {
+      "source": "jantar-mantar",
+      "target": "delhi",
+      "type": "LOCATED_IN",
+      "description": "Jantar Mantar is located in Delhi"
+    },
+    {
+      "source": "delhi",
+      "target": "india",
+      "type": "LOCATED_IN",
+      "description": "Delhi is in India"
+    },
+    {
+      "source": "abhijeet-dipke",
+      "target": "modi-government",
+      "type": "OPPOSES",
+      "description": "Dipke publicly condemned the government as a dictatorship prior to detention"
+    },
+    {
+      "source": "cjp",
+      "target": "delhi-courts",
+      "type": "NEGOTIATES_WITH",
+      "description": "CJP engaged the Delhi judiciary to secure release of detained leaders"
+    },
+    {
+      "source": "delhi-police",
+      "target": "abhijeet-dipke",
+      "type": "THREATENS",
+      "description": "Police insisted Dipke sign arrest papers despite family bereavement"
+    },
+    {
+      "source": "abhijeet-dipke",
+      "target": "cjp",
+      "type": "INVOLVES",
+      "description": "Abhijeet Dipke is the founder of CJP."
+    },
+    {
+      "source": "cjp",
+      "target": "cjp-protest-oct-2026",
+      "type": "ORGANIZES",
+      "description": "CJP was the organizer of the planned October 2026 demonstration."
+    },
+    {
+      "source": "indian-police",
+      "target": "abhijeet-dipke",
+      "type": "IMPACTS",
+      "description": "Indian police detained CJP founder Abhijeet Dipke ahead of the protest."
+    },
+    {
+      "source": "indian-police",
+      "target": "dhruv-rathee",
+      "type": "IMPACTS",
+      "description": "Indian police detained YouTuber Dhruv Rathee ahead of the protest."
+    },
+    {
+      "source": "indian-government",
+      "target": "cjp-protest-oct-2026",
+      "type": "OPPOSES",
+      "description": "Indian state authorities moved to prevent the CJP demonstration from taking place."
+    },
+    {
+      "source": "cjp",
+      "target": "indian-government",
+      "type": "OPPOSES",
+      "description": "CJP, as a civil rights organisation, is positioned in opposition to restrictive state actions."
+    },
+    {
+      "source": "abhijeet-dipke",
+      "target": "india",
+      "type": "LOCATED_IN",
+      "description": "Abhijeet Dipke is an Indian civil rights activist based in India."
+    },
+    {
+      "source": "dhruv-rathee",
+      "target": "india",
+      "type": "LOCATED_IN",
+      "description": "Dhruv Rathee is an Indian YouTuber."
+    },
+    {
+      "source": "cjp",
+      "target": "delhi",
+      "type": "LOCATED_IN",
+      "description": "CJP operates from Delhi, a focal point of the planned protest."
+    },
+    {
+      "source": "cockroach-leaders-controversy",
+      "target": "abhijeet-dipke",
+      "type": "INVOLVES",
+      "description": "The 'cockroach leaders' framing referred to detained activists including Dipke."
+    },
+    {
+      "source": "dhruv-rathee",
+      "target": "youtube",
+      "type": "INVOLVES",
+      "description": "Dhruv Rathee built his public career through content creation on YouTube."
+    },
+    {
+      "source": "dhruv-rathee",
+      "target": "germany",
+      "type": "LOCATED_IN",
+      "description": "Dhruv Rathee pursued higher studies in Germany."
+    },
+    {
+      "source": "dhruv-rathee",
+      "target": "mechanical-engineering",
+      "type": "INVOLVES",
+      "description": "Dhruv Rathee's undergraduate field of study was mechanical engineering."
+    },
+    {
+      "source": "dhruv-rathee",
+      "target": "youtube-content-creation",
+      "type": "SUPPORTS",
+      "description": "Dhruv Rathee's YouTube content creation is the foundation of his wealth and lifestyle profile."
+    },
+    {
+      "source": "dhruv-rathee-net-worth-2026",
+      "target": "youtube-content-creation",
+      "type": "CAUSED_BY",
+      "description": "Dhruv Rathee's 2026 net worth profile results from his YouTube content creation activity."
+    },
+    {
+      "source": "abhijeet-dipke",
+      "target": "cockroach-janta-party",
+      "type": "SUPPORTS",
+      "description": "Abhijeet Dipke is the founder of Cockroach Janta Party."
+    },
+    {
+      "source": "ashutosh-ranka",
+      "target": "cockroach-janta-party",
+      "type": "SUPPORTS",
+      "description": "Ashutosh Ranka serves as spokesperson of Cockroach Janta Party."
+    },
+    {
+      "source": "abhijeet-dipke",
+      "target": "aam-aadmi-party",
+      "type": "INVOLVES",
+      "description": "Report raises questions about the founder's past ties to AAP."
+    },
+    {
+      "source": "cockroach-janta-party",
+      "target": "aam-aadmi-party",
+      "type": "OPPOSES",
+      "description": "CJP is alleged to be linked to / targeting AAP, raising political tensions."
+    },
+    {
+      "source": "ashutosh-ranka",
+      "target": "gavi",
+      "type": "INVOLVES",
+      "description": "Ranka's reported 'Gavi trail' is the basis of the Pakistan-link allegation."
+    },
+    {
+      "source": "ashutosh-ranka",
+      "target": "sania-nishtar",
+      "type": "INVOLVES",
+      "description": "Ranka's Gavi trail allegedly leads to former Pakistani minister Sania Nishtar."
+    },
+    {
+      "source": "sania-nishtar",
+      "target": "imran-khan",
+      "type": "SUPPORTS",
+      "description": "Sania Nishtar served as minister under former PM Imran Khan."
+    },
+    {
+      "source": "sania-nishtar",
+      "target": "pakistan",
+      "type": "LOCATED_IN",
+      "description": "Sania Nishtar is a Pakistani political figure."
+    },
+    {
+      "source": "gavi",
+      "target": "pakistan",
+      "type": "LOCATED_IN",
+      "description": "Gavi serves as the institutional link to Pakistan in the alleged trail."
+    },
+    {
+      "source": "aam-aadmi-party",
+      "target": "bjp",
+      "type": "ACCUSES",
+      "description": "AAP accuses BJP of plotting to defame it by linking it to drug traffickers ahead of Punjab polls."
+    },
+    {
+      "source": "bjp",
+      "target": "aam-aadmi-party",
+      "type": "OPPOSES",
+      "description": "BJP and AAP are rival political parties in the context of Punjab elections."
+    },
+    {
+      "source": "bjp",
+      "target": "drug-trafficking",
+      "type": "ACCUSES",
+      "description": "BJP allegedly linked AAP to drug traffickers as part of the alleged defamation plot."
+    },
+    {
+      "source": "aam-aadmi-party",
+      "target": "punjab-state",
+      "type": "LOCATED_IN",
+      "description": "AAP is contesting the upcoming Punjab elections."
+    },
+    {
+      "source": "bjp",
+      "target": "punjab-state",
+      "type": "LOCATED_IN",
+      "description": "BJP is also active in Punjab ahead of the upcoming elections."
+    },
+    {
+      "source": "russia",
+      "target": "energy-ceasefire",
+      "type": "OPPOSES",
+      "description": "Russia is alleged to have violated the energy ceasefire by striking Ukrainian energy infrastructure"
+    },
+    {
+      "source": "ukraine",
+      "target": "russia",
+      "type": "ACCUSES",
+      "description": "Ukraine accused Russia of violating Trump's energy ceasefire"
+    },
+    {
+      "source": "european-union",
+      "target": "russia",
+      "type": "SANCTIONS",
+      "description": "Imposed almost 1,600 new sanctions on Russia's military-industrial complex."
+    },
+    {
+      "source": "united-states",
+      "target": "russia",
+      "type": "NEGOTIATES_WITH",
+      "description": "The US under Trump is engaging diplomatically with Russia over the Ukraine conflict"
+    },
+    {
+      "source": "united-states",
+      "target": "ukraine",
+      "type": "NEGOTIATES_WITH",
+      "description": "The US under Trump is engaging diplomatically with Ukraine over the conflict"
+    },
+    {
+      "source": "russia",
+      "target": "ukraine",
+      "type": "THREATENS",
+      "description": "The film is part of broader Russian information warfare against Ukraine"
+    },
+    {
+      "source": "russia",
+      "target": "brexit",
+      "type": "IMPACTS",
+      "description": "Russia is alleged to have interfered in the Brexit vote"
+    },
+    {
+      "source": "russia",
+      "target": "united-kingdom",
+      "type": "THREATENS",
+      "description": "Russian interference in Brexit demonstrates hostile action toward UK democratic processes"
+    },
+    {
+      "source": "russia",
+      "target": "kyiv-government",
+      "type": "OPPOSES",
+      "description": "Russia opposes the Ukrainian government and is engaged in military conflict"
+    },
+    {
+      "source": "houthi-movement",
+      "target": "middle-east-oil-market",
+      "type": "IMPACTS",
+      "description": "A Houthi blockade could worsen an already fragile Middle East oil market"
+    },
+    {
+      "source": "middle-east-oil-market",
+      "target": "red-sea",
+      "type": "LOCATED_IN",
+      "description": "Middle East oil exports rely heavily on Red Sea transit routes"
+    },
+    {
+      "source": "middle-east-oil-market",
+      "target": "strait-of-hormuz",
+      "type": "LOCATED_IN",
+      "description": "A large share of Middle East oil transits the Strait of Hormuz"
+    },
+    {
+      "source": "uae",
+      "target": "habshan-fujairah-pipeline",
+      "type": "INVOLVES",
+      "description": "The Habshan-Fujairah pipeline allows the UAE to bypass the Strait of Hormuz"
+    },
+    {
+      "source": "iraq",
+      "target": "turkey",
+      "type": "NEGOTIATES_WITH",
+      "description": "Iraq depends on pipelines through Turkey to export oil to Mediterranean markets"
+    },
+    {
+      "source": "israel",
+      "target": "middle-east-oil-market",
+      "type": "IMPACTS",
+      "description": "Israeli regional dynamics add to the fragility of Middle East oil export routes"
+    },
+    {
+      "source": "united-states",
+      "target": "iran",
+      "type": "NEGOTIATES_WITH",
+      "description": "The US and Iran are engaged in nuclear talks whose progress is buoying shippers"
+    },
+    {
+      "source": "united-states",
+      "target": "middle-east-oil-market",
+      "type": "IMPACTS",
+      "description": "US-Iran diplomatic progress influences confidence in Middle East oil transit"
+    },
+    {
+      "source": "red-sea",
+      "target": "persian-gulf",
+      "type": "LOCATED_IN",
+      "description": "The Red Sea is the principal maritime corridor adjacent to the Persian Gulf oil-producing region"
+    },
+    {
+      "source": "saudi-led-coalition",
+      "target": "houthi-movement",
+      "type": "OPPOSES",
+      "description": "The Saudi-led coalition is fighting the Houthis in Yemen."
+    },
+    {
+      "source": "saudi-arabia",
+      "target": "saudi-led-coalition",
+      "type": "ALLIES_WITH",
+      "description": "Saudi Arabia leads the multinational coalition fighting in Yemen."
+    },
+    {
+      "source": "uae",
+      "target": "saudi-led-coalition",
+      "type": "ALLIES_WITH",
+      "description": "The UAE is a key partner in the Saudi-led coalition in Yemen."
+    },
+    {
+      "source": "houthi-movement",
+      "target": "internationally-recognized-government-of-yemen",
+      "type": "OPPOSES",
+      "description": "The Houthis are fighting the internationally recognized Yemeni government."
+    },
+    {
+      "source": "internationally-recognized-government-of-yemen",
+      "target": "saudi-led-coalition",
+      "type": "ALLIES_WITH",
+      "description": "The internationally recognized Yemeni government is backed by the Saudi-led coalition."
+    },
+    {
+      "source": "united-states",
+      "target": "yemeni-civil-war",
+      "type": "IMPACTS",
+      "description": "US voters are reportedly fatigued by ongoing Middle East conflicts including the Yemen war."
+    },
+    {
+      "source": "un-security-council",
+      "target": "yemeni-civil-war",
+      "type": "RESPONDS_TO",
+      "description": "The UN Security Council is responding to the renewed Yemen war with diplomatic engagement."
+    },
+    {
+      "source": "houthi-red-sea-campaign",
+      "target": "houthi-movement",
+      "type": "INVOLVES",
+      "description": "The Houthi Red Sea shipping campaign is carried out by the Houthi movement."
+    },
+    {
+      "source": "saudi-arabia",
+      "target": "yemen",
+      "type": "THREATENS",
+      "description": "Saudi Arabia's renewed military campaign threatens Yemen's stability."
+    },
+    {
+      "source": "saudi-arabia",
+      "target": "iran",
+      "type": "OPPOSES",
+      "description": "Saudi Arabia and Iran are regional rivals backing opposing sides in the Yemen conflict."
+    },
+    {
+      "source": "norwegian-nobel-committee",
+      "target": "navi-pillay",
+      "type": "SANCTIONS",
+      "description": "Awarded the Nobel Peace Prize to Navi Pillay for promoting international law."
+    },
+    {
+      "source": "navi-pillay",
+      "target": "israel",
+      "type": "ACCUSES",
+      "description": "Chaired the UN commission that concluded Israel committed genocide in Gaza."
+    },
+    {
+      "source": "israel",
+      "target": "gaza",
+      "type": "LOCATED_IN",
+      "description": "Israel's military actions in Gaza formed the basis of the genocide finding."
+    },
+    {
+      "source": "hurricane-isaias",
+      "target": "noaa",
+      "type": "IMPACTS",
+      "description": "NOAA is tracking Hurricane Isaias' approach to the US Gulf coast."
+    },
+    {
+      "source": "egypt",
+      "target": "matsadaash",
+      "type": "ACCUSES",
+      "description": "Egyptian authorities accused Matsadaash journalists of producing false news on behalf of the Muslim Brotherhood."
+    },
+    {
+      "source": "matsadaash",
+      "target": "cairo",
+      "type": "LOCATED_IN",
+      "description": "Matsadaash operates out of Cairo where protests over detentions were planned."
+    },
+    {
+      "source": "egypt",
+      "target": "muslim-brotherhood",
+      "type": "OPPOSES",
+      "description": "Egypt outlawed the Muslim Brotherhood, which authorities accuse the journalists of serving."
+    },
+    {
+      "source": "zelenskyy",
+      "target": "russia",
+      "type": "ACCUSES",
+      "description": "Accused Russia of violating the Trump-brokered energy ceasefire."
+    },
+    {
+      "source": "zelenskyy",
+      "target": "donald-trump",
+      "type": "NEGOTIATES_WITH",
+      "description": "Negotiated an 'energy ceasefire' framework with Trump."
+    },
+    {
+      "source": "poland",
+      "target": "donald-tusk",
+      "type": "THREATENS",
+      "description": "Polish police foiled a plot to assassinate PM Donald Tusk in Lower Silesia."
+    },
+    {
+      "source": "houthi-movement",
+      "target": "riyadh-airport",
+      "type": "IMPACTS",
+      "description": "Houthis struck Riyadh airport and another Saudi facility, killing 13."
+    },
+    {
+      "source": "houthi-movement",
+      "target": "saudi-arabia",
+      "type": "THREATENS",
+      "description": "Houthi attacks on Saudi airports triggered Saudi vows of a serious response."
+    },
+    {
+      "source": "saudi-arabia",
+      "target": "houthi-movement",
+      "type": "RESPONDS_TO",
+      "description": "Saudi minister vowed a serious response to the Houthi attacks."
+    },
+    {
+      "source": "russia",
+      "target": "donald-trump",
+      "type": "OPPOSES",
+      "description": "Russia's actions prompted Trump-brokered ceasefire efforts and US-Russia diesel deal backlash."
+    },
+    {
+      "source": "abramovich",
+      "target": "russia",
+      "type": "LOCATED_IN",
+      "description": "Russian oligarch whose wealth concealment linked him to Russian tax evasion."
     }
   ],
-  "generated_at": "2026-10-11T15:05:11.271996+00:00",
-  "entity_count": 129,
-  "relationship_count": 190
+  "generated_at": "2026-10-12T11:01:08.420983+00:00",
+  "entity_count": 185,
+  "relationship_count": 245
 }
