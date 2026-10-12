@@ -1008,6 +1008,15 @@ function dimHex(hex) {
 function effectiveNodeColor(node) {
   if (state.highlightedNodeIds && state.highlightedNodeIds.size > 0) {
     if (!state.highlightedNodeIds.has(node.id)) return dimHex(getNodeColor(node));
+    return getNodeColor(node);
+  }
+  // When a node is selected / focused, keep the target AND all its connecting neighbours in full bright colour
+  if (state.selectedNode) {
+    const selId = state.selectedNode.id;
+    if (node.id === selId) return getNodeColor(node);
+    const neighbours = adjSet.get(selId);
+    if (neighbours && neighbours.has(node.id)) return getNodeColor(node);
+    return dimHex(getNodeColor(node));
   }
   if (state.hoveredNode && node !== state.hoveredNode && !state.hoveredNeighbours.has(node.id)) {
     return dimHex(getNodeColor(node));
@@ -1030,10 +1039,18 @@ function effectiveLinkColor(link) {
     if (!state.highlightedNodeIds.has(sId) || !state.highlightedNodeIds.has(tId)) {
       return 'rgba(30,32,42,0.1)';
     }
+    return getLinkColor(link);
+  }
+  // Highlight links directly connected to the selected node
+  if (state.selectedNode) {
+    const selId = state.selectedNode.id;
+    if (sId === selId || tId === selId) return getLinkColor(link);
+    return 'rgba(30,32,42,0.06)';
   }
   if (state.hoveredNode) {
     const hId = state.hoveredNode.id;
     if (sId !== hId && tId !== hId) return 'rgba(30,32,42,0.15)';
+    return getLinkColor(link);
   }
   if (state.searchQuery) {
     const q = state.searchQuery.toLowerCase();
@@ -1126,9 +1143,30 @@ async function main() {
     })
     .linkColor(link => effectiveLinkColor(link))
     .linkOpacity(0.5)
-    .linkWidth(1)
-    .linkDirectionalParticles(1)
-    .linkDirectionalParticleWidth(1.5)
+    .linkWidth(link => {
+      if (state.selectedNode) {
+        const s = link.source.id ?? link.source;
+        const t = link.target.id ?? link.target;
+        return (s === state.selectedNode.id || t === state.selectedNode.id) ? 2.5 : 0.4;
+      }
+      return 1;
+    })
+    .linkDirectionalParticles(link => {
+      if (state.selectedNode) {
+        const s = link.source.id ?? link.source;
+        const t = link.target.id ?? link.target;
+        return (s === state.selectedNode.id || t === state.selectedNode.id) ? 3 : 0;
+      }
+      return 1;
+    })
+    .linkDirectionalParticleWidth(link => {
+      if (state.selectedNode) {
+        const s = link.source.id ?? link.source;
+        const t = link.target.id ?? link.target;
+        return (s === state.selectedNode.id || t === state.selectedNode.id) ? 2.2 : 1;
+      }
+      return 1.5;
+    })
     .linkDirectionalParticleColor(link => getLinkColor(link))
     .linkDirectionalParticleOffset(link => link.__particleOffset ?? (link.__particleOffset = Math.random()))
     .linkDirectionalParticleSpeed(link => link.__particleSpeed ?? (link.__particleSpeed = 0.003 + Math.random() * 0.004))
@@ -1140,14 +1178,7 @@ async function main() {
     })
     .onNodeClick(node => {
       document.getElementById('hint-bar')?.classList.add('hidden');
-      openPanel(node);
-      const hyp = Math.hypot(node.x, node.y, node.z) || 1;
-      const ratio = 1 + 120 / hyp;
-      G.cameraPosition(
-        { x: node.x * ratio, y: node.y * ratio, z: node.z * ratio },
-        node, 1500
-      );
-      startPulse(node);
+      focusNode(node);
     })
     .onNodeHover(node => {
       if (isTouchDevice) return;
@@ -1168,7 +1199,15 @@ async function main() {
       );
       else hideTooltip();
     })
-    .onBackgroundClick(() => closePanel());
+    .onBackgroundClick(() => {
+      closePanel();
+      state.selectedNode = null;
+      state.searchQuery = '';
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      document.getElementById('search-clear')?.classList.remove('visible');
+      refreshColors();
+    });
 
   G.d3Force('charge').strength(-400);
   G.d3Force('link').distance(80);
@@ -1366,19 +1405,35 @@ function updateToolbarHeight() {
 function refreshColors() {
   G.nodeColor(G.nodeColor());
   G.linkColor(G.linkColor());
+  G.linkWidth(G.linkWidth());
+  G.linkDirectionalParticles(G.linkDirectionalParticles());
   if (G && G.graphData && G.graphData().nodes) {
+    const selId = state.selectedNode?.id;
     const isSearching = Boolean(state.searchQuery);
     G.graphData().nodes.forEach(node => {
       if (node.__labelSprite) {
-        if (isSearching) {
+        if (selId) {
+          if (node.id === selId) {
+            node.__labelSprite.color = '#ffffff';
+            node.__labelSprite.textHeight = 10;
+          } else if (adjSet.get(selId)?.has(node.id)) {
+            node.__labelSprite.color = '#f1f5f9';
+            node.__labelSprite.textHeight = 8;
+          } else {
+            node.__labelSprite.color = 'rgba(100,116,139,0.15)';
+            node.__labelSprite.textHeight = 5;
+          }
+        } else if (isSearching) {
           const q = state.searchQuery.toLowerCase();
           const name = (node.label || node.canonical_name || node.id || '').toLowerCase();
           const desc = (node.description || '').toLowerCase();
           const type = (node.type || '').toLowerCase();
           const matches = name.includes(q) || desc.includes(q) || type.includes(q);
           node.__labelSprite.color = matches ? '#ffffff' : 'rgba(100,116,139,0.2)';
+          node.__labelSprite.textHeight = matches ? 8 : 6;
         } else {
           node.__labelSprite.color = '#cccccc';
+          node.__labelSprite.textHeight = 8;
         }
       }
     });
@@ -1393,8 +1448,9 @@ function resetView() {
   document.getElementById('search-clear')?.classList.remove('visible');
   closeSearchDropdown();
   state.searchQuery = '';
-  refreshColors();
+  state.selectedNode = null;
   closePanel();
+  refreshColors();
   const sorted = Object.values(degreeMap).sort((a, b) => b - a);
   const threshold = sorted[Math.floor(sorted.length * 0.3)] || 1;
   const hasCluster = G.graphData().nodes.some(n => (degreeMap[n.id] || 0) >= threshold && !state.hiddenTypes.has(n.type));
@@ -1538,13 +1594,13 @@ function selectSearchedNode(node) {
   const clear = document.getElementById('search-clear');
   if (clear) clear.classList.add('visible');
   closeSearchDropdown();
-  state.searchQuery = name.toLowerCase();
-  refreshColors();
   focusNode(node);
 }
 
 function focusNode(node) {
   if (!node) return;
+  cancelFlyover();
+
   const liveNodes = (G && G.graphData && G.graphData().nodes) || state.rawData?.nodes || [];
   const target = liveNodes.find(n => n.id === node.id) || nodeById.get(node.id) || node;
 
@@ -1561,21 +1617,42 @@ function focusNode(node) {
     });
   }
 
+  // Set selected node and clear text search query so connecting nodes are NOT dimmed
+  state.selectedNode = target;
+  state.searchQuery = '';
+  refreshColors();
+
   document.getElementById('hint-bar')?.classList.add('hidden');
   openPanel(target);
 
-  // Smooth camera flight
+  // Smooth, precise camera flight directly in front of the target node
   const tx = target.x ?? 0;
   const ty = target.y ?? 0;
   const tz = target.z ?? 0;
-  const hyp = Math.hypot(tx, ty, tz) || 1;
-  const dist = 140;
-  const ratio = 1 + dist / hyp;
+
+  const currentCam = G.camera().position;
+  let dx = currentCam.x - tx;
+  let dy = currentCam.y - ty;
+  let dz = currentCam.z - tz;
+  let dist = Math.hypot(dx, dy, dz);
+
+  // Optimal distance to frame target node and all its connected neighbours clearly
+  const targetDist = 130;
+  if (dist < 1) {
+    dx = 0;
+    dy = 25;
+    dz = targetDist;
+    dist = Math.hypot(dx, dy, dz);
+  }
+
+  const camX = tx + (dx / dist) * targetDist;
+  const camY = ty + (dy / dist) * targetDist;
+  const camZ = tz + (dz / dist) * targetDist;
 
   G.cameraPosition(
-    { x: tx * ratio, y: ty * ratio, z: tz * ratio },
+    { x: camX, y: camY, z: camZ },
     { x: tx, y: ty, z: tz },
-    1500
+    1200
   );
 
   startPulse(target);
@@ -1586,30 +1663,57 @@ function setupSearch() {
   const clear = document.getElementById('search-clear');
   const dropdown = document.getElementById('search-dropdown');
   const wrap = document.getElementById('search-wrap');
-
-  input.addEventListener('input', () => {
-    clearTimeout(searchTimer);
-    const val = input.value;
-    clear.classList.toggle('visible', val.length > 0);
-    searchTimer = setTimeout(() => {
-      doSearch(val.trim());
-    }, 150);
-  });
+  const searchIcon = wrap?.querySelector('svg');
+  if (searchIcon) {
+    searchIcon.style.cursor = 'pointer';
+    searchIcon.title = 'Search entity';
+    searchIcon.addEventListener('click', () => {
+      cancelFlyover();
+      doSearch(input.value.trim(), true);
+    });
+  }
 
   input.addEventListener('focus', () => {
+    cancelFlyover();
     if (input.value.trim().length > 0) {
       doSearch(input.value.trim());
     }
   });
 
+  input.addEventListener('input', () => {
+    cancelFlyover();
+    clearTimeout(searchTimer);
+    const val = input.value;
+    clear.classList.toggle('visible', val.length > 0);
+    state.selectedNode = null;
+    searchTimer = setTimeout(() => {
+      doSearch(val.trim());
+    }, 150);
+  });
+
   input.addEventListener('keydown', (e) => {
-    if (!dropdown || !dropdown.classList.contains('open')) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        doSearch(input.value.trim(), true);
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      cancelFlyover();
+      const val = input.value.trim();
+      if (!val) return;
+
+      const items = dropdown?.querySelectorAll('.search-item') || [];
+      if (dropdown && dropdown.classList.contains('open') && currentSelectedIndex >= 0 && currentSelectedIndex < items.length) {
+        items[currentSelectedIndex].click();
+        return;
       }
+
+      if (dropdown && dropdown.classList.contains('open') && items.length > 0) {
+        items[0].click();
+        return;
+      }
+
+      doSearch(val, true);
       return;
     }
+
+    if (!dropdown || !dropdown.classList.contains('open')) return;
 
     const items = dropdown.querySelectorAll('.search-item');
     if (items.length === 0) return;
@@ -1622,13 +1726,6 @@ function setupSearch() {
       e.preventDefault();
       currentSelectedIndex = (currentSelectedIndex - 1 + items.length) % items.length;
       updateDropdownSelection(items);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (currentSelectedIndex >= 0 && currentSelectedIndex < items.length) {
-        items[currentSelectedIndex].click();
-      } else if (items.length > 0) {
-        items[0].click();
-      }
     } else if (e.key === 'Escape') {
       closeSearchDropdown();
     }
@@ -1639,6 +1736,8 @@ function setupSearch() {
     clear.classList.remove('visible');
     closeSearchDropdown();
     state.searchQuery = '';
+    state.selectedNode = null;
+    closePanel();
     refreshColors();
   });
 
@@ -1692,7 +1791,7 @@ function doSearch(query, selectImmediate = false) {
     return;
   }
 
-  currentSelectedIndex = -1;
+  currentSelectedIndex = 0;
   dropdown.innerHTML = '';
 
   if (matches.length === 0) {
@@ -1702,9 +1801,9 @@ function doSearch(query, selectImmediate = false) {
   }
 
   const topMatches = matches.slice(0, 15);
-  topMatches.forEach(node => {
+  topMatches.forEach((node, index) => {
     const item = document.createElement('div');
-    item.className = 'search-item';
+    item.className = 'search-item' + (index === 0 ? ' selected' : '');
     item.dataset.id = node.id;
     const color = getNodeColor(node);
     const connCount = degreeMap[node.id] || node.connection_count || 0;
@@ -1794,6 +1893,7 @@ function openPanel(node) {
 function closePanel() {
   state.selectedNode = null;
   document.getElementById('side-panel').classList.remove('open');
+  refreshColors();
 }
 
 // ── Tooltip ──────────────────────────────────────────────────────────────────
@@ -1880,7 +1980,16 @@ main();
 
 // ── Flyover ──────────────────────────────────────────────────────────────────
 
-function shouldRunFlyover() { return true; }
+let flyoverCancelled = false;
+
+function cancelFlyover() {
+  if (flyoverCancelled) return;
+  flyoverCancelled = true;
+  const bar = document.getElementById('flyover-bar');
+  if (bar) bar.classList.remove('active');
+}
+
+function shouldRunFlyover() { return !flyoverCancelled; }
 function markFlyoverDone() {}
 
 async function runFlyover() {
@@ -1899,6 +2008,7 @@ async function runFlyover() {
   const skip   = document.getElementById('flyover-skip');
 
   // Build dots
+  dots.innerHTML = '';
   nodes.forEach((_, i) => {
     const d = document.createElement('div');
     d.className = 'flyover-dot';
@@ -1908,19 +2018,16 @@ async function runFlyover() {
 
   bar.classList.add('active');
 
-  let cancelled = false;
-  const cancel = () => { cancelled = true; };
-  skip.addEventListener('click', cancel, { once: true });
+  skip.addEventListener('click', cancelFlyover, { once: true });
 
   const wait = ms => new Promise(res => {
     const t = setTimeout(res, ms);
-    // Check cancellation every 100ms
-    const check = setInterval(() => { if (cancelled) { clearTimeout(t); clearInterval(check); res(); } }, 100);
+    const check = setInterval(() => { if (flyoverCancelled) { clearTimeout(t); clearInterval(check); res(); } }, 100);
     setTimeout(() => clearInterval(check), ms + 50);
   });
 
   for (let i = 0; i < nodes.length; i++) {
-    if (cancelled) break;
+    if (flyoverCancelled) break;
     const node = nodes[i];
 
     // Update dot
@@ -1938,12 +2045,12 @@ async function runFlyover() {
     );
 
     await wait(2000);
-    if (cancelled) break;
+    if (flyoverCancelled) break;
 
     // Open panel
     openPanel(node);
     await wait(4200);
-    if (cancelled) break;
+    if (flyoverCancelled) break;
 
     closePanel();
     await wait(600);
@@ -1953,7 +2060,7 @@ async function runFlyover() {
   bar.classList.remove('active');
   markFlyoverDone();
 
-  if (!cancelled) {
+  if (!flyoverCancelled) {
     // Settle on the top node at a close viewing distance
     const topNode = nodes[0];
     const dist  = 160;
