@@ -9,4 +9,3 @@ data/*.db
 data/*.db-*
 .pytest_cache/
 graphify-out/cache/
-# project ignore rules verified

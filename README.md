@@ -87,8 +87,8 @@ Live site: **https://driftforge.cloud**
 ### 1. Setup Virtual Environment
 ```bash
 # Clone the repository
-git clone https://github.com/richardholliday/graph-app.git
-cd graph-app
+git clone https://github.com/Import-Saurabh/Knowledge_Graph.git
+cd Knowledge_Graph
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -97,3 +97,108 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 # macOS/Linux:
 source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Configure Environment Variables
+Copy the template to `.env`:
+```bash
+cp .env.example .env
+```
+Edit `.env` with your settings:
+```ini
+HOST=0.0.0.0
+PORT=8080
+DATABASE_PATH=data/driftforge.db
+
+# LLM Configuration (MiniMax Anthropic-compatible or native Anthropic)
+ANTHROPIC_BASE_URL=https://api.minimax.io/anthropic
+ANTHROPIC_API_KEY=your_api_key_here
+LLM_MODEL=MiniMax-M3
+
+ADMIN_API_KEY=driftforge-admin-secret
+SCHEDULER_ENABLED=true
+INGESTION_SCHEDULE_HOURS=1
+```
+
+### 3. Run the Application
+```bash
+# Windows:
+.\.venv\Scripts\python.exe -m uvicorn server.app:app --host 0.0.0.0 --port 8080 --reload
+
+# Linux/macOS:
+uvicorn server.app:app --host 0.0.0.0 --port 8080 --reload
+```
+
+Open your browser at:
+- **3D Knowledge Graph**: `http://localhost:8080/`
+- **Graph Chat Workspace**: `http://localhost:8080/chat`
+- **Interactive API Docs**: `http://localhost:8080/docs`
+
+---
+
+## API Reference
+
+### Graph Endpoints
+- `GET /api/graph` — Retrieve nodes and links for 3D visualization. Supports `?limit=500`.
+- `GET /api/graph/subgraph?nodes=russia,ukraine&hops=2` — Multi-hop neighborhood traversal.
+- `GET /api/entities/{id}` — Entity metadata and connected relationships.
+- `GET /api/entities/search?q=saudi` — Full-text search across entities and aliases.
+- `GET /api/events/{id}` — Event details and recorded timestamps.
+
+### Query & Chat Endpoints
+- `POST /api/query` — Execute graph-grounded question answering and research.
+  ```json
+  {
+    "question": "What are today's major Saudi Arabia-Houthi developments?",
+    "conversation_id": "optional-uuid",
+    "force_research": false
+  }
+  ```
+- `GET /api/conversations` — List conversation sessions.
+- `POST /api/conversations` — Create a new conversation session.
+- `GET /api/conversations/{id}` — Fetch conversation with complete message history.
+
+### Ingestion & System Endpoints
+- `GET /api/health` — System health, database connectivity, and entity counts.
+- `POST /api/ingest` — Trigger manual news ingestion (Requires `X-API-Key: ADMIN_API_KEY`).
+- `GET /api/ingest/status` — History of background and manual ingestion jobs.
+
+---
+
+## Production Deployment
+
+### Docker Deployment
+```bash
+# Build and run with Docker Compose
+docker compose up -d --build
+
+# View container logs
+docker compose logs -f driftforge
+```
+
+### Database Backup & Recovery
+All persistent data resides in `data/driftforge.db`.
+```bash
+# Backup SQLite database safely using online backup API:
+sqlite3 data/driftforge.db ".backup data/driftforge_backup_$(date +%Y%m%d).db"
+
+# Restore database:
+cp data/driftforge_backup_20261011.db data/driftforge.db
+```
+
+---
+
+## Testing
+
+Run the automated test suite:
+```bash
+.\.venv\Scripts\pytest.exe -v
+```
+The test suite validates:
+- SQLite schema initialization, CRUD operations, and FTS5 search
+- URL normalization, RSS feed parsing, and article deduplication
+- Entity slugification and alias management
+- FastAPI endpoint responses and authentication barriers
