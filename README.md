@@ -6,11 +6,10 @@ DriftForge is a production-grade, continuously updated, evidence-backed news int
 
 Watch the complete demonstration showcasing the interactive 3D Knowledge Graph, real-time entity navigation, and evidence-grounded Graph Chat:
 
-🎬 **[Watch Demo Recording](media/Screen%20Recording%202026-10-12%20161635.mp4)**
+🎬 **[Stream / Watch Demo Video](https://media.githubusercontent.com/media/Import-Saurabh/Knowledge_Graph/main/Media/Screen%20Recording%202026-10-12%20161635.mp4)** · **[View in Repository](Media/Screen%20Recording%202026-10-12%20161635.mp4)**
 
-<video src="media/Screen%20Recording%202026-10-12%20161635.mp4" controls="controls" width="100%"></video>
-
-> *Recording file:* [`media/Screen Recording 2026-10-12 161635.mp4`](media/Screen%20Recording%202026-10-12%20161635.mp4)
+> 📹 **Direct Media Stream / Download**: [Click here to stream the full walkthrough MP4](https://media.githubusercontent.com/media/Import-Saurabh/Knowledge_Graph/main/Media/Screen%20Recording%202026-10-12%20161635.mp4)  
+> 📁 **Repository Path**: [`Media/Screen Recording 2026-10-12 161635.mp4`](Media/Screen%20Recording%202026-10-12%20161635.mp4) *(tracked via Git LFS, 208 MB)*
 
 ---
 
