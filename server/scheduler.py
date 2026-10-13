@@ -1,6 +1,7 @@
 """Background ingestion scheduler using APScheduler."""
 from __future__ import annotations
 
+import os
 import sys
 import threading
 from typing import Optional
@@ -41,18 +42,33 @@ def start_scheduler() -> Optional[BackgroundScheduler]:
     if _scheduler is not None and _scheduler.running:
         return _scheduler
 
+    from datetime import datetime, timezone
+
     scheduler = BackgroundScheduler(daemon=True)
-    hours = max(1, settings.ingestion_schedule_hours)
+
+    # Calculate schedule interval: default to minutes for real-time news sync
+    if settings.ingestion_schedule_hours and settings.ingestion_schedule_hours > 0 and not os.environ.get("INGESTION_SCHEDULE_MINUTES"):
+        hours = max(1, settings.ingestion_schedule_hours)
+        trigger = IntervalTrigger(hours=hours)
+        schedule_desc = f"every {hours} hour(s)"
+    else:
+        minutes = max(1, settings.ingestion_schedule_minutes or 2)
+        trigger = IntervalTrigger(minutes=minutes)
+        schedule_desc = f"every {minutes} minute(s)"
+
+    # Trigger immediately at current timestamp so news is ingested right away without waiting
+    start_time = datetime.now(timezone.utc)
     scheduler.add_job(
         run_scheduled_ingestion,
-        trigger=IntervalTrigger(hours=hours),
-        id="news_ingestion_hourly",
+        trigger=trigger,
+        next_run_time=start_time,
+        id="news_ingestion_scheduled",
         name="Scheduled News Ingestion",
         replace_existing=True,
     )
     scheduler.start()
     _scheduler = scheduler
-    print(f"[Scheduler] Background scheduler started (running every {hours} hour(s)).")
+    print(f"[Scheduler] Background scheduler started ({schedule_desc}, initial ingestion triggered at {start_time.isoformat()}).")
     return _scheduler
 
 
