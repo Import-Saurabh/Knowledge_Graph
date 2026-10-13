@@ -6,9 +6,9 @@
       "canonical_name": "Houthi Movement",
       "type": "armed_group",
       "entity_type": "armed_group",
-      "description": "Yemeni armed group that struck Riyadh airport and another Saudi facility, killing 13 people.",
-      "val": 733,
-      "connection_count": 27,
+      "description": "Yemeni rebel group conducting drone and missile strikes against Saudi Arabia.",
+      "val": 788,
+      "connection_count": 28,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
@@ -17,9 +17,9 @@
       "canonical_name": "Saudi Arabia",
       "type": "country",
       "entity_type": "country",
-      "description": "Country whose airports were struck by the Houthis; vowed a serious response.",
-      "val": 488,
-      "connection_count": 22,
+      "description": "Country whose King Khalid International Airport in Riyadh was the subject of false viral attack videos.",
+      "val": 580,
+      "connection_count": 24,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
@@ -28,9 +28,9 @@
       "canonical_name": "Russia",
       "type": "country",
       "entity_type": "country",
-      "description": "Country accused by Zelenskyy of violating the energy ceasefire and subject to nearly 1,600 new EU sanctions on its military-industrial complex.",
-      "val": 328,
-      "connection_count": 18,
+      "description": "Country accused of striking Ukrainian energy infrastructure after ceasefire announcement.",
+      "val": 404,
+      "connection_count": 20,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
@@ -39,9 +39,9 @@
       "canonical_name": "United States",
       "type": "country",
       "entity_type": "country",
-      "description": "Major external power with interests in the Red Sea and Middle East; voters reportedly fatigued by Mideast turmoil.",
-      "val": 200,
-      "connection_count": 14,
+      "description": "Country that imposed sanctions on the ICC and is pressuring Ukraine leadership.",
+      "val": 293,
+      "connection_count": 17,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
@@ -50,7 +50,18 @@
       "canonical_name": "Donald Trump",
       "type": "person",
       "entity_type": "person",
-      "description": "US president who brokered an 'energy ceasefire' between Russia and Ukraine and faces backlash over plans to import Russian diesel.",
+      "description": "US president who announced an energy-infrastructure ceasefire and pressures Ukraine over leadership.",
+      "val": 229,
+      "connection_count": 15,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "ukraine",
+      "label": "Ukraine",
+      "canonical_name": "Ukraine",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country suffering Russian strikes on energy infrastructure.",
       "val": 173,
       "connection_count": 13,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -67,12 +78,12 @@
       "first_observed_at": "2026-10-12T10:04:38.727195+00:00"
     },
     {
-      "id": "ukraine",
-      "label": "Ukraine",
-      "canonical_name": "Ukraine",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country at war with Russia; accusing Moscow of violating the Trump-brokered energy ceasefire.",
+      "id": "navi-pillay",
+      "label": "Navi Pillay",
+      "canonical_name": "Navi Pillay",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Nobel Peace Prize winner who condemned US sanctions against the ICC.",
       "val": 104,
       "connection_count": 10,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -89,6 +100,39 @@
       "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
     },
     {
+      "id": "egypt",
+      "label": "Egypt",
+      "canonical_name": "Egypt",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country whose authorities are detaining journalists from Matsadaash, allegedly under torture",
+      "val": 85,
+      "connection_count": 9,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "india",
+      "label": "India",
+      "canonical_name": "India",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country facing massive protests over voter roll revisions.",
+      "val": 85,
+      "connection_count": 9,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "united-kingdom",
+      "label": "United Kingdom",
+      "canonical_name": "United Kingdom",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country whose PM commented on RAF base incidents and Manchester City situation",
+      "val": 85,
+      "connection_count": 9,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
       "id": "cjp",
       "label": "Campaign for Judicial and Political Accountability (CJP)",
       "canonical_name": "Campaign for Judicial and Political Accountability (CJP)",
@@ -100,23 +144,23 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "navi-pillay",
-      "label": "Navi Pillay",
-      "canonical_name": "Navi Pillay",
-      "type": "person",
-      "entity_type": "person",
-      "description": "South African former UN human rights chief and current ICJ judge who chaired the UN commission finding Israel committed genocide in Gaza; awarded the 2026 Nobel Peace Prize.",
-      "val": 68,
-      "connection_count": 8,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
       "id": "cockroach-movement",
       "label": "'Cockroach' Movement",
       "canonical_name": "'Cockroach' Movement",
       "type": "concept",
       "entity_type": "concept",
       "description": "Indian protest movement framed around the 'cockroach' social media post, testing the Modi government",
+      "val": 68,
+      "connection_count": 8,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "iran",
+      "label": "Iran",
+      "canonical_name": "Iran",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country accused by UK PM of likely coordinating incidents at RAF bases",
       "val": 68,
       "connection_count": 8,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -155,6 +199,28 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
+      "id": "ethiopia",
+      "label": "Ethiopia",
+      "canonical_name": "Ethiopia",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Horn of Africa nation whose federal forces have advanced into Tigray's Adwa town.",
+      "val": 53,
+      "connection_count": 7,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
+      "id": "bjp",
+      "label": "Bharatiya Janata Party (BJP)",
+      "canonical_name": "Bharatiya Janata Party (BJP)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Indian ruling party alleged by opposition to benefit from voter roll revisions.",
+      "val": 53,
+      "connection_count": 7,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
       "id": "hurricane-isaias",
       "label": "Hurricane Isaias",
       "canonical_name": "Hurricane Isaias",
@@ -166,23 +232,12 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "iran",
-      "label": "Iran",
-      "canonical_name": "Iran",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Regional backer of the Houthi movement.",
-      "val": 40,
-      "connection_count": 6,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
-      "id": "india",
-      "label": "India",
-      "canonical_name": "India",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country where AAP, BJP, and Cockroach Janta Party operate and where Punjab elections are forthcoming.",
+      "id": "matsadaash",
+      "label": "Matsadaash",
+      "canonical_name": "Matsadaash",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Independent Egyptian journalism platform whose six journalists are detained and allege torture",
       "val": 40,
       "connection_count": 6,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -199,23 +254,12 @@
       "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
     },
     {
-      "id": "egypt",
-      "label": "Egypt",
-      "canonical_name": "Egypt",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country whose authorities arrested and charged six Matsadaash journalists with terrorism offences.",
-      "val": 29,
-      "connection_count": 5,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
-      "id": "bjp",
-      "label": "Bharatiya Janata Party (BJP)",
-      "canonical_name": "Bharatiya Janata Party (BJP)",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Indian political party accused by AAP of plotting to defame AAP by linking it to drug traffickers ahead of Punjab elections.",
+      "id": "us-doj",
+      "label": "US Department of Justice",
+      "canonical_name": "US Department of Justice",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Department that approved the search warrant of Rep. Omar's home and launched an antitrust probe of TV networks.",
       "val": 29,
       "connection_count": 5,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -230,6 +274,28 @@
       "val": 29,
       "connection_count": 5,
       "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
+    },
+    {
+      "id": "andy-burnham",
+      "label": "Andy Burnham",
+      "canonical_name": "Andy Burnham",
+      "type": "person",
+      "entity_type": "person",
+      "description": "UK Prime Minister; former Mayor of Manchester",
+      "val": 29,
+      "connection_count": 5,
+      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
+    },
+    {
+      "id": "saudi-led-coalition",
+      "label": "Saudi-led Coalition",
+      "canonical_name": "Saudi-led Coalition",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Coalition responding to Houthi attacks on Saudi territory.",
+      "val": 29,
+      "connection_count": 5,
+      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
     },
     {
       "id": "russian-ukrainian-pow-battalion",
@@ -276,12 +342,12 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "ethiopia",
-      "label": "Ethiopia",
-      "canonical_name": "Ethiopia",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Horn of Africa nation edging toward potential war with Eritrea amid Red Sea tensions",
+      "id": "volodymyr-zelensky",
+      "label": "Volodymyr Zelensky",
+      "canonical_name": "Volodymyr Zelensky",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Ukrainian president reporting Russian strikes on energy sites despite Trump's ceasefire announcement.",
       "val": 20,
       "connection_count": 4,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -309,34 +375,12 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "united-kingdom",
-      "label": "United Kingdom",
-      "canonical_name": "United Kingdom",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country offering defensive support, including aerial refueling, to Saudi Arabia to counter Houthi attacks.",
-      "val": 20,
-      "connection_count": 4,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
       "id": "delhi",
       "label": "Delhi",
       "canonical_name": "Delhi",
       "type": "location",
       "entity_type": "location",
       "description": "Indian capital city and a focal point for the planned CJP demonstration.",
-      "val": 20,
-      "connection_count": 4,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
-      "id": "matsadaash",
-      "label": "Matsadaash",
-      "canonical_name": "Matsadaash",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Egyptian independent factchecking and investigative platform whose staff were charged with terrorism.",
       "val": 20,
       "connection_count": 4,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -353,15 +397,15 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "saudi-led-coalition",
-      "label": "Saudi-led Coalition",
-      "canonical_name": "Saudi-led Coalition",
-      "type": "armed_group",
-      "entity_type": "armed_group",
-      "description": "Military alliance led by Saudi Arabia and the UAE that intervened in Yemen in 2015 against the Houthis.",
+      "id": "france",
+      "label": "France",
+      "canonical_name": "France",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country where stolen Renoir paintings were recovered behind a wall following arrests",
       "val": 20,
       "connection_count": 4,
-      "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
       "id": "yemeni-civil-war",
@@ -375,15 +419,15 @@
       "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
     },
     {
-      "id": "volodymyr-zelensky",
-      "label": "Volodymyr Zelensky",
-      "canonical_name": "Volodymyr Zelensky",
-      "type": "person",
-      "entity_type": "person",
-      "description": "Ukrainian president condemned by Trump over diesel deal with Russia.",
-      "val": 13,
-      "connection_count": 3,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+      "id": "ethiopian-national-defense-force",
+      "label": "Ethiopian National Defense Force",
+      "canonical_name": "Ethiopian National Defense Force",
+      "type": "armed_group",
+      "entity_type": "armed_group",
+      "description": "Ethiopia's federal military force reportedly entering strategic towns in Tigray.",
+      "val": 20,
+      "connection_count": 4,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
     },
     {
       "id": "us-midterms",
@@ -424,7 +468,7 @@
       "canonical_name": "Yemen",
       "type": "country",
       "entity_type": "country",
-      "description": "Arabian Peninsula state that has fallen back into full-scale war, according to the UN envoy.",
+      "description": "Country whose Houthi rebels are attacking Saudi Arabia.",
       "val": 13,
       "connection_count": 3,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -496,6 +540,17 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
+      "id": "narendra-modi",
+      "label": "Narendra Modi",
+      "canonical_name": "Narendra Modi",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Indian Prime Minister whose party is accused of benefiting from voter list changes.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
       "id": "un-security-council",
       "label": "United Nations Security Council",
       "canonical_name": "United Nations Security Council",
@@ -562,6 +617,50 @@
       "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
     },
     {
+      "id": "donald-tusk",
+      "label": "Donald Tusk",
+      "canonical_name": "Donald Tusk",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Prime Minister of Poland who publicly characterized the Starlink station fire as an act of 'hybrid warfare'.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "south-korea",
+      "label": "South Korea",
+      "canonical_name": "South Korea",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country that secretly received North Korean POWs, straining ties with Ukraine.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "starlink",
+      "label": "Starlink",
+      "canonical_name": "Starlink",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Satellite internet service whose station was the target of a fire in Poland in September 2026.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "tigray",
+      "label": "Tigray",
+      "canonical_name": "Tigray",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Northern Ethiopian region where renewed military operations are reportedly taking place.",
+      "val": 13,
+      "connection_count": 3,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
       "id": "french-police",
       "label": "French Police",
       "canonical_name": "French Police",
@@ -623,17 +722,6 @@
       "type": "concept",
       "entity_type": "concept",
       "description": "Strong climate phenomenon contributing to a notably quiet 2026 Atlantic hurricane season.",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
-      "id": "us-doj",
-      "label": "US Department of Justice",
-      "canonical_name": "US Department of Justice",
-      "type": "organisation",
-      "entity_type": "organisation",
-      "description": "Agency whose civil rights mission has been reshaped under Dhillon.",
       "val": 8,
       "connection_count": 2,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -716,17 +804,6 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "narendra-modi",
-      "label": "Narendra Modi",
-      "canonical_name": "Narendra Modi",
-      "type": "person",
-      "entity_type": "person",
-      "description": "Prime Minister of India; government tested by the 'Cockroach' protests",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
       "id": "china",
       "label": "China",
       "canonical_name": "China",
@@ -744,17 +821,6 @@
       "type": "concept",
       "entity_type": "concept",
       "description": "AI coding tool that enabled rapid creation of a global mass surveillance site",
-      "val": 8,
-      "connection_count": 2,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
-      "id": "france",
-      "label": "France",
-      "canonical_name": "France",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Nation experiencing nationwide school protests and police crackdowns in October 2026",
       "val": 8,
       "connection_count": 2,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -837,6 +903,17 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
+      "id": "paris",
+      "label": "Paris",
+      "canonical_name": "Paris",
+      "type": "location",
+      "entity_type": "location",
+      "description": "French capital where historic market burned.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
+    },
+    {
       "id": "saurabh-das",
       "label": "Saurabh Das",
       "canonical_name": "Saurabh Das",
@@ -890,6 +967,17 @@
       "val": 8,
       "connection_count": 2,
       "first_observed_at": "2026-10-12T10:13:07.264794+00:00"
+    },
+    {
+      "id": "germany",
+      "label": "Germany",
+      "canonical_name": "Germany",
+      "type": "country",
+      "entity_type": "country",
+      "description": "European country where two Turkish citizens were arrested in connection with the Starlink station fire.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
     },
     {
       "id": "youtube-content-creation",
@@ -947,6 +1035,17 @@
       "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
     },
     {
+      "id": "turkey",
+      "label": "Turkey",
+      "canonical_name": "Turkey",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country whose two citizens were arrested in Germany in connection with the Starlink station fire.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
+    },
+    {
       "id": "internationally-recognized-government-of-yemen",
       "label": "Internationally Recognized Government of Yemen",
       "canonical_name": "Internationally Recognized Government of Yemen",
@@ -956,6 +1055,149 @@
       "val": 8,
       "connection_count": 2,
       "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "poland",
+      "label": "Poland",
+      "canonical_name": "Poland",
+      "type": "country",
+      "entity_type": "country",
+      "description": "European country whose authorities reported arrests linked to a Starlink station fire and whose Prime Minister characterized the incident as 'hybrid warfare'.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "nypd",
+      "label": "New York City Police Department",
+      "canonical_name": "New York City Police Department",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Police force undergoing a use-of-force review ordered by Mayor Mamdani.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "icc",
+      "label": "International Criminal Court",
+      "canonical_name": "International Criminal Court",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "International court facing US sanctions condemned by Navi Pillay.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "ilhan-omar",
+      "label": "Ilhan Omar",
+      "canonical_name": "Ilhan Omar",
+      "type": "person",
+      "entity_type": "person",
+      "description": "US Congressperson whose DC home was searched by federal agents.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "cyprus",
+      "label": "Cyprus",
+      "canonical_name": "Cyprus",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country moving closer to Schengen membership despite political hurdles.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "adwa",
+      "label": "Adwa",
+      "canonical_name": "Adwa",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Strategic town in Tigray that Ethiopian forces reportedly entered without a fight.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
+      "id": "mekelle",
+      "label": "Mekelle",
+      "canonical_name": "Mekelle",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Capital of Tigray to which Ethiopian Airlines resumed flights on Sunday.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
+      "id": "ethiopian-airlines",
+      "label": "Ethiopian Airlines",
+      "canonical_name": "Ethiopian Airlines",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "National carrier that resumed flights to Mekelle, indicating a normalization of access to Tigray.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
+      "id": "tplf",
+      "label": "Tigray People's Liberation Front",
+      "canonical_name": "Tigray People's Liberation Front",
+      "type": "armed_group",
+      "entity_type": "armed_group",
+      "description": "Former dominant political-military force in Tigray, party of the region's leadership.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
+      "id": "raf-fairford",
+      "label": "RAF Fairford",
+      "canonical_name": "RAF Fairford",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Royal Air Force base in the UK where one of the suspected coordinated incidents occurred",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "raf-molesworth",
+      "label": "RAF Molesworth",
+      "canonical_name": "RAF Molesworth",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Royal Air Force base in the UK where one of the suspected coordinated incidents occurred",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "manchester-city",
+      "label": "Manchester City FC",
+      "canonical_name": "Manchester City FC",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "English football club found guilty of serious financial breaches; linked to PM via chairman meeting",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "deutsche-welle",
+      "label": "Deutsche Welle (DW)",
+      "canonical_name": "Deutsche Welle (DW)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "German international broadcaster that published both the Poland arrest report and the Riyadh fact check.",
+      "val": 8,
+      "connection_count": 2,
+      "first_observed_at": "2026-10-12T18:39:47.710720+00:00"
     },
     {
       "id": "guinea-bissau",
@@ -985,7 +1227,7 @@
       "canonical_name": "Riyadh",
       "type": "location",
       "entity_type": "location",
-      "description": "Saudi capital targeted by Houthi missiles and drones.",
+      "description": "Capital city of Saudi Arabia, location of the King Khalid International Airport referenced in viral misinformation.",
       "val": 5,
       "connection_count": 1,
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
@@ -1255,17 +1497,6 @@
       "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
     },
     {
-      "id": "paris",
-      "label": "Paris",
-      "canonical_name": "Paris",
-      "type": "location",
-      "entity_type": "location",
-      "description": "Capital of France where thousands protested school conditions and were dispersed by police",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-11T15:05:11.271996+00:00"
-    },
-    {
       "id": "french-government",
       "label": "French Government",
       "canonical_name": "French Government",
@@ -1420,17 +1651,6 @@
       "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
     },
     {
-      "id": "germany",
-      "label": "Germany",
-      "canonical_name": "Germany",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country where Dhruv Rathee pursued higher studies, as reported by News18.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-12T10:31:24.142888+00:00"
-    },
-    {
       "id": "mechanical-engineering",
       "label": "Mechanical Engineering",
       "canonical_name": "Mechanical Engineering",
@@ -1473,17 +1693,6 @@
       "val": 5,
       "connection_count": 1,
       "first_observed_at": "2026-10-12T10:32:15.451134+00:00"
-    },
-    {
-      "id": "andy-burnham",
-      "label": "Andy Burnham",
-      "canonical_name": "Andy Burnham",
-      "type": "person",
-      "entity_type": "person",
-      "description": "Mayor of Greater Manchester; stated it is 'clear' Russia interfered with the Brexit vote",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-12T10:36:06.881616+00:00"
     },
     {
       "id": "mariupol",
@@ -1547,17 +1756,6 @@
       "type": "country",
       "entity_type": "country",
       "description": "Oil producer reliant on pipeline routes through Turkey for export",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
-    },
-    {
-      "id": "turkey",
-      "label": "Turkey",
-      "canonical_name": "Turkey",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Transit country for Iraqi oil pipeline exports to Mediterranean markets",
       "val": 5,
       "connection_count": 1,
       "first_observed_at": "2026-10-12T10:38:42.828123+00:00"
@@ -1640,28 +1838,6 @@
       "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
     },
     {
-      "id": "donald-tusk",
-      "label": "Donald Tusk",
-      "canonical_name": "Donald Tusk",
-      "type": "person",
-      "entity_type": "person",
-      "description": "Polish Prime Minister targeted in a foiled alleged assassination attempt.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
-    },
-    {
-      "id": "poland",
-      "label": "Poland",
-      "canonical_name": "Poland",
-      "type": "country",
-      "entity_type": "country",
-      "description": "Country where police foiled an alleged plot to assassinate PM Donald Tusk.",
-      "val": 5,
-      "connection_count": 1,
-      "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
-    },
-    {
       "id": "abramovich",
       "label": "Roman Abramovich",
       "canonical_name": "Roman Abramovich",
@@ -1671,6 +1847,248 @@
       "val": 5,
       "connection_count": 1,
       "first_observed_at": "2026-10-12T11:01:08.420983+00:00"
+    },
+    {
+      "id": "zohran-mamdani",
+      "label": "Zohran Mamdani",
+      "canonical_name": "Zohran Mamdani",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Mayor of New York City who ordered a use-of-force review for the NYPD.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "ice",
+      "label": "U.S. Immigration and Customs Enforcement",
+      "canonical_name": "U.S. Immigration and Customs Enforcement",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Federal agency whose recent shooting sparked political debate in NYC.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "raphael-glucksmann",
+      "label": "Rapha\u00ebl Glucksmann",
+      "canonical_name": "Rapha\u00ebl Glucksmann",
+      "type": "person",
+      "entity_type": "person",
+      "description": "French EU lawmaker elected as centre-left presidential candidate for 2027.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "marche-des-enfants-rouges",
+      "label": "March\u00e9 des Enfants-Rouges",
+      "canonical_name": "March\u00e9 des Enfants-Rouges",
+      "type": "location",
+      "entity_type": "location",
+      "description": "Historic covered food market in Paris destroyed by fire.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "supreme-court-of-india",
+      "label": "Supreme Court of India",
+      "canonical_name": "Supreme Court of India",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Court where opposition marched to demand election chief's resignation.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "shadrack-sibiya",
+      "label": "Shadrack Sibiya",
+      "canonical_name": "Shadrack Sibiya",
+      "type": "person",
+      "entity_type": "person",
+      "description": "South Africa's deputy police chief who resigned after being charged with sexual offences.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "south-africa",
+      "label": "South Africa",
+      "canonical_name": "South Africa",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country whose deputy police chief resigned amid criminal charges.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "north-korea",
+      "label": "North Korea",
+      "canonical_name": "North Korea",
+      "type": "country",
+      "entity_type": "country",
+      "description": "Country whose POWs are at the center of a South Korea\u2013Ukraine diplomatic dispute.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "schengen-area",
+      "label": "Schengen Area",
+      "canonical_name": "Schengen Area",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "European border-free travel zone Cyprus is seeking to join.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "european-commission",
+      "label": "European Commission",
+      "canonical_name": "European Commission",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Body declaring Cyprus ready to join the Schengen Area.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "elon-musk",
+      "label": "Elon Musk",
+      "canonical_name": "Elon Musk",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Owner of Starlink awaiting India launch approval.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "witnesses-adwa",
+      "label": "Witnesses in Adwa",
+      "canonical_name": "Witnesses in Adwa",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Civilian eyewitnesses cited as source for reports of Ethiopian troop entry without fighting.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
+      "id": "al-jazeera",
+      "label": "Al Jazeera",
+      "canonical_name": "Al Jazeera",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "News outlet reporting the entry of Ethiopian forces into Adwa and resumption of flights.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:21:34.684232+00:00"
+    },
+    {
+      "id": "royal-air-force",
+      "label": "Royal Air Force (RAF)",
+      "canonical_name": "Royal Air Force (RAF)",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "UK's air force branch operating the bases targeted in the suspected incidents",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "egyptian-press-union",
+      "label": "Egyptian Press Union",
+      "canonical_name": "Egyptian Press Union",
+      "type": "organisation",
+      "entity_type": "organisation",
+      "description": "Egyptian journalists' union whose chief rejected pressure over detained journalists",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "renoir",
+      "label": "Pierre-Auguste Renoir",
+      "canonical_name": "Pierre-Auguste Renoir",
+      "type": "person",
+      "entity_type": "person",
+      "description": "Painter whose stolen works were recovered in France",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "manchester-mayorship",
+      "label": "Manchester Mayorship",
+      "canonical_name": "Manchester Mayorship",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Office formerly held by Andy Burnham during which he met Man City chairman",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "uk-prime-ministry",
+      "label": "UK Prime Minister's Office",
+      "canonical_name": "UK Prime Minister's Office",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Office currently held by Andy Burnham",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
+    },
+    {
+      "id": "king-khalid-international-airport",
+      "label": "King Khalid International Airport",
+      "canonical_name": "King Khalid International Airport",
+      "type": "location",
+      "entity_type": "location",
+      "description": "International airport in Riyadh, Saudi Arabia, falsely depicted in viral AI-generated videos as having been attacked.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:39:47.710720+00:00"
+    },
+    {
+      "id": "polish-authorities",
+      "label": "Polish Authorities",
+      "canonical_name": "Polish Authorities",
+      "type": "government",
+      "entity_type": "government",
+      "description": "Polish law enforcement and government bodies that reported the arrests and investigated the Starlink fire.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:39:47.710720+00:00"
+    },
+    {
+      "id": "hybrid-warfare",
+      "label": "Hybrid Warfare",
+      "canonical_name": "Hybrid Warfare",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Concept cited by Polish PM Donald Tusk to describe the Starlink station fire, blending sabotage and covert operations.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:39:47.710720+00:00"
+    },
+    {
+      "id": "ai-generated-content",
+      "label": "AI-Generated Misinformation",
+      "canonical_name": "AI-Generated Misinformation",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Concept describing synthetic media produced by artificial intelligence, used here to spread false claims about a Riyadh airport attack.",
+      "val": 5,
+      "connection_count": 1,
+      "first_observed_at": "2026-10-12T18:39:47.710720+00:00"
     },
     {
       "id": "saudi-government",
@@ -2034,6 +2452,28 @@
       "val": 4,
       "connection_count": 0,
       "first_observed_at": "2026-10-12T10:44:14.358669+00:00"
+    },
+    {
+      "id": "new-york-city",
+      "label": "New York City",
+      "canonical_name": "New York City",
+      "type": "location",
+      "entity_type": "location",
+      "description": "US city where the mayor ordered a police use-of-force review.",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T18:17:47.798420+00:00"
+    },
+    {
+      "id": "raf-base-incidents",
+      "label": "RAF base incidents",
+      "canonical_name": "RAF base incidents",
+      "type": "concept",
+      "entity_type": "concept",
+      "description": "Coordinated incidents at UK RAF bases attributed by UK PM to Iran",
+      "val": 4,
+      "connection_count": 0,
+      "first_observed_at": "2026-10-12T18:31:41.619513+00:00"
     }
   ],
   "links": [
@@ -2359,7 +2799,7 @@
       "source": "saudi-arabia",
       "target": "houthi-movement",
       "type": "OPPOSES",
-      "description": "Saudi Arabia opposes the Houthi movement and is fighting it in Yemen."
+      "description": "Saudi Arabia vowed a deadly response to Houthi drone and missile strikes."
     },
     {
       "source": "saudi-arabia",
@@ -2371,7 +2811,7 @@
       "source": "houthi-movement",
       "target": "yemen",
       "type": "LOCATED_IN",
-      "description": "The Houthis control much of northern Yemen, including Sanaa."
+      "description": "Houthis are Yemeni rebels fighting the Saudi-led coalition."
     },
     {
       "source": "united-kingdom",
@@ -2461,7 +2901,7 @@
       "source": "houthi-movement",
       "target": "riyadh",
       "type": "THREATENS",
-      "description": "Houthis launch missile and drone attacks aimed at the Saudi capital Riyadh."
+      "description": "Houthi combined drone/missile strikes forced the closure of Riyadh's international airport."
     },
     {
       "source": "houthi-movement",
@@ -3085,7 +3525,7 @@
       "source": "russia",
       "target": "ukraine",
       "type": "THREATENS",
-      "description": "The film is part of broader Russian information warfare against Ukraine"
+      "description": "Russia struck six Ukrainian energy sites despite Trump's announced ceasefire."
     },
     {
       "source": "russia",
@@ -3308,9 +3748,279 @@
       "target": "russia",
       "type": "LOCATED_IN",
       "description": "Russian oligarch whose wealth concealment linked him to Russian tax evasion."
+    },
+    {
+      "source": "zohran-mamdani",
+      "target": "nypd",
+      "type": "INVOLVES",
+      "description": "Mamdani ordered a use-of-force review of the NYPD."
+    },
+    {
+      "source": "nypd",
+      "target": "ice",
+      "type": "RESPONDS_TO",
+      "description": "NYPD response to last week's ICE shooting triggered reform calls."
+    },
+    {
+      "source": "navi-pillay",
+      "target": "icc",
+      "type": "SUPPORTS",
+      "description": "Pillay publicly defended the ICC against US sanctions."
+    },
+    {
+      "source": "united-states",
+      "target": "icc",
+      "type": "SANCTIONS",
+      "description": "US imposed sanctions against the ICC, condemned by Pillay as 'totally unfair'."
+    },
+    {
+      "source": "navi-pillay",
+      "target": "united-states",
+      "type": "OPPOSES",
+      "description": "Pillay condemned US sanctions against the ICC."
+    },
+    {
+      "source": "raphael-glucksmann",
+      "target": "france",
+      "type": "PARTICIPATED_IN",
+      "description": "Glucksmann was elected centre-left candidate with over 66% of the vote, declaring the 'battle begins' to unite the left for 2027."
+    },
+    {
+      "source": "marche-des-enfants-rouges",
+      "target": "paris",
+      "type": "LOCATED_IN",
+      "description": "The historic market is located in Paris."
+    },
+    {
+      "source": "bjp",
+      "target": "india",
+      "type": "INVOLVES",
+      "description": "Opposition accuses BJP of benefiting from voter roll revisions that removed over 130 million names."
+    },
+    {
+      "source": "india",
+      "target": "supreme-court-of-india",
+      "type": "INVOLVES",
+      "description": "Opposition parties marched to the Supreme Court demanding the election chief's resignation."
+    },
+    {
+      "source": "saudi-led-coalition",
+      "target": "houthi-movement",
+      "type": "RESPONDS_TO",
+      "description": "The Saudi-led coalition announced it was responding to Houthi attacks."
+    },
+    {
+      "source": "volodymyr-zelensky",
+      "target": "russia",
+      "type": "ACCUSES",
+      "description": "Zelensky accused Russia of continuing energy-infrastructure strikes."
+    },
+    {
+      "source": "donald-trump",
+      "target": "russia",
+      "type": "NEGOTIATES_WITH",
+      "description": "Trump announced a ceasefire under which energy infrastructure would not be targeted."
+    },
+    {
+      "source": "south-africa",
+      "target": "shadrack-sibiya",
+      "type": "INVOLVES",
+      "description": "Sibiya, South Africa's deputy police chief, resigned after being charged with sexual offences."
+    },
+    {
+      "source": "us-doj",
+      "target": "ilhan-omar",
+      "type": "LEGAL_ACTION",
+      "description": "DOJ approved the warrant that led to federal agents searching Omar's DC home."
+    },
+    {
+      "source": "ilhan-omar",
+      "target": "us-doj",
+      "type": "ACCUSES",
+      "description": "Omar called the search 'an attempt to target political enemies'."
+    },
+    {
+      "source": "us-doj",
+      "target": "united-states",
+      "type": "INVOLVES",
+      "description": "DOJ is part of the US government and is conducting an antitrust probe of TV networks."
+    },
+    {
+      "source": "donald-trump",
+      "target": "ukraine",
+      "type": "PRESSURES",
+      "description": "Trump said Ukraine needs a new leader, pressuring Kyiv's political direction."
+    },
+    {
+      "source": "south-korea",
+      "target": "ukraine",
+      "type": "OPPOSES",
+      "description": "South Korea and Ukraine are trading accusations over the transfer of North Korean POWs."
+    },
+    {
+      "source": "ukraine",
+      "target": "south-korea",
+      "type": "ACCUSES",
+      "description": "Kyiv publicly accused Seoul over the secret POW transfer."
+    },
+    {
+      "source": "south-korea",
+      "target": "north-korea",
+      "type": "OPPOSES",
+      "description": "South Korea sought to avoid antagonizing Pyongyang while secretly receiving its POWs."
+    },
+    {
+      "source": "cyprus",
+      "target": "schengen-area",
+      "type": "NEGOTIATES_WITH",
+      "description": "Cyprus is moving closer to joining the Schengen Area."
+    },
+    {
+      "source": "european-commission",
+      "target": "cyprus",
+      "type": "SUPPORTS",
+      "description": "The European Commission declared Cyprus ready to join the Schengen Area."
+    },
+    {
+      "source": "starlink",
+      "target": "india",
+      "type": "NEGOTIATES_WITH",
+      "description": "Starlink awaits Indian regulatory approval despite securing key clearances."
+    },
+    {
+      "source": "elon-musk",
+      "target": "starlink",
+      "type": "INVOLVES",
+      "description": "Musk owns Starlink, which remains in Indian regulatory limbo."
+    },
+    {
+      "source": "narendra-modi",
+      "target": "bjp",
+      "type": "LEADS",
+      "description": "Modi leads the BJP, which the opposition accuses of benefiting from voter roll changes."
+    },
+    {
+      "source": "ethiopian-national-defense-force",
+      "target": "adwa",
+      "type": "LOCATED_IN",
+      "description": "Ethiopian forces entered and took control of the strategic town of Adwa."
+    },
+    {
+      "source": "ethiopia",
+      "target": "ethiopian-national-defense-force",
+      "type": "INVOLVES",
+      "description": "The ENDF operates as the military instrument of the Ethiopian federal government."
+    },
+    {
+      "source": "ethiopian-national-defense-force",
+      "target": "tigray",
+      "type": "LOCATED_IN",
+      "description": "Forces deployed across the Tigray region as part of ongoing operations."
+    },
+    {
+      "source": "ethiopia",
+      "target": "tigray",
+      "type": "IMPACTS",
+      "description": "Federal Ethiopian actions directly impact the Tigray region and its population."
+    },
+    {
+      "source": "ethiopian-airlines",
+      "target": "mekelle",
+      "type": "LOCATED_IN",
+      "description": "Ethiopian Airlines resumed service routing to Mekelle."
+    },
+    {
+      "source": "ethiopia",
+      "target": "tplf",
+      "type": "OPPOSES",
+      "description": "The Ethiopian federal government is in opposition to the TPLF, the region's former dominant party."
+    },
+    {
+      "source": "tplf",
+      "target": "tigray",
+      "type": "LOCATED_IN",
+      "description": "The TPLF is historically rooted in and associated with the Tigray region."
+    },
+    {
+      "source": "andy-burnham",
+      "target": "uk-prime-ministry",
+      "type": "PARTICIPATED_IN",
+      "description": "Andy Burnham serves as UK Prime Minister"
+    },
+    {
+      "source": "andy-burnham",
+      "target": "manchester-mayorship",
+      "type": "PARTICIPATED_IN",
+      "description": "Andy Burnham previously held the office of Mayor of Manchester"
+    },
+    {
+      "source": "raf-fairford",
+      "target": "united-kingdom",
+      "type": "LOCATED_IN",
+      "description": "RAF Fairford is a Royal Air Force base in the United Kingdom"
+    },
+    {
+      "source": "raf-molesworth",
+      "target": "united-kingdom",
+      "type": "LOCATED_IN",
+      "description": "RAF Molesworth is a Royal Air Force base in the United Kingdom"
+    },
+    {
+      "source": "royal-air-force",
+      "target": "united-kingdom",
+      "type": "SUPPORTS",
+      "description": "The RAF is part of the United Kingdom's armed forces"
+    },
+    {
+      "source": "iran",
+      "target": "united-kingdom",
+      "type": "THREATENS",
+      "description": "Iran accused by UK PM of likely coordinating incidents on UK military bases"
+    },
+    {
+      "source": "egypt",
+      "target": "matsadaash",
+      "type": "OPPOSES",
+      "description": "Egypt has detained six Matsadaash journalists who allege torture"
+    },
+    {
+      "source": "egyptian-press-union",
+      "target": "egypt",
+      "type": "OPPOSES",
+      "description": "Egyptian press union chief rejects pressure over detained journalists"
+    },
+    {
+      "source": "matsadaash",
+      "target": "egypt",
+      "type": "ACCUSES",
+      "description": "Matsadaash journalists allege torture while detained by Egypt"
+    },
+    {
+      "source": "andy-burnham",
+      "target": "manchester-city",
+      "type": "NEGOTIATES_WITH",
+      "description": "Burnham met Manchester City chairman during his time as Mayor of Manchester"
+    },
+    {
+      "source": "manchester-city",
+      "target": "united-kingdom",
+      "type": "LOCATED_IN",
+      "description": "Manchester City FC is based in the United Kingdom"
+    },
+    {
+      "source": "donald-tusk",
+      "target": "hybrid-warfare",
+      "type": "INVOLVES",
+      "description": "Tusk invoked the concept of hybrid warfare to frame the Starlink fire."
+    },
+    {
+      "source": "deutsche-welle",
+      "target": "saudi-arabia",
+      "type": "IMPACTS",
+      "description": "DW's fact check addressed misinformation targeting Saudi Arabia's image and security."
     }
   ],
-  "generated_at": "2026-10-12T11:01:08.420983+00:00",
-  "entity_count": 185,
-  "relationship_count": 245
+  "generated_at": "2026-10-12T18:39:47.710720+00:00",
+  "entity_count": 225,
+  "relationship_count": 314
 }
