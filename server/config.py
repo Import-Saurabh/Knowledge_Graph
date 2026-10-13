@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Optional
 from pydantic import BaseModel, Field
 
 try:
@@ -61,8 +62,11 @@ class Settings(BaseModel):
     )
 
     # Scheduling
-    ingestion_schedule_hours: int = Field(
-        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_HOURS", "1"))
+    ingestion_schedule_minutes: int = Field(
+        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_MINUTES", "2"))
+    )
+    ingestion_schedule_hours: Optional[int] = Field(
+        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_HOURS")) if os.environ.get("INGESTION_SCHEDULE_HOURS") else None
     )
     scheduler_enabled: bool = Field(
         default_factory=lambda: os.environ.get("SCHEDULER_ENABLED", "true").lower() in ("true", "1", "yes")
