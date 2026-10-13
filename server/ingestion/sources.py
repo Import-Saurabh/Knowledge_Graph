@@ -47,6 +47,43 @@ def compute_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def parse_entry_timestamp(entry: dict) -> str:
+    """Parse RSS entry publication date into ISO 8601 UTC timestamp, defaulting to current time."""
+    import calendar
+    from datetime import datetime, timezone
+
+    # 1. Check parsed struct_time provided by feedparser
+    parsed_time = entry.get("published_parsed") or entry.get("updated_parsed")
+    if parsed_time:
+        try:
+            secs = calendar.timegm(parsed_time)
+            return datetime.fromtimestamp(secs, tz=timezone.utc).isoformat()
+        except Exception:
+            pass
+
+    # 2. Try parsing raw RFC 822 / 2822 / ISO strings
+    raw_str = entry.get("published") or entry.get("updated")
+    if raw_str and isinstance(raw_str, str):
+        try:
+            import email.utils
+            dt = email.utils.parsedate_to_datetime(raw_str)
+            if dt:
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt.astimezone(timezone.utc).isoformat()
+        except Exception:
+            pass
+        try:
+            from datetime import datetime
+            dt = datetime.fromisoformat(raw_str.replace("Z", "+00:00"))
+            return dt.isoformat()
+        except Exception:
+            pass
+
+    # 3. Default to current UTC timestamp so ingested news has real-time timestamp
+    return utc_now_iso()
+
+
 def detect_publisher(url: str, default: Optional[str] = None) -> str:
     domain = urlparse(url).netloc.lower()
     if "bbc." in domain or "bbci." in domain:
@@ -93,7 +130,7 @@ class RSSConnector:
                 content_str = f"{title}\n{summary}"
                 content_hash = compute_sha256(content_str)
 
-                published_at = entry.get("published", None) or entry.get("updated", None)
+                published_at = parse_entry_timestamp(entry)
 
                 article = Article(
                     id=str(uuid.uuid4()),
@@ -162,7 +199,7 @@ class RSSConnector:
                 url_hash = compute_sha256(clean_url)
                 content_str = f"{clean_title}\n{summary}"
                 content_hash = compute_sha256(content_str)
-                published_at = entry.get("published", None) or entry.get("updated", None)
+                published_at = parse_entry_timestamp(entry)
 
                 articles.append(Article(
                     id=str(uuid.uuid4()),
