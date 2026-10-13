@@ -61,7 +61,8 @@ class IngestionPipeline:
                 job.status = "completed"
                 job.completed_at = utc_now_iso()
                 GraphStore.record_job(job)
-                print("[Pipeline] No new articles to process. Job completed.")
+                GraphWriter.export_graph_snapshot()
+                print("[Pipeline] No new articles to process. Job completed (snapshot refreshed).")
                 return job
 
             # 3. Extract knowledge graph using LLM
