@@ -368,6 +368,7 @@ class GraphStore:
                     SELECT e.* FROM entities e
                     JOIN entities_fts fts ON e.id = fts.id
                     WHERE entities_fts MATCH ?
+                    ORDER BY e.updated_at DESC
                     LIMIT ?
                     """,
                     (match_expr, limit),
@@ -387,6 +388,7 @@ class GraphStore:
                 """
                 SELECT * FROM entities
                 WHERE id LIKE ? OR canonical_name LIKE ? OR aliases LIKE ?
+                ORDER BY updated_at DESC
                 LIMIT ?
                 """,
                 (f"%{query}%", f"%{query}%", f"%{query}%", limit),
@@ -601,8 +603,18 @@ class GraphStore:
                         "description": r["description"] or "",
                     })
 
-            # Find latest update time
-            latest_row = conn.execute("SELECT MAX(updated_at) FROM entities").fetchone()
+            # Find latest update time across entities, articles, and jobs
+            latest_row = conn.execute(
+                """
+                SELECT MAX(ts) FROM (
+                    SELECT MAX(updated_at) as ts FROM entities
+                    UNION ALL
+                    SELECT MAX(ingested_at) as ts FROM articles
+                    UNION ALL
+                    SELECT MAX(completed_at) as ts FROM ingestion_jobs WHERE status = 'completed'
+                )
+                """
+            ).fetchone()
             latest_time = latest_row[0] if latest_row and latest_row[0] else utc_now_iso()
 
             return {
