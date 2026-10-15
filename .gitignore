@@ -7,5 +7,6 @@ lambda.zip
 lambda_package/
 data/*.db
 data/*.db-*
+data/*kuzu*
 .pytest_cache/
 graphify-out/cache/
