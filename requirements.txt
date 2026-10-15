@@ -9,3 +9,4 @@ uvicorn[standard]
 apscheduler
 httpx
 pytest
+kuzu>=0.11.0
