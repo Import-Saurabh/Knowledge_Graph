@@ -28,6 +28,97 @@ Instructions:
 """
 
 
+def format_compact_triples(subgraph: dict, entities: list[dict]) -> tuple[str, str]:
+    """Serialize graph topology into concise linearized notation and deduplicate entity attributes."""
+    entity_dict = {}
+    for e in entities:
+        eid = e.get("id")
+        if eid:
+            name = e.get("canonical_name") or e.get("label") or eid
+            etype = e.get("entity_type") or e.get("type") or "concept"
+            desc = (e.get("description") or "").strip()
+            entity_dict[eid] = {"name": name, "type": etype, "desc": desc}
+
+    # Format compact linearized relationships: [Subject] -[:REL_TYPE]-> [Object] | context
+    rel_lines = []
+    seen_edges = set()
+    for l in subgraph.get("links", [])[:35]:
+        s = l["source"]["id"] if isinstance(l.get("source"), dict) else l.get("source", "")
+        t = l["target"]["id"] if isinstance(l.get("target"), dict) else l.get("target", "")
+        rtype = l.get("type", "RELATED_TO").upper()
+        rdesc = (l.get("description") or "").strip()
+
+        if not s or not t or (s, t, rtype) in seen_edges:
+            continue
+        seen_edges.add((s, t, rtype))
+
+        s_name = entity_dict.get(s, {}).get("name", s)
+        t_name = entity_dict.get(t, {}).get("name", t)
+
+        if rdesc:
+            rel_lines.append(f"[{s_name}] -[:{rtype}]-> [{t_name}] | {rdesc}")
+        else:
+            rel_lines.append(f"[{s_name}] -[:{rtype}]-> [{t_name}]")
+
+    # Format deduplicated entity attributes
+    ent_lines = []
+    seen_eids = set()
+    for e in entities[:20]:
+        eid = e.get("id")
+        if not eid or eid in seen_eids:
+            continue
+        seen_eids.add(eid)
+        name = e.get("canonical_name") or e.get("label") or eid
+        etype = e.get("entity_type") or e.get("type") or "concept"
+        desc = (e.get("description") or "").strip()
+
+        if desc:
+            ent_lines.append(f"- [{eid}] {name} ({etype}): {desc}")
+        else:
+            ent_lines.append(f"- [{eid}] {name} ({etype})")
+
+    ent_text = "\n".join(ent_lines) if ent_lines else "No specific entities found."
+    rel_text = "\n".join(rel_lines) if rel_lines else "No direct relationships found."
+    return ent_text, rel_text
+
+
+def format_deduplicated_sources(articles: list[dict], claims: list[dict]) -> tuple[str, str]:
+    """Eliminate redundant article text chunks when factual claims already capture the answer."""
+    claim_lines = []
+    claimed_article_ids = set()
+
+    for c in claims[:12]:
+        attrib = c.get("attribution", "media")
+        text = (c.get("claim_text") or "").strip()
+        headline = c.get("headline", "Report")
+        art_id = c.get("source_article_id")
+        if art_id:
+            claimed_article_ids.add(art_id)
+        if text:
+            claim_lines.append(f"- ({attrib}) \"{text}\" [Source: {headline}]")
+
+    art_lines = []
+    for a in articles[:8]:
+        pub = a.get("publisher", "Publisher")
+        hl = a.get("headline", "Untitled")
+        date = a.get("published_at", "Recent")
+        url = a.get("url", "")
+        aid = a.get("id")
+
+        if aid in claimed_article_ids:
+            art_lines.append(f"- [{pub}] \"{hl}\" ({date}) <{url}> [Captured in claims]")
+        else:
+            summary = (a.get("summary") or "").strip()
+            if summary:
+                art_lines.append(f"- [{pub}] \"{hl}\" ({date}) <{url}>\n  Key excerpt: {summary[:160]}")
+            else:
+                art_lines.append(f"- [{pub}] \"{hl}\" ({date}) <{url}>")
+
+    claims_text = "\n".join(claim_lines) if claim_lines else "No specific claims recorded."
+    arts_text = "\n".join(art_lines) if art_lines else "No direct articles retrieved."
+    return claims_text, arts_text
+
+
 class AnswerSynthesizer:
     """Generates source-backed intelligence briefings using LLM."""
 
@@ -52,50 +143,31 @@ class AnswerSynthesizer:
         articles: list[dict],
         conversation_history: list[dict] = None,
     ) -> tuple[str, list[Citation], list[str], list[str]]:
-        """Synthesize a graph-grounded response."""
-        # 1. Format graph context
-        ent_lines = []
-        for e in entities[:20]:
-            name = e.get('canonical_name') or e.get('label') or e.get('id', 'Unknown')
-            etype = e.get('entity_type') or e.get('type') or 'concept'
-            eid = e.get('id', 'unknown')
-            desc = e.get('description', '')
-            ent_lines.append(f"- {name} (Type: {etype}, ID: {eid}): {desc}")
+        """Synthesize a graph-grounded response with compact serialization and KV caching."""
+        # 1. Format compact graph context & deduplicate sources
+        ent_text, rel_text = format_compact_triples(subgraph, entities)
+        claims_text, arts_text = format_deduplicated_sources(articles, claims)
 
-        rel_lines = []
-        for l in subgraph.get("links", [])[:30]:
-            s = l['source']['id'] if isinstance(l.get('source'), dict) else l.get('source', '')
-            t = l['target']['id'] if isinstance(l.get('target'), dict) else l.get('target', '')
-            rtype = l.get('type', 'RELATED_TO')
-            rdesc = l.get('description', '')
-            rel_lines.append(f"- [{s}] --({rtype})--> [{t}]: {rdesc}")
         event_lines = [
             f"- Event [{ev.get('id')}]: {ev.get('summary')} (Time: {ev.get('event_time', 'recent')}, Loc: {ev.get('location', 'N/A')})"
             for ev in events[:8]
         ]
-        claim_lines = [
-            f"- Claim ({c.get('attribution', 'media')}): \"{c.get('claim_text')}\" [Source: {c.get('headline', 'Article')}]"
-            for c in claims[:12]
-        ]
-        art_lines = [
-            f"- [{a.get('publisher', 'Publisher')}] \"{a.get('headline')}\" ({a.get('published_at', 'Recent')})\n  URL: {a.get('url')}\n  Excerpt: {a.get('summary', '')[:250]}"
-            for a in articles[:8]
-        ]
+        events_text = "\n".join(event_lines) if event_lines else "No specific events recorded."
 
-        context_text = f"""### KNOWLEDGE GRAPH ENTITIES:
-{chr(10).join(ent_lines) or 'No specific entities found.'}
+        context_text = f"""### KNOWLEDGE GRAPH TOPOLOGY (LINEARIZED TRIPLES):
+{rel_text}
 
-### GRAPH RELATIONSHIPS:
-{chr(10).join(rel_lines) or 'No direct relationships found.'}
+### ENTITY ATTRIBUTES:
+{ent_text}
 
 ### RECORDED EVENTS:
-{chr(10).join(event_lines) or 'No specific events recorded.'}
+{events_text}
 
 ### EVIDENCE CLAIMS:
-{chr(10).join(claim_lines) or 'No specific claims recorded.'}
+{claims_text}
 
-### SUPPORTING ARTICLES & SOURCES:
-{chr(10).join(art_lines) or 'No direct articles retrieved.'}
+### SUPPORTING SOURCES:
+{arts_text}
 """
 
         messages = []
@@ -107,22 +179,38 @@ class AnswerSynthesizer:
                 })
 
         user_content = (
-            f"User Question: {question}\n\n"
-            f"Evidence & Knowledge Graph Context:\n{context_text}\n\n"
-            f"Please synthesize a comprehensive, evidence-grounded briefing."
+            f"### EVIDENCE CONTEXT\n{context_text}\n\n"
+            f"### DIRECTIVE & QUESTION\nUser Question: {question}\n\n"
+            f"Please synthesize a comprehensive, evidence-grounded briefing based strictly on the knowledge graph context above."
         )
         messages.append({"role": "user", "content": user_content})
 
+        # 2. KV Prompt Caching: use cache_control ephemeral block with string fallback
         try:
             response = self.client.messages.create(
                 model=self.model,
                 max_tokens=1536,
-                system=SYNTHESIS_SYSTEM_PROMPT,
+                system=[
+                    {
+                        "type": "text",
+                        "text": SYNTHESIS_SYSTEM_PROMPT,
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
                 messages=messages,
             )
             raw_answer = response.content[0].text.strip()
-        except Exception as e:
-            raw_answer = f"Error during briefing synthesis: {e}"
+        except Exception:
+            try:
+                response = self.client.messages.create(
+                    model=self.model,
+                    max_tokens=1536,
+                    system=SYNTHESIS_SYSTEM_PROMPT,
+                    messages=messages,
+                )
+                raw_answer = response.content[0].text.strip()
+            except Exception as e:
+                raw_answer = f"Error during briefing synthesis: {e}"
 
         # Extract explore_graph block
         entity_ids = [e["id"] for e in entities]
