@@ -29,6 +29,12 @@ class Settings(BaseModel):
     db_path: Path = Field(
         default_factory=lambda: Path(os.environ.get("DATABASE_PATH", str(DATA_DIR / "driftforge.db")))
     )
+    kuzu_db_path: Path = Field(
+        default_factory=lambda: Path(os.environ.get("KUZU_DB_PATH", str(DATA_DIR / "kuzu_store")))
+    )
+    use_kuzu: bool = Field(
+        default_factory=lambda: os.environ.get("USE_KUZU", "true").lower() in ("true", "1", "yes")
+    )
 
     # LLM Settings (MiniMax / Anthropic compatible)
     anthropic_base_url: str = Field(

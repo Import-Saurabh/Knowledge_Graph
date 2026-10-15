@@ -234,6 +234,16 @@ def init_db(db_path: Optional[Path] = None) -> None:
 
     seed_from_graph_json_if_empty()
 
+    if getattr(settings, "use_kuzu", True):
+        try:
+            from server.kuzu_store import KuzuGraphEngine
+            kuzu_path = db_path.parent / f"{db_path.stem}_kuzu" if db_path else settings.kuzu_db_path
+            KuzuGraphEngine.reset(kuzu_path)
+            with get_db() as conn:
+                KuzuGraphEngine.sync_from_sqlite(conn)
+        except Exception as e:
+            print(f"Notice: Could not init Kuzu: {e}")
+
 
 def seed_from_graph_json_if_empty() -> None:
     """If database has 0 entities, seed from existing graph.json to preserve historical baseline."""
@@ -343,6 +353,18 @@ class GraphStore:
             except Exception:
                 pass
             conn.commit()
+
+        if getattr(settings, "use_kuzu", True):
+            try:
+                from server.kuzu_store import KuzuGraphEngine
+                KuzuGraphEngine.upsert_entity(
+                    entity_id=entity.id,
+                    canonical_name=entity.canonical_name,
+                    entity_type=entity.entity_type,
+                    description=entity.description or "",
+                )
+            except Exception:
+                pass
 
     @staticmethod
     def get_entity(entity_id: str) -> Optional[dict]:
@@ -479,6 +501,18 @@ class GraphStore:
                 ),
             )
             conn.commit()
+
+        if getattr(settings, "use_kuzu", True):
+            try:
+                from server.kuzu_store import KuzuGraphEngine
+                KuzuGraphEngine.upsert_relationship(
+                    source_id=rel.source_id,
+                    target_id=rel.target_id,
+                    relationship_type=rel.relationship_type,
+                    description=rel.description or "",
+                )
+            except Exception:
+                pass
 
     @staticmethod
     def get_relationships_for_entity(entity_id: str) -> list[dict]:
@@ -630,6 +664,15 @@ class GraphStore:
         """Retrieve the neighborhood subgraph centered on a set of entity IDs."""
         if not entity_ids:
             return {"nodes": [], "links": []}
+
+        if getattr(settings, "use_kuzu", True):
+            try:
+                from server.kuzu_store import KuzuGraphEngine
+                res = KuzuGraphEngine.get_subgraph(entity_ids, max_hops=max_hops)
+                if res and (res.get("nodes") or res.get("links")):
+                    return res
+            except Exception:
+                pass
 
         with get_db() as conn:
             # Use CTE to find connected nodes within max_hops
