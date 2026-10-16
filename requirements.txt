@@ -10,3 +10,5 @@ apscheduler
 httpx
 pytest
 kuzu>=0.11.0
+newspaper4k>=0.9.6
+gnews>=0.8.3

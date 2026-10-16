@@ -5,8 +5,9 @@ __pycache__/
 .DS_Store
 lambda.zip
 lambda_package/
-data/*.db
-data/*.db-*
-data/*kuzu*
+data/*.db-shm
+data/*.db-wal
+data/test_*
+data/test_kuzu*
 .pytest_cache/
 graphify-out/cache/

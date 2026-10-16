@@ -98,7 +98,153 @@ def detect_publisher(url: str, default: Optional[str] = None) -> str:
         return "Deutsche Welle"
     if "france24." in domain:
         return "France 24"
+    if "nytimes." in domain:
+        return "The New York Times"
+    if "washingtonpost." in domain:
+        return "The Washington Post"
+    if "reuters." in domain:
+        return "Reuters"
+    if "euronews." in domain:
+        return "Euronews"
+    if "themoscowtimes." in domain:
+        return "The Moscow Times"
+    if "bloomberg." in domain:
+        return "Bloomberg"
+    if "globaltimes." in domain:
+        return "Global Times"
+    if "timesofindia." in domain or "indiatimes." in domain:
+        return "The Times of India"
+    if "businessinsider." in domain:
+        return "Business Insider"
+    if "tehrantimes." in domain:
+        return "Tehran Times"
     return default or domain
+
+
+def scrape_article_body(
+    url: str,
+    fallback_summary: str = "",
+    timeout: float = 3.5,
+    max_chars: int = 3500,
+) -> str:
+    """Scrape full article text using newspaper4k with strict timeout and fallback."""
+    if not url:
+        return fallback_summary
+    try:
+        import newspaper
+        config = newspaper.Config()
+        config.request_timeout = timeout
+        config.fetch_images = False
+        config.memoize_articles = False
+        config.browser_user_agent = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
+        art = newspaper.article(url, config=config)
+        text = (art.text or "").strip()
+        if text and len(text) > 100:
+            return text[:max_chars]
+    except Exception:
+        pass
+    return fallback_summary
+
+
+def scrape_articles_parallel(
+    articles: list[Article],
+    max_workers: int = 10,
+    timeout: float = 3.5,
+    max_chars: int = 3500,
+) -> list[Article]:
+    """Scrape full text concurrently across a batch of articles with strict deadline isolation."""
+    if not articles:
+        return []
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    def _worker(art: Article) -> Article:
+        try:
+            body = scrape_article_body(
+                art.url,
+                fallback_summary=art.summary or art.content_excerpt or art.headline,
+                timeout=timeout,
+                max_chars=max_chars,
+            )
+            if body:
+                art.content_excerpt = body
+                art.content_hash = compute_sha256(f"{art.headline}\n{body}")
+        except Exception:
+            pass
+        return art
+
+    workers = min(len(articles), max_workers)
+    result_map = {a.id: a for a in articles}
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        f_to_id = {executor.submit(_worker, a): a.id for a in articles}
+        try:
+            for fut in as_completed(f_to_id, timeout=timeout + 2.0):
+                try:
+                    res_art = fut.result()
+                    result_map[res_art.id] = res_art
+                except Exception:
+                    pass
+        except Exception:
+            pass
+    return [result_map[a.id] for a in articles]
+
+
+def discover_gnews_articles(
+    domains: Optional[list[str]] = None,
+    max_per_domain: int = 10,
+) -> list[Article]:
+    """Discover recent articles from domains via GNews concurrently."""
+    target_domains = domains or settings.gnews_monitored_domains
+    if not target_domains:
+        return []
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from gnews import GNews
+
+    def _fetch_domain(domain: str) -> list[Article]:
+        domain_articles = []
+        try:
+            gn = GNews(language="en", period="2d", max_results=max_per_domain)
+            items = gn.get_news_by_site(domain)
+            pub_name = detect_publisher(f"https://{domain}")
+            for item in items:
+                raw_url = item.get("url", "")
+                title = item.get("title", "").strip()
+                summary = item.get("description", "").strip()
+                pub_date = item.get("published date", "")
+                if not raw_url or not title:
+                    continue
+                clean_url = normalize_url(raw_url)
+                url_hash = compute_sha256(clean_url)
+                domain_articles.append(Article(
+                    id=str(uuid.uuid4()),
+                    url=clean_url,
+                    url_hash=url_hash,
+                    publisher=pub_name,
+                    headline=title,
+                    summary=summary,
+                    content_excerpt=summary[:500] if summary else title,
+                    content_hash=compute_sha256(f"{title}\n{summary}"),
+                    published_at=pub_date or utc_now_iso(),
+                    ingested_at=utc_now_iso(),
+                    feed_source=f"gnews:{domain}",
+                    extraction_status="pending",
+                    metadata={"source_domain": domain},
+                ))
+        except Exception as exc:
+            print(f"[GNews] Error fetching from {domain}: {exc}", file=sys.stderr)
+        return domain_articles
+
+    discovered = []
+    with ThreadPoolExecutor(max_workers=min(len(target_domains), 8)) as executor:
+        futures = [executor.submit(_fetch_domain, d) for d in target_domains]
+        for fut in as_completed(futures):
+            try:
+                discovered.extend(fut.result())
+            except Exception as e:
+                print(f"[GNews] Worker error: {e}", file=sys.stderr)
+    return discovered
 
 
 class RSSConnector:
@@ -110,7 +256,14 @@ class RSSConnector:
     def _fetch_single_feed(self, feed_url: str, max_per_feed: int) -> list[Article]:
         items = []
         try:
-            feed = feedparser.parse(feed_url)
+            import urllib.request
+            req = urllib.request.Request(
+                feed_url,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+            )
+            with urllib.request.urlopen(req, timeout=settings.feed_timeout_seconds) as response:
+                xml_data = response.read()
+            feed = feedparser.parse(xml_data)
             publisher = detect_publisher(feed_url, feed.feed.get("title", ""))
             count = 0
 
@@ -156,17 +309,32 @@ class RSSConnector:
             print(f"[RSSConnector] Warning: could not parse feed {feed_url}: {exc}", file=sys.stderr)
         return items
 
-    def discover_articles(self, max_per_feed: int = 4) -> list[Article]:
-        """Fetch articles concurrently across feeds with per-source error isolation."""
+    def discover_articles(self, max_per_feed: Optional[int] = None) -> list[Article]:
+        """Fetch articles concurrently across all RSS feeds and GNews domains with per-source error isolation."""
         from concurrent.futures import ThreadPoolExecutor, as_completed
+        limit = max_per_feed or settings.max_articles_per_feed
         discovered: list[Article] = []
-        with ThreadPoolExecutor(max_workers=min(len(self.feeds), 6)) as executor:
-            futures = [executor.submit(self._fetch_single_feed, url, max_per_feed) for url in self.feeds]
+
+        # 1. Fetch direct RSS feeds concurrently
+        with ThreadPoolExecutor(max_workers=min(len(self.feeds), 16)) as executor:
+            futures = [executor.submit(self._fetch_single_feed, url, limit) for url in self.feeds]
             for fut in as_completed(futures):
                 try:
                     discovered.extend(fut.result())
                 except Exception as exc:
                     print(f"[RSSConnector] Thread execution error: {exc}", file=sys.stderr)
+
+        # 2. Fetch GNews monitored domains concurrently
+        if getattr(settings, "gnews_monitored_domains", None):
+            try:
+                gnews_items = discover_gnews_articles(
+                    domains=settings.gnews_monitored_domains,
+                    max_per_domain=settings.gnews_max_per_domain,
+                )
+                discovered.extend(gnews_items)
+            except Exception as exc:
+                print(f"[RSSConnector] GNews discovery error: {exc}", file=sys.stderr)
+
         return discovered
 
     def search_topic_articles(self, query: str, max_articles: int = 6) -> list[Article]:

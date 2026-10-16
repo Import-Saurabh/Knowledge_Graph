@@ -54,7 +54,7 @@ class Settings(BaseModel):
     )
     cors_origins: list[str] = ["*"]
 
-    # Ingestion & Feeds
+    # Ingestion & Feeds (16+ Newsrooms)
     rss_feeds: list[str] = [
         "http://feeds.bbci.co.uk/news/world/rss.xml",
         "https://feeds.npr.org/1001/rss.xml",
@@ -62,14 +62,52 @@ class Settings(BaseModel):
         "https://www.aljazeera.com/xml/rss/all.xml",
         "https://rss.dw.com/rdf/rss-en-world",
         "https://www.france24.com/en/rss",
+        "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+        "https://www.euronews.com/rss?level=theme&name=news",
+        "https://www.themoscowtimes.com/rss/news",
+        "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms",
+        "https://www.businessinsider.com/rss",
+        "https://www.tehrantimes.com/rss",
     ]
+    gnews_monitored_domains: list[str] = [
+        "washingtonpost.com",
+        "reuters.com",
+        "bloomberg.com",
+        "globaltimes.cn",
+    ]
+    gnews_max_per_domain: int = Field(
+        default_factory=lambda: int(os.environ.get("GNEWS_MAX_PER_DOMAIN", "10"))
+    )
     max_articles_per_feed: int = Field(
-        default_factory=lambda: int(os.environ.get("MAX_ARTICLES_PER_FEED", "4"))
+        default_factory=lambda: int(os.environ.get("MAX_ARTICLES_PER_FEED", "30"))
+    )
+
+    # Low-Latency Performance Settings
+    feed_timeout_seconds: float = Field(
+        default_factory=lambda: float(os.environ.get("FEED_TIMEOUT_SECONDS", "4.0"))
+    )
+    scrape_timeout_seconds: float = Field(
+        default_factory=lambda: float(os.environ.get("SCRAPE_TIMEOUT_SECONDS", "3.5"))
+    )
+    max_scrape_workers: int = Field(
+        default_factory=lambda: int(os.environ.get("MAX_SCRAPE_WORKERS", "10"))
+    )
+    max_article_text_chars: int = Field(
+        default_factory=lambda: int(os.environ.get("MAX_ARTICLE_TEXT_CHARS", "3500"))
+    )
+    extractor_batch_size: int = Field(
+        default_factory=lambda: int(os.environ.get("EXTRACTOR_BATCH_SIZE", "5"))
+    )
+    extractor_max_concurrency: int = Field(
+        default_factory=lambda: int(os.environ.get("EXTRACTOR_MAX_CONCURRENCY", "2"))
+    )
+    max_process_per_run: int = Field(
+        default_factory=lambda: int(os.environ.get("MAX_PROCESS_PER_RUN", "10"))
     )
 
     # Scheduling
     ingestion_schedule_minutes: int = Field(
-        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_MINUTES", "2"))
+        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_MINUTES", "1"))
     )
     ingestion_schedule_hours: Optional[int] = Field(
         default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_HOURS")) if os.environ.get("INGESTION_SCHEDULE_HOURS") else None

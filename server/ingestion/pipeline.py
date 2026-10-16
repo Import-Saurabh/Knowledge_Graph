@@ -65,10 +65,26 @@ class IngestionPipeline:
                 print("[Pipeline] No new articles to process. Job completed (snapshot refreshed).")
                 return job
 
-            # 3. Extract knowledge graph using LLM
+            # Pace processing per cycle (e.g. 10 articles) so each run finishes in ~5s without 429 rate limit errors
+            max_process = getattr(settings, "max_process_per_run", 10)
+            if len(new_articles) > max_process:
+                print(f"[Pipeline] Pacing: processing top {max_process} of {len(new_articles)} new articles in this cycle...")
+                new_articles = new_articles[:max_process]
+
+            # 3. Scrape full text concurrently for new articles (ultra-low-latency 10-thread pool)
+            from server.ingestion.sources import scrape_articles_parallel
+            print(f"[Pipeline] Scraping full article bodies for {len(new_articles)} new articles concurrently...")
+            new_articles = scrape_articles_parallel(
+                new_articles,
+                max_workers=getattr(settings, "max_scrape_workers", 10),
+                timeout=getattr(settings, "scrape_timeout_seconds", 3.5),
+                max_chars=getattr(settings, "max_article_text_chars", 3500),
+            )
+
+            # 4. Extract knowledge graph using LLM (parallel chunked batches)
             extracted = self.extractor.extract(new_articles)
 
-            # 4. Persist extraction transactionally
+            # 5. Persist extraction transactionally
             stats = self.writer.persist_extraction(new_articles, extracted)
 
             job.articles_processed = len(new_articles)
