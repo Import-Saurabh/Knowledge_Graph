@@ -101,13 +101,17 @@ class Settings(BaseModel):
     extractor_max_concurrency: int = Field(
         default_factory=lambda: int(os.environ.get("EXTRACTOR_MAX_CONCURRENCY", "2"))
     )
+    # Bug #4 fix: raised from 10 to 50 so more new articles are processed
+    # before they age off the feeds.
     max_process_per_run: int = Field(
-        default_factory=lambda: int(os.environ.get("MAX_PROCESS_PER_RUN", "10"))
+        default_factory=lambda: int(os.environ.get("MAX_PROCESS_PER_RUN", "50"))
     )
 
     # Scheduling
+    # Bug #3 fix: default interval raised from 1 to 5 minutes.
+    # A full ingestion run takes ~60s, so 1-minute intervals cause skips.
     ingestion_schedule_minutes: int = Field(
-        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_MINUTES", "1"))
+        default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_MINUTES", "5"))
     )
     ingestion_schedule_hours: Optional[int] = Field(
         default_factory=lambda: int(os.environ.get("INGESTION_SCHEDULE_HOURS")) if os.environ.get("INGESTION_SCHEDULE_HOURS") else None

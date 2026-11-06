@@ -5,8 +5,17 @@ __pycache__/
 .DS_Store
 lambda.zip
 lambda_package/
+# Bug #9 fix: ignore all SQLite database files (DB, SHM, WAL)
+# They contain runtime data (including chat history) and the WAL was
+# already gitignored but not the main .db, leading to inconsistent
+# committed state.
+data/*.db
 data/*.db-shm
 data/*.db-wal
+data/*.wal
+# Keep the kuzu store out of version control too
+data/kuzu_store/
+data/kuzu_store*
 data/test_*
 data/test_kuzu*
 .pytest_cache/
