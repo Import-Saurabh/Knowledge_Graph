@@ -1,20 +1,24 @@
-version: "3.8"
-
 services:
   driftforge:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: driftforge-app
     ports:
-      - "8080:8080"
+      - "${PORT:-8080}:8080"
     volumes:
       - driftforge-data:/app/data
     env_file:
       - .env
+    environment:
+      - DATABASE_PATH=/app/data/driftforge.db
+      - KUZU_DB_PATH=/app/data/kuzu_store
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
       interval: 30s
       timeout: 10s
+      start_period: 15s
       retries: 3
 
 volumes:

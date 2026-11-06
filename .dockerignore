@@ -1,0 +1,25 @@
+.venv/
+.env
+.git/
+.gitignore
+.pytest_cache/
+__pycache__/
+*.pyc
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/kuzu_store/
+graphify-out/
+Media/
+docs/
+tests/
+lambda.zip
+lambda_package/
+.DS_Store
+# Exclude markdown docs but keep project files needed at runtime
+README.md
+IMPLEMENTATION_PLAN.md
+RUN_GUIDE.md
+architecture.md
+plamd.md
+plan.md
