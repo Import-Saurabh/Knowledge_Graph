@@ -29,6 +29,15 @@ def get_subgraph(
     return GraphStore.get_subgraph(node_ids, max_hops=hops)
 
 
+# Bug #5 fix: /entities/search MUST be registered BEFORE /entities/{entity_id}
+# so that FastAPI matches the literal "search" path segment first, not as a
+# path parameter.
+@router.get("/entities/search")
+def search_entities(q: str = Query(..., min_length=1), limit: int = 20):
+    """Search entities by canonical name or alias."""
+    return GraphStore.search_entities(q, limit=limit)
+
+
 @router.get("/entities/{entity_id}")
 def get_entity_detail(entity_id: str):
     """Retrieve entity metadata and connected relationships."""
@@ -40,12 +49,6 @@ def get_entity_detail(entity_id: str):
         "entity": entity,
         "relationships": relationships,
     }
-
-
-@router.get("/entities/search")
-def search_entities(q: str = Query(..., min_length=1), limit: int = 20):
-    """Search entities by canonical name or alias."""
-    return GraphStore.search_entities(q, limit=limit)
 
 
 @router.get("/events/{event_id}")

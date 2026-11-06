@@ -232,6 +232,20 @@ class KuzuGraphEngine:
     def sync_from_sqlite(cls, conn: sqlite3.Connection) -> None:
         """Synchronize existing entities and relationships from SQLite into Kùzu."""
         try:
+            # Check if Kùzu is already populated to avoid expensive redundant queries
+            k_conn = cls.get_connection()
+            try:
+                check_res = k_conn.execute("MATCH (e:Entity) RETURN COUNT(e)")
+                if check_res.has_next():
+                    existing_count = check_res.get_next()[0]
+                    if existing_count > 0:
+                        logger.info(
+                            f"[KuzuGraphEngine] Kùzu already populated with {existing_count} entities, skipping sync."
+                        )
+                        return
+            except Exception:
+                pass
+
             # Sync entities
             entity_rows = conn.execute(
                 "SELECT id, canonical_name, entity_type, description FROM entities"

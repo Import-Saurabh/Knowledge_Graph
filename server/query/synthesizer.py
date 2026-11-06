@@ -199,7 +199,14 @@ class AnswerSynthesizer:
                 ],
                 messages=messages,
             )
-            raw_answer = response.content[0].text.strip()
+            # Bug #13 fix: handle thinking blocks in synthesis too
+            raw_answer = ""
+            for block in response.content:
+                if getattr(block, "type", None) == "text" and getattr(block, "text", None):
+                    raw_answer = block.text.strip()
+                    break
+            if not raw_answer:
+                raw_answer = (getattr(response.content[0], "text", "") or "").strip()
         except Exception:
             try:
                 response = self.client.messages.create(
@@ -208,9 +215,16 @@ class AnswerSynthesizer:
                     system=SYNTHESIS_SYSTEM_PROMPT,
                     messages=messages,
                 )
-                raw_answer = response.content[0].text.strip()
+                raw_answer = ""
+                for block in response.content:
+                    if getattr(block, "type", None) == "text" and getattr(block, "text", None):
+                        raw_answer = block.text.strip()
+                        break
+                if not raw_answer:
+                    raw_answer = (getattr(response.content[0], "text", "") or "").strip()
             except Exception as e:
-                raw_answer = f"Error during briefing synthesis: {e}"
+                # Bug #6 fix: re-raise so the route handler returns HTTP 500
+                raise RuntimeError(f"Briefing synthesis failed: {e}") from e
 
         # Extract explore_graph block
         entity_ids = [e["id"] for e in entities]

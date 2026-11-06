@@ -27,9 +27,19 @@ _local = threading.local()
 
 def get_db_connection() -> sqlite3.Connection:
     """Thread-local database connection with row factory and WAL mode."""
-    if not hasattr(_local, "conn") or _local.conn is None:
+    target_path = str(settings.db_path)
+    if (
+        not hasattr(_local, "conn")
+        or _local.conn is None
+        or getattr(_local, "conn_path", None) != target_path
+    ):
+        if hasattr(_local, "conn") and _local.conn is not None:
+            try:
+                _local.conn.close()
+            except Exception:
+                pass
         conn = sqlite3.connect(
-            str(settings.db_path),
+            target_path,
             check_same_thread=False,
             timeout=30.0,
         )
@@ -38,7 +48,19 @@ def get_db_connection() -> sqlite3.Connection:
         conn.execute("PRAGMA foreign_keys = ON;")
         conn.execute("PRAGMA synchronous = NORMAL;")
         _local.conn = conn
+        _local.conn_path = target_path
     return _local.conn
+
+
+def close_db_connection() -> None:
+    """Close the thread-local SQLite connection if active."""
+    if hasattr(_local, "conn") and _local.conn is not None:
+        try:
+            _local.conn.close()
+        except Exception:
+            pass
+        _local.conn = None
+        _local.conn_path = None
 
 
 @contextmanager
@@ -238,7 +260,7 @@ def init_db(db_path: Optional[Path] = None) -> None:
         try:
             from server.kuzu_store import KuzuGraphEngine
             kuzu_path = db_path.parent / f"{db_path.stem}_kuzu" if db_path else settings.kuzu_db_path
-            KuzuGraphEngine.reset(kuzu_path)
+            KuzuGraphEngine.get_database(kuzu_path)
             with get_db() as conn:
                 KuzuGraphEngine.sync_from_sqlite(conn)
         except Exception as e:
@@ -534,10 +556,15 @@ class GraphStore:
 
     @staticmethod
     def upsert_article(article: Article) -> bool:
-        """Returns True if article was newly inserted, False if it was already known."""
+        """Insert new article or update extraction_status if existing. Returns True if inserted."""
         with get_db() as conn:
             existing = conn.execute("SELECT id FROM articles WHERE url = ?", (article.url,)).fetchone()
             if existing:
+                conn.execute(
+                    "UPDATE articles SET extraction_status = ?, metadata = ? WHERE url = ?",
+                    (article.extraction_status, json.dumps(article.metadata), article.url),
+                )
+                conn.commit()
                 return False
 
             conn.execute(
@@ -576,6 +603,16 @@ class GraphStore:
     def article_exists_by_url(url: str) -> bool:
         with get_db() as conn:
             row = conn.execute("SELECT 1 FROM articles WHERE url = ?", (url,)).fetchone()
+            return row is not None
+
+    @staticmethod
+    def article_extracted_by_url(url: str) -> bool:
+        """Check if an article exists and has been successfully extracted."""
+        with get_db() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM articles WHERE url = ? AND extraction_status = 'extracted'",
+                (url,),
+            ).fetchone()
             return row is not None
 
     @staticmethod
