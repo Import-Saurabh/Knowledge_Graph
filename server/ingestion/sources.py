@@ -140,8 +140,19 @@ def scrape_article_body(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
-        art = newspaper.article(url, config=config)
-        text = (art.text or "").strip()
+
+        # Bug #8 fix: enforce the timeout with a thread-level deadline
+        # so network calls that ignore request_timeout are still bounded.
+        from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+
+        def _download_and_parse():
+            art = newspaper.article(url, config=config)
+            return (art.text or "").strip()
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(_download_and_parse)
+            text = future.result(timeout=timeout + 1.0)
+
         if text and len(text) > 100:
             return text[:max_chars]
     except Exception:
@@ -191,6 +202,64 @@ def scrape_articles_parallel(
     return [result_map[a.id] for a in articles]
 
 
+def _resolve_gnews_url(google_url: str, timeout: float = 5.0) -> str:
+    """Resolve a Google News redirect URL to the actual article URL.
+
+    Bug #2 fix: GNews items use Google redirect URLs which newspaper4k
+    cannot scrape. Follow the redirect to get the real publisher URL.
+    """
+    if not google_url or "news.google.com" not in google_url:
+        return google_url
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            google_url,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.url
+    except Exception:
+        return google_url
+
+
+def _parse_gnews_date(date_str: str) -> str:
+    """Parse a GNews date string into ISO 8601 format.
+
+    Bug #11 fix: GNews dates come in various non-ISO formats like
+    'Mon, 12 Oct 2026 17:32:13 GMT'. Normalise them here.
+    """
+    if not date_str or not isinstance(date_str, str):
+        return utc_now_iso()
+    # Already ISO?
+    try:
+        from datetime import datetime, timezone
+        dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+        return dt.astimezone(timezone.utc).isoformat()
+    except Exception:
+        pass
+    # Try RFC 2822 / RFC 822
+    try:
+        import email.utils
+        from datetime import datetime, timezone
+        dt = email.utils.parsedate_to_datetime(date_str)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc).isoformat()
+    except Exception:
+        pass
+    # Try dateutil as last resort
+    try:
+        from dateutil.parser import parse as du_parse
+        from datetime import timezone
+        dt = du_parse(date_str)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc).isoformat()
+    except Exception:
+        pass
+    return utc_now_iso()
+
+
 def discover_gnews_articles(
     domains: Optional[list[str]] = None,
     max_per_domain: int = 10,
@@ -215,8 +284,15 @@ def discover_gnews_articles(
                 pub_date = item.get("published date", "")
                 if not raw_url or not title:
                     continue
-                clean_url = normalize_url(raw_url)
+
+                # Bug #2 fix: resolve Google redirect to real article URL
+                resolved_url = _resolve_gnews_url(raw_url)
+                clean_url = normalize_url(resolved_url)
                 url_hash = compute_sha256(clean_url)
+
+                # Bug #11 fix: convert GNews dates to ISO format
+                iso_date = _parse_gnews_date(pub_date) if pub_date else utc_now_iso()
+
                 domain_articles.append(Article(
                     id=str(uuid.uuid4()),
                     url=clean_url,
@@ -226,7 +302,7 @@ def discover_gnews_articles(
                     summary=summary,
                     content_excerpt=summary[:500] if summary else title,
                     content_hash=compute_sha256(f"{title}\n{summary}"),
-                    published_at=pub_date or utc_now_iso(),
+                    published_at=iso_date,
                     ingested_at=utc_now_iso(),
                     feed_source=f"gnews:{domain}",
                     extraction_status="pending",
@@ -310,30 +386,56 @@ class RSSConnector:
         return items
 
     def discover_articles(self, max_per_feed: Optional[int] = None) -> list[Article]:
-        """Fetch articles concurrently across all RSS feeds and GNews domains with per-source error isolation."""
+        """Fetch articles concurrently across all RSS feeds and GNews domains with per-source error isolation.
+
+        Bug #2 fix: Interleave GNews articles with RSS articles so they aren't
+        pushed out of the per-run processing cap by sheer RSS volume.
+        """
         from concurrent.futures import ThreadPoolExecutor, as_completed
         limit = max_per_feed or settings.max_articles_per_feed
-        discovered: list[Article] = []
+        rss_articles: list[Article] = []
 
         # 1. Fetch direct RSS feeds concurrently
-        with ThreadPoolExecutor(max_workers=min(len(self.feeds), 16)) as executor:
-            futures = [executor.submit(self._fetch_single_feed, url, limit) for url in self.feeds]
-            for fut in as_completed(futures):
-                try:
-                    discovered.extend(fut.result())
-                except Exception as exc:
-                    print(f"[RSSConnector] Thread execution error: {exc}", file=sys.stderr)
+        if self.feeds:
+            with ThreadPoolExecutor(max_workers=min(len(self.feeds), 16)) as executor:
+                futures = [executor.submit(self._fetch_single_feed, url, limit) for url in self.feeds]
+                for fut in as_completed(futures):
+                    try:
+                        rss_articles.extend(fut.result())
+                    except Exception as exc:
+                        print(f"[RSSConnector] Thread execution error: {exc}", file=sys.stderr)
 
         # 2. Fetch GNews monitored domains concurrently
+        gnews_articles: list[Article] = []
         if getattr(settings, "gnews_monitored_domains", None):
             try:
-                gnews_items = discover_gnews_articles(
+                gnews_articles = discover_gnews_articles(
                     domains=settings.gnews_monitored_domains,
                     max_per_domain=settings.gnews_max_per_domain,
                 )
-                discovered.extend(gnews_items)
             except Exception as exc:
                 print(f"[RSSConnector] GNews discovery error: {exc}", file=sys.stderr)
+
+        # 3. Interleave: alternate RSS and GNews so both get a fair share
+        # of the per-run processing cap downstream.
+        discovered: list[Article] = []
+        seen_urls: set[str] = set()
+        ri, gi = 0, 0
+        while ri < len(rss_articles) or gi < len(gnews_articles):
+            # Take one RSS article
+            if ri < len(rss_articles):
+                art = rss_articles[ri]
+                ri += 1
+                if art.url not in seen_urls:
+                    seen_urls.add(art.url)
+                    discovered.append(art)
+            # Take one GNews article
+            if gi < len(gnews_articles):
+                art = gnews_articles[gi]
+                gi += 1
+                if art.url not in seen_urls:
+                    seen_urls.add(art.url)
+                    discovered.append(art)
 
         return discovered
 

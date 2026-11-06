@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import sys
 from typing import Any
@@ -10,6 +11,8 @@ from anthropic import Anthropic
 
 from server.config import settings
 from server.models import Article
+
+logger = logging.getLogger(__name__)
 
 EXTRACTION_SYSTEM_PROMPT = """You are an expert geopolitical intelligence analyst building a knowledge graph from current news reporting.
 
@@ -95,9 +98,15 @@ class LLMExtractor:
         self.model = settings.llm_model
 
     def _extract_chunk(self, chunk_articles: list[Article], offset: int = 0) -> dict[str, Any]:
-        """Extract graph elements from a single chunk of articles with index offset adjustment."""
+        """Extract graph elements from a single chunk of articles with index offset adjustment.
+
+        Returns a dict with 'entities', 'events', 'relationships', 'claims',
+        and '_failed' (bool) so callers can distinguish empty extraction from
+        a hard failure.
+        """
+        empty = {"entities": [], "events": [], "relationships": [], "claims": []}
         if not chunk_articles:
-            return {"entities": [], "events": [], "relationships": [], "claims": []}
+            return empty
 
         articles_text = "\n\n".join(
             f"ARTICLE {i + 1} ({a.publisher or 'Unknown Source'} - {a.published_at or 'Today'}):\n"
@@ -120,7 +129,18 @@ class LLMExtractor:
                     system=EXTRACTION_SYSTEM_PROMPT,
                     messages=[{"role": "user", "content": prompt}],
                 )
-                raw_text = response.content[0].text.strip()
+
+                # Bug #13 fix: handle thinking blocks (e.g. MiniMax-M3.1-Flash).
+                # Walk through all content blocks and find the first text block.
+                raw_text = ""
+                for block in response.content:
+                    if getattr(block, "type", None) == "text" and getattr(block, "text", None):
+                        raw_text = block.text.strip()
+                        break
+                if not raw_text:
+                    # Fallback: try legacy .text on first block
+                    raw_text = (getattr(response.content[0], "text", "") or "").strip()
+
                 json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_text, re.DOTALL)
                 if json_match:
                     raw_text = json_match.group(1).strip()
@@ -135,17 +155,24 @@ class LLMExtractor:
                 relationships = data.get("relationships", [])
                 claims = data.get("claims", [])
 
+                # Bug #7 fix: safely coerce article_index to int so a
+                # non-numeric value doesn't crash the whole batch.
+                def _safe_int(val: Any, default: int = 1) -> int:
+                    try:
+                        return int(val)
+                    except (TypeError, ValueError):
+                        return default
+
                 # Re-map 1-based article_index to match global article list
-                if offset > 0:
-                    for ev in events:
-                        if "article_index" in ev:
-                            ev["article_index"] = ev["article_index"] + offset
-                    for rel in relationships:
-                        if "article_index" in rel:
-                            rel["article_index"] = rel["article_index"] + offset
-                    for cl in claims:
-                        if "article_index" in cl:
-                            cl["article_index"] = cl["article_index"] + offset
+                for ev in events:
+                    if "article_index" in ev:
+                        ev["article_index"] = _safe_int(ev["article_index"]) + offset
+                for rel in relationships:
+                    if "article_index" in rel:
+                        rel["article_index"] = _safe_int(rel["article_index"]) + offset
+                for cl in claims:
+                    if "article_index" in cl:
+                        cl["article_index"] = _safe_int(cl["article_index"]) + offset
 
                 return {
                     "entities": data.get("entities", []),
@@ -159,19 +186,30 @@ class LLMExtractor:
                     import time
                     time.sleep(2.0)
                     continue
-                print(f"[LLMExtractor] Error during chunk extraction (offset {offset}): {e}", file=sys.stderr)
-                return {"entities": [], "events": [], "relationships": [], "claims": []}
+                logger.error(f"[LLMExtractor] Error during chunk extraction (offset {offset}): {e}")
+                # Bug #1 fix: mark as failed so the pipeline can track it
+                return {**empty, "_failed": True}
 
     def extract(self, articles: list[Article]) -> dict[str, Any]:
-        """Perform structured extraction on articles, using parallel chunking for low latency."""
+        """Perform structured extraction on articles, using parallel chunking for low latency.
+
+        Returns dict with 'entities', 'events', 'relationships', 'claims',
+        and 'failed_article_count' so the pipeline can record partial failures.
+        """
+        empty = {"entities": [], "events": [], "relationships": [], "claims": [], "failed_article_count": 0}
         if not articles:
-            return {"entities": [], "events": [], "relationships": [], "claims": []}
+            return empty
 
         batch_size = getattr(settings, "extractor_batch_size", 5)
         concurrency = getattr(settings, "extractor_max_concurrency", 3)
 
         if len(articles) <= batch_size:
-            return self._extract_chunk(articles, offset=0)
+            result = self._extract_chunk(articles, offset=0)
+            is_failed = result.pop("_failed", False)
+            for a in articles:
+                a.extraction_status = "failed" if is_failed else "extracted"
+            result["failed_article_count"] = len(articles) if is_failed else 0
+            return result
 
         # Split into batches and execute concurrently
         from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -184,13 +222,27 @@ class LLMExtractor:
         all_relationships: list[dict] = []
         all_claims: list[dict] = []
         seen_entity_ids = set()
+        failed_article_count = 0
 
         workers = min(len(chunks), concurrency)
         with ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = [executor.submit(self._extract_chunk, chunk_arts, offset) for chunk_arts, offset in chunks]
+            futures = {
+                executor.submit(self._extract_chunk, chunk_arts, offset): (chunk_arts, offset)
+                for chunk_arts, offset in chunks
+            }
             for fut in as_completed(futures):
+                chunk_arts, offset = futures[fut]
                 try:
                     res = fut.result()
+                    if res.pop("_failed", False):
+                        for a in chunk_arts:
+                            a.extraction_status = "failed"
+                        failed_article_count += len(chunk_arts)
+                        continue
+
+                    for a in chunk_arts:
+                        a.extraction_status = "extracted"
+
                     for ent in res.get("entities", []):
                         eid = ent.get("id")
                         if eid and eid not in seen_entity_ids:
@@ -203,11 +255,15 @@ class LLMExtractor:
                     all_relationships.extend(res.get("relationships", []))
                     all_claims.extend(res.get("claims", []))
                 except Exception as exc:
-                    print(f"[LLMExtractor] Batch execution error: {exc}", file=sys.stderr)
+                    logger.error(f"[LLMExtractor] Batch execution error: {exc}")
+                    for a in chunk_arts:
+                        a.extraction_status = "failed"
+                    failed_article_count += len(chunk_arts)
 
         return {
             "entities": all_entities,
             "events": all_events,
             "relationships": all_relationships,
             "claims": all_claims,
+            "failed_article_count": failed_article_count,
         }

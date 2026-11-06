@@ -32,7 +32,8 @@ class GraphWriter:
         # 1. Map article index (1-based) to article instance
         article_map: dict[int, Article] = {i + 1: a for i, a in enumerate(articles)}
 
-        # 2. Persist articles first
+        # 2. Persist articles with their respective extraction_status
+        # Bug #1 fix: ensures article status transitions out of "pending" to "extracted" or "failed"
         for a in articles:
             GraphStore.upsert_article(a)
 
