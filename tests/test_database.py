@@ -17,12 +17,17 @@ def test_db():
         db_path = Path(tf.name)
     
     orig_path = settings.db_path
+    orig_kuzu = settings.use_kuzu
     settings.db_path = db_path
+    settings.use_kuzu = False
     init_db(db_path)
 
     yield db_path
 
+    from server.database import close_db_connection
+    close_db_connection()
     settings.db_path = orig_path
+    settings.use_kuzu = orig_kuzu
     try:
         os.remove(db_path)
     except Exception:
@@ -118,9 +123,11 @@ def test_article_deduplication():
         url="https://www.bbc.com/news/world-12345?utm_source=rss",
         url_hash="hash1",
         headline="Breaking News Test (Duplicate)",
+        extraction_status="extracted",
     )
     is_duplicate = GraphStore.upsert_article(art2)
     assert is_duplicate is False
+    assert GraphStore.article_extracted_by_url(art2.url) is True
 
 
 def test_conversations_and_messages():

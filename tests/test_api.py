@@ -83,3 +83,25 @@ def test_static_page_serves():
     # graph.json
     graph_res = client.get("/graph.json")
     assert graph_res.status_code == 200
+
+
+def test_entities_search_endpoint_not_shadowed():
+    """Bug #5 regression test: /api/entities/search must return 200, not 404 from {entity_id}."""
+    res = client.get("/api/entities/search?q=united")
+    assert res.status_code == 200
+    data = res.json()
+    assert isinstance(data, list)
+
+
+def test_query_error_returns_500(monkeypatch):
+    """Bug #6 regression test: /api/query must return HTTP 500 on synthesis error, not 200 with error as answer."""
+    from server.query.synthesizer import AnswerSynthesizer
+
+    def mock_synthesize(*args, **kwargs):
+        raise RuntimeError("Simulated LLM synthesis failure")
+
+    monkeypatch.setattr(AnswerSynthesizer, "synthesize", mock_synthesize)
+
+    res = client.post("/api/query", json={"question": "What is the latest situation?"})
+    assert res.status_code == 500
+    assert "Query failed" in res.json()["detail"]
